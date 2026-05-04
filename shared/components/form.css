@@ -1,0 +1,79 @@
+/* ============================================================
+ * PLIALU — Formulaires (canonique)
+ * ------------------------------------------------------------
+ * Champs de saisie texte/select/textarea + label uppercase.
+ *
+ * Markup attendu :
+ *   <label for="ex">Mon champ</label>
+ *   <input id="ex" type="text">
+ *
+ * 100 % token-driven. Les valeurs hors tokens d'espace globaux
+ * (10px de padding vertical, largeur de bordure 1.5px) sont
+ * scopées localement.
+ * ============================================================ */
+
+input,
+select,
+textarea {
+  --_input-py:     10px;
+  --_input-px:     12px;
+  --_input-border: 1.5px;
+  --_focus-width:  2px;
+
+  width: 100%;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  padding: var(--_input-py) var(--_input-px);
+  border: var(--_input-border) solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--brand-900);
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: var(--_focus-width) solid var(--accent-glow);
+  outline-offset: 0;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-disabled);
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background: var(--bg-muted);
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+textarea {
+  resize: vertical;
+  min-height: var(--space-8);
+  font-family: var(--font-sans);
+}
+
+/* Labels en tag uppercase (au-dessus du champ) */
+label {
+  --_label-tracking:  0.5px;
+
+  display: block;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--_label-tracking);
+  margin-bottom: var(--space-1);
+}

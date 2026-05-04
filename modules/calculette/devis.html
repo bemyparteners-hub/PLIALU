@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="../../shared/components/navbar.css">
 <link rel="stylesheet" href="../../shared/components/buttons.css">
 <link rel="stylesheet" href="../../shared/components/card.css">
+<link rel="stylesheet" href="../../shared/components/form.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;color:#1a2e38;min-height:100vh}
@@ -23,12 +24,8 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;color:#1a2e38;min-heig
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
 
-/* FORM */
-label{display:block;font-size:10px;font-weight:700;color:#6b7a80;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
-input,select,textarea{width:100%;padding:10px 12px;border:1.5px solid #dde3e8;border-radius:8px;font-size:14px;background:#fff;color:#1a2e38;transition:border .2s;font-family:'Segoe UI',sans-serif}
-input:focus,select:focus,textarea:focus{outline:none;border-color:#0d2933}
-input::placeholder,textarea::placeholder{color:#b0bec5}
-textarea{resize:vertical;min-height:90px}
+/* FORM — overrides locaux */
+textarea{min-height:90px}
 
 /* TABLE DEVIS */
 .devis-wrap{overflow-x:auto;margin-bottom:0}
