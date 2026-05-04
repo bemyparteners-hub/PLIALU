@@ -1,0 +1,31 @@
+# Local configuration / secrets
+contacts.local.json
+*.local.json
+*.local.js
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs / temporary
+*.log
+*.tmp
+*.bak
+tmp/
+
+# Node / build outputs (defensive)
+node_modules/
+dist/
+build/
+.cache/
