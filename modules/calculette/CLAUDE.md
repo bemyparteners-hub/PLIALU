@@ -1,8 +1,11 @@
 # PLIALU — Module Calculette
 
 Module Calculette du CRM PLIALU. Outil web statique interne pour le façonnage
-aluminium sur mesure : calcul de prix, génération de devis PDF, dessin technique,
-configurateur de pièces.
+aluminium sur mesure : calcul de prix, génération de devis PDF, dessin technique.
+
+> Le **configurateur de pièces** vit désormais dans son propre module
+> (`modules/configurateur/`). Voir la section *Couplage avec le Configurateur*
+> ci-dessous.
 
 ## Règles absolues
 
@@ -28,10 +31,22 @@ modules/calculette/
 ├── calcul.html             # Calculette de prix
 ├── devis.html              # Générateur de devis PDF
 ├── dessinateur.html        # Outil de dessin canvas
-├── configurateur.html      # Configurateur de pièces (SVG paramétrique)
 ├── CLAUDE.md               # Ce fichier
 └── contacts.local.example.json
 ```
+
+## Couplage avec le Configurateur
+
+La calculette et le configurateur sont des modules **techniquement
+indépendants** (déploiement, versioning, navigation propre) mais
+**fonctionnellement liés** par le workflow `configurer → devis`. Le
+couplage est assuré par :
+
+- les **liens croisés dans les navbars** (`../configurateur/index.html`
+  côté calculette, `../calculette/...` côté configurateur) ;
+- la **convention `localStorage['plialu-devis']`** partagée par origine,
+  qui transporte les lignes générées dans le configurateur vers
+  `devis.html` sans appel inter-module.
 
 ---
 
