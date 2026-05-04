@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CRM PLIALU</title>
+<link rel="stylesheet" href="shared/tokens.css">
+<link rel="stylesheet" href="shared/components/navbar.css">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
@@ -15,24 +17,6 @@
     flex-direction:column;
     min-height:100vh;
   }
-  header{
-    background:#0d2933;
-    color:#fff;
-    padding:18px 32px;
-    display:flex;
-    align-items:center;
-    gap:14px;
-  }
-  header .mark{
-    width:34px;height:34px;border-radius:8px;
-    background:#e8fc69;color:#0d2933;
-    display:flex;align-items:center;justify-content:center;
-    font-weight:900;font-size:15px;
-  }
-  header h1{
-    font-size:18px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
-  }
-  header h1 span{color:#e8fc69}
   main{
     flex:1;
     max-width:1100px;
@@ -102,10 +86,14 @@
 </head>
 <body>
 
-<header>
-  <div class="mark">P</div>
-  <h1>CRM <span>PLIALU</span></h1>
-</header>
+<nav class="nav">
+  <div class="nav-brand nav-brand--static" title="Hub CRM PLIALU">
+    <span class="nav-mark">P</span>
+    <span class="nav-title nav-title--hub">
+      <span class="nav-title-prefix">CRM</span>PLIALU
+    </span>
+  </div>
+</nav>
 
 <main>
   <p class="lead">Outils internes — sélectionnez un module.</p>
