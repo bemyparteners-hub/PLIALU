@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PLIALU — Accueil</title>
+  <style>
+    /* ════ RESET ════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; color: #1a2e35; }
+
+    /* ════ NAVBAR ════ */
+    .navbar {
+      background: #0d2933;
+      padding: 0 32px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .navbar-brand {
+      font-size: 20px;
+      font-weight: 800;
+      color: #e8fc69;
+      letter-spacing: 1px;
+    }
+    .navbar-links { display: flex; gap: 8px; }
+    .navbar-links a {
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all .2s;
+    }
+    .navbar-links a:hover { background: rgba(232,252,105,0.15); color: #e8fc69; }
+    .navbar-links a.active { background: #e8fc69; color: #0d2933; font-weight: 700; }
+
+    /* ════ HERO ════ */
+    .hero {
+      background: #0d2933;
+      padding: 80px 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -80px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(232,252,105,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(232,252,105,0.15);
+      color: #e8fc69;
+      border: 1px solid rgba(232,252,105,0.3);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: 42px;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    .hero h1 span { color: #e8fc69; }
+    .hero p {
+      font-size: 17px;
+      color: rgba(255,255,255,0.65);
+      max-width: 520px;
+      margin: 0 auto 36px;
+      line-height: 1.6;
+    }
+    .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: #e8fc69;
+      color: #0d2933;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 15px;
+      text-decoration: none;
+      transition: all .2s;
+    }
+    .btn-primary:hover { background: #d4e85a; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(232,252,105,0.4); }
+    .btn-outline {
+      background: transparent;
+      color: #ffffff;
+      border: 2px solid rgba(255,255,255,0.3);
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      transition: all .2s;
+    }
+    .btn-outline:hover { border-color: #e8fc69; color: #e8fc69; }
+
+    /* ════ CONTAINER ════ */
+    .container { max-width: 960px; margin: 0 auto; padding: 48px 24px; }
+
+    /* ════ SECTION TITRE ════ */
+    .section-title {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .section-title h2 { font-size: 26px; font-weight: 800; color: #0d2933; }
+    .section-title p { color: #5a7a85; margin-top: 8px; font-size: 15px; }
+
+    /* ════ MODULES GRID ════ */
+    .modules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 48px; }
+    .module-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 32px 28px;
+      border: 2px solid #e2e8f0;
+      text-decoration: none;
+      color: inherit;
+      transition: all .25s;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+    .module-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: #e8fc69;
+      transform: scaleX(0);
+      transition: transform .25s;
+    }
+    .module-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(13,41,51,0.12); border-color: #0d2933; }
+    .module-card:hover::after { transform: scaleX(1); }
+    .module-icon { font-size: 40px; margin-bottom: 16px; }
+    .module-card h3 { font-size: 20px; font-weight: 800; color: #0d2933; margin-bottom: 10px; }
+    .module-card p { font-size: 14px; color: #5a7a85; line-height: 1.6; margin-bottom: 16px; }
+    .module-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag {
+      background: #f0f4f5;
+      color: #0d2933;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .module-arrow {
+      position: absolute;
+      top: 28px; right: 28px;
+      font-size: 20px;
+      color: #c0d0d5;
+      transition: all .2s;
+    }
+    .module-card:hover .module-arrow { color: #0d2933; transform: translateX(4px); }
+
+    /* ════ INFO BAND ════ */
+    .info-band {
+      background: rgba(232,252,105,0.1);
+      border: 1px solid rgba(232,252,105,0.3);
+      border-radius: 10px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+    .info-band span { font-size: 24px; }
+    .info-band p { font-size: 14px; color: #1a2e35; line-height: 1.5; }
+    .info-band strong { color: #0d2933; }
+
+    /* ════ FOOTER ════ */
+    footer {
+      background: #0d2933;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      padding: 24px;
+      font-size: 13px;
+    }
+    footer strong { color: #e8fc69; }
+
+    /* ════ RESPONSIVE ════ */
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 28px; }
+      .navbar { padding: 0 16px; }
+      .navbar-brand { font-size: 16px; }
+      .navbar-links a { padding: 6px 10px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="index.html" style="text-decoration:none;"><div class="navbar-brand">● PLIALU</div></a>
+  <div class="navbar-links">
+    <a href="index.html" class="active">🏠 Accueil</a>
+    <a href="calcul.html">🧮 Calculette</a>
+    <a href="devis.html">📄 Devis</a>
+    <a href="dessinateur.html">✏️ Dessinateur</a>
+    <a href="configurateur.html">⚙️ Configurateur</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🏗️ Outil interne PLIALU</div>
+  <h1>Silence ça chiffre<br><span>simple &amp; rapide</span></h1>
+  <div class="hero-btns">
+    <a href="calcul.html" class="btn-primary">🧮 Lancer la calculette</a>
+    <a href="devis.html" class="btn-outline">📄 Créer un devis</a>
+    <a href="dessinateur.html" class="btn-outline">✏️ Dessinateur</a>
+  </div>
+</section>
+
+<!-- CONTENU -->
+<div class="container">
+
+  <!-- Modules -->
+  <div class="section-title">
+    <h2>Modules disponibles</h2>
+    <p>Trois outils complémentaires pour votre activité commerciale</p>
+  </div>
+
+  <div class="modules-grid">
+
+    <a href="calcul.html" class="module-card">
+      <div class="module-arrow">→</div>
+      <div class="module-icon">🧮</div>
+      <h3>Calculette de prix</h3>
+      <p>Calculez instantanément le prix de vente selon la catégorie, l'épaisseur et la finition. Visualisez votre marge en temps réel.</p>
+      <div class="module-tags">
+        <span class="tag">Prix de vente</span>
+        <span class="tag">Marge</span>
+        <span class="tag">Coefficient R</span>
+      </div>
+    </a>
+
+    <a href="devis.html" class="module-card">
+      <div class="module-arrow">→</div>
+      <div class="module-icon">📄</div>
+      <h3>Générateur de devis</h3>
+      <p>Renseignez les informations client et chantier, ajoutez vos lignes de produits et téléchargez votre devis en PDF.</p>
+      <div class="module-tags">
+        <span class="tag">PDF</span>
+        <span class="tag">Client</span>
+        <span class="tag">Chantier</span>
+      </div>
+    </a>
+
+    <a href="dessinateur.html" class="module-card">
+      <div class="module-arrow">→</div>
+      <div class="module-icon">✏️</div>
+      <h3>Dessinateur de pièces</h3>
+      <p>Dessinez le profil de vos pièces de tôle pliée, ajoutez des cotes et annotations, puis associez le croquis à votre devis.</p>
+      <div class="module-tags">
+        <span class="tag">Croquis</span>
+        <span class="tag">Annotations</span>
+        <span class="tag">Export PNG</span>
+      </div>
+    </a>
+
+    <a href="configurateur.html" class="module-card">
+      <div class="module-arrow">→</div>
+      <div class="module-icon">⚙️</div>
+      <h3>Configurateur de pièces</h3>
+      <p>Sélectionnez une gamme, paramétrez les cotes A/B/C/D et obtenez le DVP calculé, la surface et le prix — avec vue isométrique en temps réel.</p>
+      <div class="module-tags">
+        <span class="tag">DVP auto</span>
+        <span class="tag">Vue ISO</span>
+        <span class="tag">Prix</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- Info band -->
+  <div class="info-band">
+    <span>💡</span>
+    <p><strong>Astuce :</strong> Utilisez la calculette pour estimer vos marges, dessinez vos pièces dans le dessinateur, puis basculez vers le générateur de devis pour formaliser votre offre client en PDF professionnel.</p>
+  </div>
+
+  <!-- Info sauvegarde -->
+  <div class="info-band" style="background:rgba(220,252,231,0.4);border-color:rgba(134,239,172,0.5)">
+    <span>💾</span>
+    <p><strong>Sauvegarde automatique :</strong> Toutes vos donn&eacute;es (calculette, devis, dessins) sont sauvegard&eacute;es automatiquement dans votre navigateur. Rien ne se perd au rafra&icirc;chissement.</p>
+  </div>
+
+  <!-- Reset global -->
+  <div style="text-align:center;margin-bottom:48px">
+    <button onclick="if(confirm('Effacer TOUTE la m\u00e9moire du projet (calculette, devis, dessinateur) ?\n\nCette action est irr\u00e9versible.')){localStorage.removeItem('plialu_project_data');localStorage.removeItem('plialu-devis');localStorage.removeItem('plialu-devis-dessins');alert('M\u00e9moire effac\u00e9e avec succ\u00e8s !');}" style="background:#fff;color:#6b7a80;border:2px solid #e2e8f0;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='#d9534f';this.style.color='#d9534f'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#6b7a80'">🗑️ Effacer toute m&eacute;moire</button>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 <strong>PLIALU</strong> — Outils créés pour un usage interne</p>
+</footer>
+
+</body>
+</html>
