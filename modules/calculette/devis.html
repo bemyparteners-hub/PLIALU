@@ -9,6 +9,7 @@
 <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 <link rel="stylesheet" href="../../shared/tokens.css">
 <link rel="stylesheet" href="../../shared/components/navbar.css">
+<link rel="stylesheet" href="../../shared/components/buttons.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;color:#1a2e38;min-height:100vh}
@@ -49,13 +50,6 @@ textarea{resize:vertical;min-height:90px}
 .totaux-bar .t-val{font-size:18px;font-weight:800;color:#e8fc69}
 .totaux-bar .t-val.white{color:#fff;font-size:15px}
 
-/* BTN LIGNE MANUELLE */
-.btn-ligne{background:#e8fc69;color:#0d2933;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:800;cursor:pointer;transition:.2s;margin:10px 0}
-.btn-ligne:hover{background:#d4f040}
-
-/* BTN SUPPRIMER */
-.btn-del{background:#fee2e2;color:#991b1b;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;transition:.2s;white-space:nowrap}
-.btn-del:hover{background:#fca5a5}
 
 /* UPLOAD PDF */
 .upload-zone{border:2px dashed #c8d6db;border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:.2s;background:#f8fafc}
@@ -67,8 +61,7 @@ textarea{resize:vertical;min-height:90px}
 
 /* PDF list items */
 .pdf-item{background:#f0f8fa;border:2px solid #0d2933;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:12px;font-size:13px;color:#0d2933;font-weight:600;margin-bottom:8px}
-.pdf-item-remove{margin-left:auto;background:#fee2e2;color:#991b1b;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer}
-.pdf-item-remove:hover{background:#fca5a5}
+.pdf-item-remove{margin-left:auto}
 
 /* DESSINS IMPORTÉS */
 .dessin-item{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
@@ -76,16 +69,7 @@ textarea{resize:vertical;min-height:90px}
 .dessin-item-info{flex:1;min-width:0}
 .dessin-item-name{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dessin-item-date{font-size:11px;color:#6b7a80}
-.dessin-item-del{background:#fee2e2;color:#991b1b;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer}
-.dessin-item-del:hover{background:#fca5a5}
 
-/* BTN GENERER */
-.btn-gen{background:#e8fc69;color:#0d2933;border:none;border-radius:8px;padding:13px 28px;font-size:15px;font-weight:800;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:8px}
-.btn-gen:hover{background:#d4f040;transform:translateY(-1px)}
-
-/* IMPORT LIGNE */
-.btn-import{background:#f0f4f8;color:#0d2933;border:2px solid #dde3e8;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:6px}
-.btn-import:hover{border-color:#0d2933}
 
 .msg-import{background:#dcfce7;color:#166534;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;display:none;margin-top:10px}
 
@@ -188,8 +172,8 @@ textarea{resize:vertical;min-height:90px}
     <div class="card-title">3 — Lignes du devis</div>
 
     <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;align-items:center">
-      <button class="btn-import" onclick="importerDepuisCalculette()">⬇ Importer depuis la calculette</button>
-      <button class="btn-ligne" onclick="ajouterLigneManuelle()">+ Ligne manuelle</button>
+      <button class="btn btn-secondary" onclick="importerDepuisCalculette()">⬇ Importer depuis la calculette</button>
+      <button class="btn btn-primary btn-sm" onclick="ajouterLigneManuelle()">+ Ligne manuelle</button>
     </div>
     <div id="msg-import" class="msg-import">✅ Lignes importées depuis la calculette !</div>
 
@@ -240,7 +224,7 @@ textarea{resize:vertical;min-height:90px}
     <!-- DESSINS DU DESSINATEUR -->
     <div style="margin-bottom:18px">
       <label>Dessins de pièces (depuis le dessinateur)</label>
-      <button class="btn-import" onclick="importerDessins()" style="margin-bottom:10px">✏️ Importer depuis le dessinateur</button>
+      <button class="btn btn-secondary" onclick="importerDessins()" style="margin-bottom:10px">✏️ Importer depuis le dessinateur</button>
       <div id="msg-dessins" class="msg-import">✅ Dessins importés depuis le dessinateur !</div>
       <div id="dessins-list"></div>
     </div>
@@ -261,7 +245,7 @@ textarea{resize:vertical;min-height:90px}
   <!-- 5 — GÉNÉRATION PDF -->
   <div class="card">
     <div class="card-title">5 — Génération PDF</div>
-    <button class="btn-gen" onclick="genererPDF()">📄 Générer le devis PDF</button>
+    <button class="btn btn-primary btn-lg" onclick="genererPDF()">📄 Générer le devis PDF</button>
   </div>
 
   <!-- RESET GLOBAL -->
@@ -456,7 +440,7 @@ function renderDessins(){
         <div class="dessin-item-name">✏️ ${escHtml(d.nom)}</div>
         ${d.notes ? `<div class="dessin-item-date">${escHtml(d.notes)}</div>` : ''}
       </div>
-      <button class="dessin-item-del" onclick="supprimerDessin('${d.id}')">✕</button>
+      <button class="btn btn-danger btn-sm" onclick="supprimerDessin('${d.id}')">✕</button>
     </div>
   `).join('');
 }
@@ -525,7 +509,7 @@ function renderTable(){
       <td><input type="number" value="${l.qte}" onchange="updateLigne(${l.id},'qte',this.value)"  style="min-width:45px" min="1"></td>
       <td><input type="number" value="${l.puHT.toFixed(2)}" onchange="updateLigne(${l.id},'puHT',this.value)" style="min-width:70px" step="0.01"></td>
       <td class="td-total" id="total-ligne-${l.id}">${total} €</td>
-      <td><button class="btn-del" onclick="supprimerLigne(${l.id})">✕</button></td>
+      <td><button class="btn btn-danger btn-sm" onclick="supprimerLigne(${l.id})">✕</button></td>
     `;
     tbody.appendChild(tr);
   });
@@ -583,7 +567,7 @@ function renderPDFList(){
         <div style="font-weight:700">${escHtml(f.name)}</div>
         <div style="font-size:11px;color:#059669;margin-top:2px">✅ Sera joint en annexe</div>
       </div>
-      <button class="pdf-item-remove" onclick="supprimerPDF(${i})">✕ Retirer</button>
+      <button class="btn btn-danger btn-sm pdf-item-remove" onclick="supprimerPDF(${i})">✕ Retirer</button>
     </div>
   `).join('');
 }

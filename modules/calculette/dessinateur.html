@@ -6,6 +6,7 @@
   <title>PLIALU — Dessinateur</title>
   <link rel="stylesheet" href="../../shared/tokens.css">
   <link rel="stylesheet" href="../../shared/components/navbar.css">
+  <link rel="stylesheet" href="../../shared/components/buttons.css">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;color:#1a2e38;min-height:100vh}
@@ -78,10 +79,6 @@
     .resize-handle.se{bottom:-5px;right:-5px;cursor:se-resize}
 
     .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-    .btn-primary{background:#e8fc69;color:#0d2933;border:none;border-radius:8px;padding:12px 22px;font-size:14px;font-weight:800;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px}
-    .btn-primary:hover{filter:brightness(.93)}
-    .btn-secondary{background:#fff;color:#0d2933;border:1.5px solid #dde3e8;border-radius:8px;padding:12px 22px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px}
-    .btn-secondary:hover{border-color:#0d2933}
 
     .msg-ok{display:none;padding:10px 16px;background:#e6f9ee;color:#1a7a42;border-radius:8px;font-size:13px;font-weight:600;margin-top:10px;align-items:center;gap:6px}
     .msg-ok.show{display:inline-flex}
@@ -98,7 +95,6 @@
     @media(max-width:600px){
       .toolbar{gap:4px;padding:8px}
       .tool-btn{padding:6px 8px;font-size:12px}
-      .btn-primary,.btn-secondary{padding:10px 14px;font-size:13px}
     }
   </style>
 </head>
@@ -192,8 +188,8 @@
   <div class="card">
     <div class="card-title">Actions</div>
     <div class="actions">
-      <button class="btn-secondary" id="btnDownload">📥 Télécharger en PNG</button>
-      <button class="btn-primary" id="btnSave">➕ Enregistrer &amp; Ajouter au devis</button>
+      <button class="btn btn-secondary" id="btnDownload">📥 Télécharger en PNG</button>
+      <button class="btn btn-primary" id="btnSave">➕ Enregistrer &amp; Ajouter au devis</button>
     </div>
     <div class="msg-ok" id="msgOk">✅ Dessin enregistré et ajouté au devis !</div>
   </div>
@@ -207,7 +203,7 @@
 
   <!-- RESET GLOBAL -->
   <div class="card" style="text-align:center">
-    <button class="btn-secondary" style="color:#6b7a80;border-color:#dde3e8" onclick="if(confirm('Effacer TOUTE la m\u00e9moire du projet (calculette, devis, dessinateur) ?')){localStorage.removeItem('plialu_project_data');localStorage.removeItem('plialu-devis');localStorage.removeItem('plialu-devis-dessins');location.reload();}">🗑️ Effacer toute m\u00e9moire</button>
+    <button class="btn btn-reset" onclick="if(confirm('Effacer TOUTE la m\u00e9moire du projet (calculette, devis, dessinateur) ?')){localStorage.removeItem('plialu_project_data');localStorage.removeItem('plialu-devis');localStorage.removeItem('plialu-devis-dessins');location.reload();}">🗑️ Effacer toute m\u00e9moire</button>
   </div>
 
 </div>
