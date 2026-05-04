@@ -1,0 +1,62 @@
+/* ============================================================
+ * PLIALU — Card (canonique)
+ * ------------------------------------------------------------
+ * Surface conteneur principale du contenu.
+ *
+ * Markup attendu :
+ *   <div class="card">
+ *     <h3 class="card-title">Titre</h3>
+ *     …
+ *   </div>
+ *
+ * Variantes :
+ *   .card-active     bordure accent (sélection / mise en avant)
+ *
+ * Le padding canonique (22px 24px) est défini en propriétés
+ * scopées locales car 22 ne fait pas partie des tokens d'espace
+ * globaux (multiples de 4 sauf cette valeur). Reste 100 %
+ * token-driven pour le reste.
+ * ============================================================ */
+
+.card {
+  --_card-py:  22px;
+  --_card-px:  24px;
+  --_card-border-width:  1px;
+  --_card-active-border-width:  2px;
+  --_title-tracking:  0.5px;
+
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border: var(--_card-border-width) solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: var(--_card-py) var(--_card-px);
+  margin-bottom: var(--space-4);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Titre uppercase tag, séparateur accent dessous */
+.card-title {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: var(--_title-tracking);
+  margin: 0 0 var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: var(--_card-active-border-width) solid var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Variante mise en avant */
+.card-active {
+  border-color: var(--accent);
+  border-width: var(--_card-active-border-width);
+}
