@@ -1,0 +1,7 @@
+{
+  "_comment": "Copier ce fichier en contacts.local.json (gitignoré) et renseigner les vraies données. Charger via <script src=\"contacts.local.js\"></script> qui fait window.PLIALU_CONTACTS = {...}, OU servir ce JSON et l'injecter au boot.",
+  "QM":  { "nom": "Prénom NOM", "fonction": "Chef des Ventes",                     "tel": "00 00 00 00 00", "email": "user@plialu.fr" },
+  "JPB": { "nom": "Prénom NOM", "fonction": "Dirigeant",                           "tel": "00 00 00 00 00", "email": "user@plialu.fr" },
+  "TR":  { "nom": "Prénom NOM", "fonction": "Technico-Commercial Sédentaire",      "tel": "00 00 00 00 00", "email": "user@plialu.fr" },
+  "GB":  { "nom": "Prénom NOM", "fonction": "Technico-Commercial en Alternance",   "tel": "00 00 00 00 00", "email": "user@plialu.fr" }
+}

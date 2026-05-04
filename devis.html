@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLIALU — Devis</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;color:#1a2e38;min-height:100vh}
+
+/* NAV */
+.nav{background:#0d2933;padding:0 24px;display:flex;align-items:center;gap:8px;height:52px;position:sticky;top:0;z-index:100}
+.nav-logo{color:#e8fc69;font-weight:800;font-size:17px;margin-right:16px;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.nav-logo span{background:#e8fc69;color:#0d2933;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+.nav-btn{background:transparent;border:none;color:#a0bcc4;padding:8px 18px;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;transition:.2s;text-decoration:none;display:inline-flex;align-items:center}
+.nav-btn:hover{color:#fff}
+.nav-btn.active{background:#e8fc69;color:#0d2933}
+
+/* PAGE */
+.page{max-width:900px;margin:28px auto;padding:0 16px 40px}
+
+/* CARD */
+.card{background:#fff;border-radius:12px;padding:22px 24px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.card-title{font-size:13px;font-weight:800;color:#1a2e38;text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #e8fc69}
+
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+/* FORM */
+label{display:block;font-size:10px;font-weight:700;color:#6b7a80;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+input,select,textarea{width:100%;padding:10px 12px;border:1.5px solid #dde3e8;border-radius:8px;font-size:14px;background:#fff;color:#1a2e38;transition:border .2s;font-family:'Segoe UI',sans-serif}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#0d2933}
+input::placeholder,textarea::placeholder{color:#b0bec5}
+textarea{resize:vertical;min-height:90px}
+
+/* TABLE DEVIS */
+.devis-wrap{overflow-x:auto;margin-bottom:0}
+.devis-table{width:100%;border-collapse:collapse;font-size:12px;min-width:700px}
+.devis-table thead tr{background:#0d2933}
+.devis-table thead th{color:#e8fc69;padding:10px 10px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap}
+.devis-table tbody tr:hover td{background:#f8fafc}
+.devis-table tbody td{padding:8px 10px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+.devis-table tbody td input{padding:5px 7px;font-size:12px;border:1.5px solid #e2e8f0;border-radius:6px;width:100%;background:#f8fafc}
+.devis-table tbody td input:focus{border-color:#e8fc69;background:#fff;outline:none}
+.devis-table .td-total{font-weight:700;color:#0d2933;white-space:nowrap}
+
+/* BARRE TOTAUX */
+.totaux-bar{background:#0d2933;border-radius:0 0 8px 8px;padding:14px 18px;display:flex;justify-content:flex-end;gap:28px;align-items:center}
+.totaux-bar .t-item{text-align:right}
+.totaux-bar .t-label{font-size:10px;color:#a0bcc4;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.totaux-bar .t-val{font-size:18px;font-weight:800;color:#e8fc69}
+.totaux-bar .t-val.white{color:#fff;font-size:15px}
+
+/* BTN LIGNE MANUELLE */
+.btn-ligne{background:#e8fc69;color:#0d2933;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:800;cursor:pointer;transition:.2s;margin:10px 0}
+.btn-ligne:hover{background:#d4f040}
+
+/* BTN SUPPRIMER */
+.btn-del{background:#fee2e2;color:#991b1b;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;transition:.2s;white-space:nowrap}
+.btn-del:hover{background:#fca5a5}
+
+/* UPLOAD PDF */
+.upload-zone{border:2px dashed #c8d6db;border-radius:10px;padding:24px;text-align:center;cursor:pointer;transition:.2s;background:#f8fafc}
+.upload-zone:hover{border-color:#0d2933;background:#f0f4f8}
+.upload-zone input{display:none}
+.upload-icon{font-size:28px;margin-bottom:6px}
+.upload-txt{font-size:14px;font-weight:700;color:#0d2933}
+.upload-sub{font-size:12px;color:#6b7a80;margin-top:4px}
+
+/* PDF list items */
+.pdf-item{background:#f0f8fa;border:2px solid #0d2933;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:12px;font-size:13px;color:#0d2933;font-weight:600;margin-bottom:8px}
+.pdf-item-remove{margin-left:auto;background:#fee2e2;color:#991b1b;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer}
+.pdf-item-remove:hover{background:#fca5a5}
+
+/* DESSINS IMPORTÉS */
+.dessin-item{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.dessin-item img{width:80px;height:50px;object-fit:contain;border-radius:4px;border:1px solid #dde3e8;background:#fff}
+.dessin-item-info{flex:1;min-width:0}
+.dessin-item-name{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dessin-item-date{font-size:11px;color:#6b7a80}
+.dessin-item-del{background:#fee2e2;color:#991b1b;border:none;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer}
+.dessin-item-del:hover{background:#fca5a5}
+
+/* BTN GENERER */
+.btn-gen{background:#e8fc69;color:#0d2933;border:none;border-radius:8px;padding:13px 28px;font-size:15px;font-weight:800;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:8px}
+.btn-gen:hover{background:#d4f040;transform:translateY(-1px)}
+
+/* IMPORT LIGNE */
+.btn-import{background:#f0f4f8;color:#0d2933;border:2px solid #dde3e8;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:6px}
+.btn-import:hover{border-color:#0d2933}
+
+.msg-import{background:#dcfce7;color:#166534;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;display:none;margin-top:10px}
+
+.comm-btn{padding:7px 14px;border:1.5px solid #dde3e8;border-radius:6px;cursor:pointer;font-size:13px;font-weight:700;background:#fff;color:#1a2e38;transition:.15s}
+.comm-btn:hover{border-color:#0d2933}
+.comm-btn.active{background:#0d2933;color:#e8fc69;border-color:#0d2933}
+.comm-info{margin-top:8px;font-size:12px;color:#1a2e38;background:#f8fafc;border-radius:8px;padding:8px 12px;border:1.5px solid #dde3e8;line-height:1.7}
+
+@media(max-width:650px){.grid2,.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" style="text-decoration:none;">
+    <div class="nav-logo"><span>o</span> PLIALU</div>
+  </a>
+  <a class="nav-btn" href="calcul.html">Calculette</a>
+  <a class="nav-btn active" href="devis.html">Devis</a>
+  <a class="nav-btn" href="dessinateur.html">Dessinateur</a>
+  <a class="nav-btn" href="configurateur.html">Configurateur</a>
+</nav>
+
+<div class="page">
+
+  <!-- 1 — INFORMATIONS DEVIS -->
+  <div class="card">
+    <div class="card-title">1 — Informations devis</div>
+    <div class="grid3" style="margin-bottom:14px">
+      <div>
+        <label>N° de devis</label>
+        <input type="text" id="d-numero">
+      </div>
+      <div>
+        <label>Date</label>
+        <input type="date" id="d-date">
+      </div>
+      <div>
+        <label>Validité (jours)</label>
+        <input type="number" id="d-validite" value="30">
+      </div>
+    </div>
+    <div class="grid2" style="margin-bottom:14px">
+      <div>
+        <label>Chantier / Projet</label>
+        <input type="text" id="d-chantier" placeholder="Nom du chantier">
+      </div>
+      <div>
+        <label>Référence client</label>
+        <input type="text" id="d-ref" placeholder="Réf. ou affaire">
+      </div>
+    </div>
+    <div>
+      <label>Commercial</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button type="button" class="comm-btn active" data-comm="QM">QM</button>
+        <button type="button" class="comm-btn" data-comm="JPB">JPB</button>
+        <button type="button" class="comm-btn" data-comm="TR">TR</button>
+        <button type="button" class="comm-btn" data-comm="GB">GB</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 — CLIENT -->
+  <div class="card">
+    <div class="card-title">2 — Client</div>
+    <div class="grid2" style="margin-bottom:14px">
+      <div>
+        <label>Raison sociale</label>
+        <input type="text" id="d-client">
+      </div>
+      <div>
+        <label>Contact</label>
+        <input type="text" id="d-contact">
+      </div>
+    </div>
+    <div class="grid3">
+      <div>
+        <label>Email</label>
+        <input type="email" id="d-email">
+      </div>
+      <div>
+        <label>Téléphone</label>
+        <input type="tel" id="d-tel">
+      </div>
+      <div>
+        <label>Adresse</label>
+        <input type="text" id="d-adresse">
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 — LIGNES DU DEVIS -->
+  <div class="card">
+    <div class="card-title">3 — Lignes du devis</div>
+
+    <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;align-items:center">
+      <button class="btn-import" onclick="importerDepuisCalculette()">⬇ Importer depuis la calculette</button>
+      <button class="btn-ligne" onclick="ajouterLigneManuelle()">+ Ligne manuelle</button>
+    </div>
+    <div id="msg-import" class="msg-import">✅ Lignes importées depuis la calculette !</div>
+
+    <div class="devis-wrap">
+      <table class="devis-table">
+        <thead>
+          <tr>
+            <th>Désignation</th>
+            <th>RAL</th>
+            <th>DVP (mm)</th>
+            <th>Lg (mm)</th>
+            <th style="white-space:nowrap">Qté</th>
+            <th>PU HT</th>
+            <th>Total HT</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="devis-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- TOTAUX -->
+    <div class="totaux-bar">
+      <div class="t-item">
+        <div class="t-label">Total HT</div>
+        <div class="t-val" id="t-ht">0.00 €</div>
+      </div>
+      <div class="t-item">
+        <div class="t-label">TVA 20%</div>
+        <div class="t-val white" id="t-tva">0.00 €</div>
+      </div>
+      <div class="t-item">
+        <div class="t-label">Total TTC</div>
+        <div class="t-val white" id="t-ttc">0.00 €</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 — COMMENTAIRES & ANNEXES -->
+  <div class="card">
+    <div class="card-title">4 — Commentaires & Annexes</div>
+
+    <div style="margin-bottom:18px">
+      <label>Commentaire / Conditions</label>
+      <textarea id="d-comment" placeholder="Conditions de règlement, délais, remarques..."></textarea>
+    </div>
+
+    <!-- DESSINS DU DESSINATEUR -->
+    <div style="margin-bottom:18px">
+      <label>Dessins de pièces (depuis le dessinateur)</label>
+      <button class="btn-import" onclick="importerDessins()" style="margin-bottom:10px">✏️ Importer depuis le dessinateur</button>
+      <div id="msg-dessins" class="msg-import">✅ Dessins importés depuis le dessinateur !</div>
+      <div id="dessins-list"></div>
+    </div>
+
+    <!-- PDF CLIENTS (MULTI) -->
+    <div>
+      <label>Joindre des documents PDF (sans limite)</label>
+      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('pdf-input').click()">
+        <input type="file" id="pdf-input" accept="application/pdf" multiple onchange="onPDFUpload(event)">
+        <div class="upload-icon">📎</div>
+        <div class="upload-txt">Cliquez pour joindre un ou plusieurs PDF</div>
+        <div class="upload-sub">Les documents seront fusionnés à la suite du devis</div>
+      </div>
+      <div id="pdf-list" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+  <!-- 5 — GÉNÉRATION PDF -->
+  <div class="card">
+    <div class="card-title">5 — Génération PDF</div>
+    <button class="btn-gen" onclick="genererPDF()">📄 Générer le devis PDF</button>
+  </div>
+
+  <!-- RESET GLOBAL -->
+  <div class="card" style="text-align:center">
+    <button style="background:#fff;color:#6b7a80;border:1.5px solid #dde3e8;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;transition:.2s" onmouseover="this.style.borderColor='#d9534f';this.style.color='#d9534f'" onmouseout="this.style.borderColor='#dde3e8';this.style.color='#6b7a80'" onclick="if(confirm('Effacer TOUTE la m\u00e9moire du projet (calculette, devis, dessinateur) ?')){localStorage.removeItem('plialu_project_data');localStorage.removeItem('plialu-devis');localStorage.removeItem('plialu-devis-dessins');location.reload();}">🗑️ Effacer toute m\u00e9moire</button>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// COMMERCIAUX
+// ------------------------------------------------------------
+// Données réelles à fournir via contacts.local.json (gitignoré),
+// chargé en amont dans window.PLIALU_CONTACTS. Voir le template
+// contacts.local.example.json pour le schéma attendu.
+// Tant que le fichier local n'est pas chargé, des placeholders
+// neutres sont utilisés (aucune PII en clair dans le dépôt).
+// ============================================================
+const COMMERCIAUX_DEFAULT = {
+  QM:  { nom:'Commercial QM',  fonction:'Chef des Ventes',                     tel:'', email:'' },
+  JPB: { nom:'Commercial JPB', fonction:'Dirigeant',                           tel:'', email:'' },
+  TR:  { nom:'Commercial TR',  fonction:'Technico-Commercial Sédentaire',      tel:'', email:'' },
+  GB:  { nom:'Commercial GB',  fonction:'Technico-Commercial en Alternance',   tel:'', email:'' }
+};
+const COMMERCIAUX = (typeof window !== 'undefined' && window.PLIALU_CONTACTS)
+  ? window.PLIALU_CONTACTS
+  : COMMERCIAUX_DEFAULT;
+let selectedComm = 'QM';
+
+// ============================================================
+// ÉTAT
+// ============================================================
+let lignesDevis = [];
+let idCounter   = 1;
+let pdfFiles    = [];       // tableau de {name, bytes}
+let dessinsImportes = [];   // tableau de {id, nom, notes, date, imageBase64}
+
+// ============================================================
+// INIT
+// ============================================================
+// ═══════ SAUVEGARDE AUTOMATIQUE ═══════
+const SAVE_KEY = 'plialu_project_data';
+
+function getProjectData(){
+  try { return JSON.parse(localStorage.getItem(SAVE_KEY)) || {}; } catch(e){ return {}; }
+}
+function showSaveIndicator(){
+  let el = document.getElementById('save-indicator');
+  if(!el){ el = document.createElement('div'); el.id='save-indicator'; el.style.cssText='position:fixed;bottom:20px;right:20px;background:rgba(13,41,51,0.88);color:#e8fc69;padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;z-index:200;opacity:0;transition:opacity .35s;pointer-events:none;letter-spacing:.3px'; document.body.appendChild(el); }
+  el.textContent = '\uD83D\uDCBE Projet sauvegard\u00e9';
+  el.style.opacity = '1';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.opacity = '0'; }, 1800);
+}
+
+function saveDevisData(){
+  const data = getProjectData();
+  data.devis = {
+    numero: document.getElementById('d-numero').value,
+    date: document.getElementById('d-date').value,
+    validite: document.getElementById('d-validite').value,
+    chantier: document.getElementById('d-chantier').value,
+    ref: document.getElementById('d-ref').value,
+    client: document.getElementById('d-client').value,
+    contact: document.getElementById('d-contact').value,
+    email: document.getElementById('d-email').value,
+    tel: document.getElementById('d-tel').value,
+    adresse: document.getElementById('d-adresse').value,
+    comment: document.getElementById('d-comment').value,
+    selectedComm: selectedComm,
+    lignesDevis: lignesDevis,
+    idCounter: idCounter
+  };
+  localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  showSaveIndicator();
+}
+
+function loadDevisData(){
+  const d = getProjectData().devis;
+  if(!d){
+    document.getElementById('d-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('d-numero').value = 'DEV-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random()*900)+100);
+    return;
+  }
+  if(d.numero) document.getElementById('d-numero').value = d.numero;
+  else document.getElementById('d-numero').value = 'DEV-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random()*900)+100);
+  document.getElementById('d-date').value = d.date || new Date().toISOString().split('T')[0];
+  if(d.validite) document.getElementById('d-validite').value = d.validite;
+  if(d.chantier) document.getElementById('d-chantier').value = d.chantier;
+  if(d.ref) document.getElementById('d-ref').value = d.ref;
+  if(d.client) document.getElementById('d-client').value = d.client;
+  if(d.contact) document.getElementById('d-contact').value = d.contact;
+  if(d.email) document.getElementById('d-email').value = d.email;
+  if(d.tel) document.getElementById('d-tel').value = d.tel;
+  if(d.adresse) document.getElementById('d-adresse').value = d.adresse;
+  if(d.comment) document.getElementById('d-comment').value = d.comment;
+  if(d.selectedComm){
+    selectedComm = d.selectedComm;
+    document.querySelectorAll('.comm-btn').forEach(b => b.classList.toggle('active', b.dataset.comm === d.selectedComm));
+  }
+  if(d.lignesDevis) lignesDevis = d.lignesDevis;
+  if(d.idCounter) idCounter = d.idCounter;
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  loadDevisData();
+  document.querySelectorAll('.comm-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.comm-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedComm = btn.dataset.comm;
+      saveDevisData();
+    });
+  });
+  // Auto-save sur tous les inputs/textareas
+  document.querySelectorAll('input, textarea, select').forEach(el => {
+    el.addEventListener('input', saveDevisData);
+    el.addEventListener('change', saveDevisData);
+  });
+  renderTable();
+});
+
+// ============================================================
+// IMPORT DEPUIS CALCULETTE (localStorage)
+// ============================================================
+function importerDepuisCalculette(){
+  const stock = JSON.parse(localStorage.getItem('plialu-devis') || '[]');
+  if(!stock.length){ alert('Aucune ligne en attente depuis la calculette.'); return; }
+  const matiereMap = {'Aluminium':'ALU','INOX':'IN','ACIER':'AC'};
+  stock.forEach(l => {
+    lignesDevis.push({
+      id:          idCounter++,
+      designation: l.designation || '',
+      matiere:     matiereMap[l.matiere] || l.matiere || '',
+      ral:         l.ral         || '',
+      ep:          l.ep          || '',
+      dvp:         l.dvp         || '',
+      lg:          l.lg          || '',
+      qte:         l.qte         || 1,
+      puHT:        parseFloat(l.puHT) || 0,
+      canvasImage: l.canvasImage  || null
+    });
+  });
+  localStorage.removeItem('plialu-devis');
+  renderTable();
+  saveDevisData();
+  const msg = document.getElementById('msg-import');
+  msg.style.display = 'block';
+  setTimeout(()=>msg.style.display='none', 3000);
+}
+
+// ============================================================
+// IMPORT DEPUIS DESSINATEUR (localStorage)
+// ============================================================
+function importerDessins(){
+  const stock = JSON.parse(localStorage.getItem('plialu-devis-dessins') || '[]');
+  if(!stock.length){ alert('Aucun dessin enregistré dans le dessinateur.'); return; }
+
+  // Ajouter seulement les dessins pas déjà importés
+  let count = 0;
+  stock.forEach(d => {
+    if(!dessinsImportes.find(x => x.id === d.id)){
+      dessinsImportes.push(d);
+      count++;
+    }
+  });
+
+  if(!count){ alert('Tous les dessins sont déjà importés.'); return; }
+
+  renderDessins();
+  const msg = document.getElementById('msg-dessins');
+  msg.style.display = 'block';
+  setTimeout(()=>msg.style.display='none', 3000);
+}
+
+function supprimerDessin(id){
+  dessinsImportes = dessinsImportes.filter(d => d.id !== id);
+  renderDessins();
+}
+
+function renderDessins(){
+  const container = document.getElementById('dessins-list');
+  if(!dessinsImportes.length){
+    container.innerHTML = '';
+    return;
+  }
+  container.innerHTML = dessinsImportes.map(d => `
+    <div class="dessin-item">
+      <img src="${d.imageBase64}" alt="${d.nom}">
+      <div class="dessin-item-info">
+        <div class="dessin-item-name">✏️ ${escHtml(d.nom)}</div>
+        ${d.notes ? `<div class="dessin-item-date">${escHtml(d.notes)}</div>` : ''}
+      </div>
+      <button class="dessin-item-del" onclick="supprimerDessin('${d.id}')">✕</button>
+    </div>
+  `).join('');
+}
+
+function escHtml(s){
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// ============================================================
+// LIGNE MANUELLE
+// ============================================================
+function ajouterLigneManuelle(){
+  lignesDevis.push({
+    id: idCounter++,
+    designation:'', matiere:'ALU',
+    ral:'', ep:'15/10', dvp:'', lg:3000, qte:1, puHT:0
+  });
+  renderTable();
+  saveDevisData();
+}
+
+// ============================================================
+// SUPPRIMER
+// ============================================================
+function supprimerLigne(id){
+  lignesDevis = lignesDevis.filter(l => l.id !== id);
+  renderTable();
+  saveDevisData();
+}
+
+// ============================================================
+// UPDATE CHAMP
+// ============================================================
+function updateLigne(id, champ, val){
+  const l = lignesDevis.find(l => l.id === id);
+  if(!l) return;
+  l[champ] = (champ === 'qte' || champ === 'puHT' || champ === 'dvp' || champ === 'lg')
+    ? parseFloat(val) || 0
+    : val;
+  const totalEl = document.getElementById('total-ligne-'+id);
+  if(totalEl) totalEl.textContent = (l.qte * l.puHT).toFixed(2)+' €';
+  updateTotaux();
+  saveDevisData();
+}
+
+// ============================================================
+// RENDER TABLE
+// ============================================================
+function renderTable(){
+  const tbody = document.getElementById('devis-tbody');
+  tbody.innerHTML = '';
+
+  lignesDevis.forEach(l => {
+    const total = (l.qte * l.puHT).toFixed(2);
+    const tr = document.createElement('tr');
+    const thumbHtml = l.canvasImage
+      ? `<img src="${l.canvasImage}" style="width:44px;height:28px;object-fit:contain;vertical-align:middle;margin-right:6px;border-radius:3px;border:1px solid #dde3e8;background:#fff;flex-shrink:0">`
+      : '';
+    tr.innerHTML = `
+      <td><div style="display:flex;align-items:center">${thumbHtml}<input value="${escHtml(l.designation)}" onchange="updateLigne(${l.id},'designation',this.value)" style="min-width:140px;flex:1"></div></td>
+      <td><input value="${l.ral}"         onchange="updateLigne(${l.id},'ral',this.value)"         style="min-width:70px"></td>
+      <td><input type="number" value="${l.dvp}" onchange="updateLigne(${l.id},'dvp',this.value)"  style="min-width:55px"></td>
+      <td><input type="number" value="${l.lg}"  onchange="updateLigne(${l.id},'lg',this.value)"   style="min-width:65px"></td>
+      <td><input type="number" value="${l.qte}" onchange="updateLigne(${l.id},'qte',this.value)"  style="min-width:45px" min="1"></td>
+      <td><input type="number" value="${l.puHT.toFixed(2)}" onchange="updateLigne(${l.id},'puHT',this.value)" style="min-width:70px" step="0.01"></td>
+      <td class="td-total" id="total-ligne-${l.id}">${total} €</td>
+      <td><button class="btn-del" onclick="supprimerLigne(${l.id})">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  updateTotaux();
+}
+
+// ============================================================
+// TOTAUX
+// ============================================================
+function updateTotaux(){
+  const ht  = lignesDevis.reduce((s,l) => s + l.qte * l.puHT, 0);
+  const tva = ht * 0.20;
+  const ttc = ht + tva;
+  document.getElementById('t-ht').textContent  = ht.toFixed(2)+' €';
+  document.getElementById('t-tva').textContent = tva.toFixed(2)+' €';
+  document.getElementById('t-ttc').textContent = ttc.toFixed(2)+' €';
+}
+
+// ============================================================
+// PDF CLIENTS — MULTI FICHIERS
+// ============================================================
+function onPDFUpload(e){
+  const files = Array.from(e.target.files);
+  if(!files.length) return;
+
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      pdfFiles.push({ name: file.name, bytes: new Uint8Array(ev.target.result) });
+      renderPDFList();
+    };
+    reader.readAsArrayBuffer(file);
+  });
+
+  // Reset input pour pouvoir re-sélectionner les mêmes fichiers
+  e.target.value = '';
+}
+
+function supprimerPDF(idx){
+  pdfFiles.splice(idx, 1);
+  renderPDFList();
+}
+
+function renderPDFList(){
+  const container = document.getElementById('pdf-list');
+  if(!pdfFiles.length){
+    container.innerHTML = '';
+    return;
+  }
+  container.innerHTML = pdfFiles.map((f, i) => `
+    <div class="pdf-item">
+      <span style="font-size:18px">📄</span>
+      <div>
+        <div style="font-weight:700">${escHtml(f.name)}</div>
+        <div style="font-size:11px;color:#059669;margin-top:2px">✅ Sera joint en annexe</div>
+      </div>
+      <button class="pdf-item-remove" onclick="supprimerPDF(${i})">✕ Retirer</button>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// RÉFÉRENCE MATIÈRE (format AL15-9016M)
+// ============================================================
+function buildRef(mat, ep, ral){
+  // mat: ALU/AC/IN → AL/AC/IN
+  const mCode = mat === 'ALU' ? 'AL' : (mat || '');
+  // ep: "15/10" → "15"
+  const epCode = ep ? String(ep).split('/')[0] : '';
+  const ref = mCode + epCode + (ral ? '-' + ral : '');
+  return ref || '';
+}
+
+// ============================================================
+// GÉNÉRATION PDF
+// ============================================================
+async function genererPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc       = new jsPDF({ unit:'mm', format:'a4' });
+
+  const numero   = document.getElementById('d-numero').value  || 'DEV-????';
+  const date     = document.getElementById('d-date').value     || '';
+  const validite = document.getElementById('d-validite').value || '30';
+  const chantier = document.getElementById('d-chantier').value || '';
+  const ref      = document.getElementById('d-ref').value      || '';
+  const client   = document.getElementById('d-client').value   || '';
+  const contact  = document.getElementById('d-contact').value  || '';
+  const email    = document.getElementById('d-email').value    || '';
+  const tel      = document.getElementById('d-tel').value      || '';
+  const adresse  = document.getElementById('d-adresse').value  || '';
+  const comment  = document.getElementById('d-comment').value  || '';
+
+  const comm = COMMERCIAUX[selectedComm];
+
+  // ── HEADER ──
+  doc.setFillColor(13,41,51);
+  doc.rect(0,0,210,32,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(22); doc.setFont('helvetica','bold');
+  doc.text('PLIALU', 14, 19);
+  doc.setFontSize(8); doc.setFont('helvetica','normal');
+  doc.setTextColor(160,188,196);
+  doc.text('Façonnage aluminium sur mesure — Enveloppe du bâtiment', 14, 26);
+  // Badge DEVIS
+  doc.setFillColor(232,252,105);
+  doc.roundedRect(148,7,52,18,3,3,'F');
+  doc.setTextColor(13,41,51);
+  doc.setFontSize(13); doc.setFont('helvetica','bold');
+  doc.text('DEVIS', 174, 17, {align:'center'});
+  doc.setFontSize(8);
+  doc.text(numero, 174, 23, {align:'center'});
+
+  // ── COMMERCIAL + INFOS DEVIS ──
+  let y = 36;
+  doc.setFontSize(7); doc.setFont('helvetica','bold'); doc.setTextColor(100,100,100);
+  doc.text('COMMERCIAL', 14, y); y += 6;
+  doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(13,41,51);
+  doc.text(comm.nom, 14, y); y += 5;
+  doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(80,80,80);
+  doc.text(comm.fonction, 14, y); y += 5;
+  doc.text(comm.tel + '  |  ' + comm.email, 14, y); y += 14;
+  doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(100,100,100);
+  doc.text(`Date : ${date}`, 14, y);
+  doc.text(`Validité : ${validite} jours`, 70, y);
+  if(chantier) doc.text(`Chantier : ${chantier}`, 14, y+6);
+  if(ref)      doc.text(`Réf. : ${ref}`, 14, y+12);
+
+  // ── BLOC CLIENT ──
+  doc.setFillColor(248,250,252);
+  doc.roundedRect(120,36,76,52,3,3,'F');
+  doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(13,41,51);
+  doc.text('DESTINATAIRE', 124, 43);
+  doc.setFont('helvetica','normal'); doc.setTextColor(40,40,40);
+  let yc = 50;
+  if(client)  { doc.setFont('helvetica','bold'); doc.text(client, 124, yc); yc+=5; doc.setFont('helvetica','normal'); }
+  if(contact) { doc.text(contact, 124, yc); yc+=5; }
+  if(email)   { doc.text(email,   124, yc); yc+=5; }
+  if(tel)     { doc.text(tel,     124, yc); yc+=5; }
+  if(adresse) { doc.text(adresse, 124, yc); }
+
+  y = 80;
+
+  // ── TABLEAU LIGNES ──
+  const ISO_W  = 22;  // largeur image ISO en mm
+  const ISO_H  = 13;  // hauteur image ISO en mm
+  const CPAD   = 3;   // cell padding (identique à styles.cellPadding)
+
+  const rows = lignesDevis.map(l => [
+    l.canvasImage ? '' : l.designation, // vidé si image — redessiné via hook
+    buildRef(l.matiere, l.ep, l.ral),
+    l.dvp ? String(l.dvp) : '',
+    l.lg  ? String(l.lg)  : '',
+    l.qte,
+    l.puHT.toFixed(2)+' €',
+    (l.qte * l.puHT).toFixed(2)+' €'
+  ]);
+
+  doc.autoTable({
+    startY: y,
+    head: [['Désignation','Réf. Mat.','DVP (mm)','Lg (mm)','Qté','PU HT','Total HT']],
+    body: rows,
+    styles:      { fontSize:8, cellPadding:CPAD },
+    headStyles:  { fillColor:[13,41,51], textColor:[232,252,105], fontStyle:'bold' },
+    alternateRowStyles: { fillColor:[248,250,252] },
+    columnStyles: {
+      0: { cellWidth:60 },
+      1: { cellWidth:24 },
+      2: { cellWidth:18 },
+      3: { cellWidth:18 },
+      4: { cellWidth:12 },
+      5: { cellWidth:22 },
+      6: { cellWidth:24 }
+    },
+    didParseCell(data) {
+      // Force une hauteur de ligne suffisante pour contenir l'image
+      if (data.section === 'body' && data.column.index === 0 &&
+          lignesDevis[data.row.index] && lignesDevis[data.row.index].canvasImage) {
+        data.cell.styles.minCellHeight = ISO_H + CPAD * 2;
+      }
+    },
+    didDrawCell(data) {
+      if (data.section !== 'body' || data.column.index !== 0) return;
+      const l = lignesDevis[data.row.index];
+      if (!l || !l.canvasImage) return;
+
+      // Fond gris + image ISO centrée verticalement dans la cellule
+      const M  = 0.7; // marge en mm autour de l'image (~2 px écran)
+      const ix = data.cell.x + CPAD;
+      const iy = data.cell.y + (data.cell.height - ISO_H) / 2;
+      doc.setFillColor(240, 244, 248);
+      doc.roundedRect(ix - M, iy - M, ISO_W + M * 2, ISO_H + M * 2, 0.8, 0.8, 'F');
+      try {
+        doc.addImage(l.canvasImage, 'PNG', ix, iy, ISO_W, ISO_H);
+      } catch(e) { /* image corrompue, on ignore */ }
+
+      // Texte désignation à droite de l'image
+      const tx   = ix + ISO_W + 2;
+      const tw   = data.cell.width - ISO_W - CPAD * 2 - 2;
+      const ty   = data.cell.y + CPAD + 3.5;
+      doc.setFontSize(7.5);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(13, 41, 51);
+      doc.splitTextToSize(l.designation, tw).forEach((line, i) => {
+        doc.text(line, tx, ty + i * 4);
+      });
+    }
+  });
+
+  let finalY = doc.lastAutoTable.finalY + 6;
+
+  // ── TOTAUX ──
+  const ht  = lignesDevis.reduce((s,l) => s + l.qte * l.puHT, 0);
+  const tva = ht * 0.20;
+  const ttc = ht + tva;
+
+  doc.setFillColor(232,252,105);
+  doc.rect(130, finalY, 66, 10, 'F');
+  doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(13,41,51);
+  doc.text('TOTAL HT :', 134, finalY+7);
+  doc.text(ht.toFixed(2)+' €', 192, finalY+7, {align:'right'});
+  finalY += 11;
+
+  doc.setFillColor(248,250,252);
+  doc.rect(130, finalY, 66, 9, 'F');
+  doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(80,80,80);
+  doc.text('TVA 20% :', 134, finalY+6);
+  doc.text(tva.toFixed(2)+' €', 192, finalY+6, {align:'right'});
+  finalY += 10;
+
+  doc.setFillColor(13,41,51);
+  doc.rect(130, finalY, 66, 11, 'F');
+  doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(232,252,105);
+  doc.text('TOTAL TTC :', 134, finalY+8);
+  doc.text(ttc.toFixed(2)+' €', 192, finalY+8, {align:'right'});
+  finalY += 16;
+
+  // ── COMMENTAIRE ──
+  if(comment){
+    doc.setFont('helvetica','italic'); doc.setFontSize(8); doc.setTextColor(80,80,80);
+    const lines = doc.splitTextToSize(comment, 180);
+    doc.text(lines, 14, finalY);
+    finalY += lines.length * 5 + 4;
+  }
+
+  // ── PAGES ANNEXES : DESSINS DU DESSINATEUR (2 par page) ──
+  if(dessinsImportes.length){
+    const IMG_H    = 85;   // hauteur image mm
+    const BLOCK_H  = 110;  // hauteur d'un bloc (titre + image + marge)
+    const PAGE_TOP = 28;   // y de départ après header
+
+    dessinsImportes.forEach((d, i) => {
+      const posInPage = i % 2;
+
+      if(posInPage === 0){
+        doc.addPage();
+        doc.setFillColor(13,41,51);
+        doc.rect(0,0,210,22,'F');
+        doc.setTextColor(232,252,105);
+        doc.setFontSize(10); doc.setFont('helvetica','bold');
+        doc.text('ANNEXE — Dessins de pièces', 14, 14);
+        doc.setFontSize(8); doc.setTextColor(160,188,196); doc.setFont('helvetica','normal');
+        doc.text(numero, 196, 14, {align:'right'});
+      }
+
+      let dy = PAGE_TOP + posInPage * BLOCK_H;
+
+      // Séparateur entre les deux dessins
+      if(posInPage === 1){
+        doc.setDrawColor(220,220,220);
+        doc.line(14, dy - 5, 196, dy - 5);
+      }
+
+      // Nom du dessin
+      doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(13,41,51);
+      doc.text(d.nom, 14, dy);
+      dy += 6;
+
+      doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(100,100,100);
+      if(d.notes){ doc.text('Notes : ' + d.notes, 14, dy); dy += 5; }
+      dy += 2;
+
+      // Image du dessin
+      try {
+        doc.addImage(d.imageBase64, 'PNG', 14, dy, 182, IMG_H);
+      } catch(err){
+        doc.setTextColor(200,0,0);
+        doc.text('Erreur : impossible de charger le dessin.', 14, dy+10);
+      }
+    });
+  }
+
+  // ── FOOTER SUR TOUTES LES PAGES ──
+  const totalPages = doc.internal.getNumberOfPages();
+  for(let i = 1; i <= totalPages; i++){
+    doc.setPage(i);
+    doc.setFillColor(13,41,51);
+    doc.rect(0,285,210,12,'F');
+    doc.setFontSize(7); doc.setTextColor(160,188,196); doc.setFont('helvetica','normal');
+    doc.text('PLIALU — Façonnage aluminium sur mesure  |  ' + comm.nom + ' — ' + comm.email, 105, 292, {align:'center'});
+    doc.setTextColor(232,252,105);
+    doc.text('Page '+i+'/'+totalPages, 196, 292);
+  }
+
+  // ── FUSION AVEC TOUS LES PDF JOINTS ──
+  if(pdfFiles.length){
+    try {
+      const { PDFDocument } = PDFLib;
+      const devisBytes = doc.output('arraybuffer');
+      const mergedDoc  = await PDFDocument.load(devisBytes);
+
+      for(const pf of pdfFiles){
+        try {
+          const extDoc = await PDFDocument.load(pf.bytes);
+          const pages  = await mergedDoc.copyPages(extDoc, extDoc.getPageIndices());
+          pages.forEach(p => mergedDoc.addPage(p));
+        } catch(err){
+          console.error('Erreur fusion PDF:', pf.name, err);
+        }
+      }
+
+      const merged = await mergedDoc.save();
+      const blob   = new Blob([merged], {type:'application/pdf'});
+      const url    = URL.createObjectURL(blob);
+      const a      = document.createElement('a');
+      a.href = url; a.download = 'Devis_'+numero+'.pdf'; a.click();
+      URL.revokeObjectURL(url);
+    } catch(err){
+      console.error(err);
+      alert('Fusion PDF échouée — téléchargement du devis seul.');
+      doc.save('Devis_'+numero+'.pdf');
+    }
+  } else {
+    doc.save('Devis_'+numero+'.pdf');
+  }
+}
+</script>
+</body>
+</html>
