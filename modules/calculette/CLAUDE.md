@@ -1,6 +1,8 @@
-# PLIALU — Calculette
+# PLIALU — Module Calculette
 
-Outil web statique interne pour le façonnage aluminium sur mesure : calcul de prix, génération de devis PDF, dessin technique.
+Module Calculette du CRM PLIALU. Outil web statique interne pour le façonnage
+aluminium sur mesure : calcul de prix, génération de devis PDF, dessin technique,
+configurateur de pièces.
 
 ## Règles absolues
 
@@ -12,28 +14,23 @@ Outil web statique interne pour le façonnage aluminium sur mesure : calcul de p
 
 ---
 
-## Structure du repo
+## Place dans le dépôt
+
+Ce module vit sous `modules/calculette/`. Le hub CRM est à `/index.html` (racine
+du dépôt). Les assets partagés (`assets/pieces/`) sont à la racine ; depuis ce
+module, on y accède via `../../assets/pieces/`.
+
+## Structure du module
 
 ```
-/
-├── index.html              # Page d'accueil / tableau de bord
+modules/calculette/
+├── index.html              # Page d'accueil du module / tableau de bord
 ├── calcul.html             # Calculette de prix
 ├── devis.html              # Générateur de devis PDF
 ├── dessinateur.html        # Outil de dessin canvas
 ├── configurateur.html      # Configurateur de pièces (SVG paramétrique)
-├── README.md
-├── CLAUDE.md
-├── LICENSE
-├── AUDIT.md                # Audit historique de structure
-├── contacts.local.example.json
-├── .claude/
-│   └── skills/             # Slash-commands Claude Code (10 skills)
-├── assets/
-│   └── pieces/             # Catalogue d'images PNG (197 fichiers)
-├── maxcut/
-│   └── index.html          # Optimiseur de découpe aluminium (autonome)
-└── tools/
-    └── fold_configurator_export.py   # Prototype Python (export HTML)
+├── CLAUDE.md               # Ce fichier
+└── contacts.local.example.json
 ```
 
 ---

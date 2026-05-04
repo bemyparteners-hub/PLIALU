@@ -1,46 +1,62 @@
-# PLIALU
+# CRM PLIALU
 
-Outils web internes de PLIALU pour le façonnage aluminium sur mesure.
+Hub d'outils web internes de PLIALU pour le façonnage aluminium sur mesure.
 HTML / CSS / JS vanilla, sans build, déployés sur GitHub Pages depuis `main`.
 
-## Applications
+## Modules
 
 | URL (GH Pages) | Source | Rôle |
 |---|---|---|
-| `/` | `index.html` | Tableau de bord — points d'entrée vers les outils |
-| `/calcul.html` | `calcul.html` | Calculette de prix (matière + MO + sous-traitance → PV HT) |
-| `/devis.html` | `devis.html` | Génération de devis PDF (jsPDF + autoTable + pdf-lib) |
-| `/dessinateur.html` | `dessinateur.html` | Croquis techniques canvas (cotes, angles, export PNG) |
-| `/configurateur.html` | `configurateur.html` | Configurateur de pièces (gammes / matières / SVG paramétrique) |
-| `/maxcut/` | `maxcut/index.html` | Optimiseur de découpe aluminium (autonome) |
+| `/` | `index.html` | Hub CRM — point d'entrée vers les modules |
+| `/modules/calculette/` | `modules/calculette/index.html` | Tableau de bord Calculette |
+| `/modules/calculette/calcul.html` | `modules/calculette/calcul.html` | Calculette de prix (matière + MO + sous-traitance → PV HT) |
+| `/modules/calculette/devis.html` | `modules/calculette/devis.html` | Génération de devis PDF (jsPDF + autoTable + pdf-lib) |
+| `/modules/calculette/dessinateur.html` | `modules/calculette/dessinateur.html` | Croquis techniques canvas |
+| `/modules/calculette/configurateur.html` | `modules/calculette/configurateur.html` | Configurateur de pièces (gammes / matières / SVG) |
+| `/modules/maxcut/` | `modules/maxcut/index.html` | Optimiseur de plan de découpe aluminium |
+
+Pour ajouter un module, créer `modules/<nom>/index.html` puis ajouter une carte
+dans le hub `index.html` (un `<a class="card">`).
 
 ## Structure du dépôt
 
 ```
 /
-├── index.html, calcul.html, devis.html, dessinateur.html, configurateur.html
-├── CLAUDE.md                 Documentation projet pour les agents IA
-├── README.md                 Ce fichier
-├── LICENSE                   Tous droits réservés — PLIALU
+├── index.html                Hub CRM (cartes vers les modules)
+├── README.md
+├── LICENSE
 ├── AUDIT.md                  Audit de structure (référence historique)
-├── contacts.local.example.json   Schéma des contacts commerciaux (cf. infra)
 ├── .gitignore
 ├── .claude/
 │   └── skills/               Slash-commands Claude Code (10 skills)
+├── modules/
+│   ├── calculette/
+│   │   ├── index.html        Accueil Calculette
+│   │   ├── calcul.html
+│   │   ├── devis.html
+│   │   ├── dessinateur.html
+│   │   ├── configurateur.html
+│   │   ├── CLAUDE.md         Documentation projet (module)
+│   │   └── contacts.local.example.json
+│   └── maxcut/
+│       └── index.html        Optimiseur de découpe
 ├── assets/
-│   └── pieces/               Catalogue d'images de pièces (197 PNG)
-├── maxcut/
-│   └── index.html            Optimiseur de découpe (autonome)
+│   └── pieces/               Catalogue d'images de pièces (197 PNG, partagé)
 └── tools/
-    └── fold_configurator_export.py   Prototype Python (export HTML statique)
+    └── fold_configurator_export.py   Script Python jetable (export HTML)
 ```
+
+`assets/` est partagé entre modules et reste à la racine. Les modules y
+accèdent via `../../assets/...`. `tools/` est un répertoire dev, pas un
+module utilisateur.
 
 ## Données locales (PII)
 
 Les contacts commerciaux affichés dans les devis ne sont **pas** versionnés.
 Pour activer les vrais noms / téléphones / emails :
 
-1. Copier `contacts.local.example.json` en `contacts.local.json` (ignoré par Git).
+1. Copier `modules/calculette/contacts.local.example.json` en
+   `modules/calculette/contacts.local.json` (ignoré par Git).
 2. Charger ce JSON au démarrage en exposant `window.PLIALU_CONTACTS`
    avant l'inclusion de `devis.html`. Exemple :
 
@@ -76,7 +92,7 @@ Aucun backend. Toutes les données vivent dans le `localStorage` du navigateur :
 | `plialu-devis` | File de lignes calculette → devis (vidée à l'import) |
 | `plialu-devis-dessins` | File de dessins dessinateur → devis |
 
-Le bouton « Réinitialiser tout » de `index.html` purge ces 3 clés.
+Le bouton « Réinitialiser tout » de `modules/calculette/index.html` purge ces 3 clés.
 
 ## Développement
 
@@ -85,6 +101,8 @@ Le bouton « Réinitialiser tout » de `index.html` purge ces 3 clés.
 python3 -m http.server 8000
 # puis http://localhost:8000/
 ```
+
+Le hub fonctionne aussi en `file://` (ouvrir directement `index.html`).
 
 Convention de branche pour les contributions assistées :
 `claude/<courte-description>` puis PR vers `main`.
