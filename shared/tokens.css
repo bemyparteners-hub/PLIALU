@@ -1,0 +1,81 @@
+/* ============================================================
+ * PLIALU — Design tokens
+ * ------------------------------------------------------------
+ * Source unique de vérité pour les couleurs, espacements,
+ * rayons, typographie et ombres du CRM PLIALU.
+ *
+ * Convention : aucun composant partagé (shared/components/*)
+ * ne doit utiliser de valeur hex/px en dur — toujours via
+ * var(--token).
+ *
+ * Le thème par défaut est CLAIR. Le thème SOMBRE (MAXCUT)
+ * surcharge un sous-ensemble de tokens via theme-dark.css.
+ * ============================================================ */
+
+:root {
+  /* ── Brand ─────────────────────────────────────────────── */
+  --brand-900:        #0d2933;
+  --brand-700:        #1a2e38;
+  --accent:           #e8fc69;
+  --accent-hover:     #d4f040;
+  --accent-glow:      rgba(232, 252, 105, 0.2);
+
+  /* ── Surfaces (thème clair) ────────────────────────────── */
+  --bg-app:           #f0f4f8;
+  --bg-elevated:      #ffffff;
+  --bg-muted:         #f8fafc;
+  --bg-secondary:     #fafbfc;
+
+  /* ── Texte ─────────────────────────────────────────────── */
+  --text-primary:     #1a2e38;
+  --text-on-brand:    #ffffff;
+  --text-muted:       #6b7a80;
+  --text-disabled:    #a0bcc4;
+
+  /* ── Bordures ──────────────────────────────────────────── */
+  --border-soft:      #e2e8f0;
+  --border-strong:    #c0d0d5;
+
+  /* ── Statuts ───────────────────────────────────────────── */
+  --success-bg:       #dcfce7;
+  --success-border:   #86efac;
+  --success-text:     #166534;
+
+  --warning-bg:       #fef3c7;
+  --warning-border:   #fcd34d;
+  --warning-text:     #92400e;
+
+  --danger:           #d9534f;
+  --danger-bg:        #fee2e2;
+  --danger-border:    #fca5a5;
+  --danger-text:      #991b1b;
+
+  /* ── Espacements ───────────────────────────────────────── */
+  --space-1:          4px;
+  --space-2:          8px;
+  --space-3:          12px;
+  --space-4:          16px;
+  --space-5:          20px;
+  --space-6:          24px;
+  --space-8:          32px;
+
+  /* ── Rayons ────────────────────────────────────────────── */
+  --radius-sm:        6px;
+  --radius:           8px;
+  --radius-lg:        12px;
+
+  /* ── Layout ────────────────────────────────────────────── */
+  --nav-height:       52px;
+
+  /* ── Typographie ───────────────────────────────────────── */
+  --font-sans:        'Segoe UI', system-ui, -apple-system, sans-serif;
+  --text-xs:          11px;
+  --text-sm:          13px;
+  --text-base:        14px;
+  --text-lg:          16px;
+  --text-xl:          18px;
+
+  /* ── Ombres ────────────────────────────────────────────── */
+  --shadow-card:        0 2px 8px rgba(13, 41, 51, 0.08);
+  --shadow-card-hover:  0 4px 16px rgba(13, 41, 51, 0.12);
+}

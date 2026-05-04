@@ -1,0 +1,30 @@
+/* ============================================================
+ * PLIALU — Thème sombre
+ * ------------------------------------------------------------
+ * Surcharge des tokens définis dans tokens.css pour les pages
+ * en thème sombre (actuellement : modules/maxcut/index.html).
+ *
+ * Inclusion : APRÈS tokens.css, dans le <head>.
+ *   <link rel="stylesheet" href="../../shared/tokens.css">
+ *   <link rel="stylesheet" href="../../shared/theme-dark.css">
+ * ============================================================ */
+
+:root {
+  /* ── Surfaces ──────────────────────────────────────────── */
+  --bg-app:           #0d2933;
+  --bg-elevated:      #1a3d4a;
+  --bg-secondary:     #0a1f28;
+
+  /* ── Texte ─────────────────────────────────────────────── */
+  --text-primary:     #f0f0f0;
+  --text-muted:       #8fa8b0;
+
+  /* ── Bordures ──────────────────────────────────────────── */
+  --border-soft:      rgba(143, 168, 176, 0.2);
+  --border-strong:    rgba(143, 168, 176, 0.4);
+
+  /* ── Statuts (texte uniquement — fonds rares en dark) ─── */
+  --success-text:     #4caf82;
+  --warning-text:     #f0a500;
+  --danger:           #e05555;
+}

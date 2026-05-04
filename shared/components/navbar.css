@@ -1,0 +1,148 @@
+/* ============================================================
+ * PLIALU — Navbar + logo (canonique)
+ * ------------------------------------------------------------
+ * Composant unique, factorisé pour le hub et tous les modules.
+ * 100 % des valeurs proviennent de tokens (pas de hex/px en dur).
+ * Les dimensions spécifiques au logo (34, 17, 18) sont déclarées
+ * comme propriétés CSS scopées sur le composant (préfixe `--_`).
+ *
+ * Markup attendu :
+ *
+ *   <nav class="nav">
+ *     <a class="nav-brand" href="../../index.html" title="Retour au hub CRM">
+ *       <span class="nav-mark">P</span>
+ *       <span class="nav-title">PLIALU</span>
+ *     </a>
+ *     <ul class="nav-links">
+ *       <li><a class="nav-btn" href="…">Calculette</a></li>
+ *       <li><a class="nav-btn nav-btn--active" href="…">Devis</a></li>
+ *     </ul>
+ *   </nav>
+ *
+ * Variante hub : remplacer <a class="nav-brand" href="…"> par
+ *   <div class="nav-brand nav-brand--static">
+ *     <span class="nav-mark">P</span>
+ *     <span class="nav-title nav-title--hub">
+ *       <span class="nav-title-prefix">CRM</span> PLIALU
+ *     </span>
+ *   </div>
+ * ============================================================ */
+
+.nav {
+  /* dimensions propres au composant logo, scopées au navbar */
+  --_logo-mark-size:   34px;
+  --_logo-title-size:  17px;
+  --_logo-mark-text:   18px;
+  --_logo-tracking:    1px;
+  --_focus-width:      2px;
+
+  background: var(--brand-900);
+  color: var(--accent);
+  height: var(--nav-height);
+  padding: 0 var(--space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-sans);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* ── BRAND (logo + texte) ─────────────────────────────────── */
+
+.nav-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-right: var(--space-4);
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  user-select: none;
+}
+
+.nav-brand--static {
+  cursor: default;
+}
+
+.nav-mark {
+  width: var(--_logo-mark-size);
+  height: var(--_logo-mark-size);
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--brand-900);
+  font-size: var(--_logo-mark-text);
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.nav-title {
+  font-size: var(--_logo-title-size);
+  font-weight: 800;
+  letter-spacing: var(--_logo-tracking);
+  color: var(--accent);
+}
+
+/* Variante hub : « CRM PLIALU » avec « CRM » en blanc */
+.nav-title--hub {
+  color: var(--accent);
+}
+.nav-title--hub .nav-title-prefix {
+  color: var(--text-on-brand);
+  margin-right: var(--space-1);
+}
+
+/* ── LIENS DE NAVIGATION ──────────────────────────────────── */
+
+.nav-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: var(--text-disabled);
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: var(--text-base);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.nav-btn:hover {
+  color: var(--text-on-brand);
+}
+
+.nav-btn:focus-visible {
+  outline: var(--_focus-width) solid var(--accent);
+  outline-offset: var(--_focus-width);
+}
+
+.nav-btn--active,
+.nav-btn.active {
+  background: var(--accent);
+  color: var(--brand-900);
+}
+
+.nav-btn--active:hover,
+.nav-btn.active:hover {
+  background: var(--accent-hover);
+  color: var(--brand-900);
+}

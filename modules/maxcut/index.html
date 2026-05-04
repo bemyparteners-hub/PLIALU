@@ -233,17 +233,19 @@ body{background:var(--bg-main);color:var(--text-main);font-family:'Segoe UI',sys
 
 <!-- HEADER -->
 <header class="app-header">
-  <div class="logo">
-    <div class="logo-mark">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M3 3h18v2H3zm0 4h12v2H3zm0 4h18v2H3zm0 4h12v2H3zm0 4h18v2H3z"/>
-      </svg>
+  <a href="../../index.html" title="Retour au hub CRM" style="text-decoration:none;color:inherit;cursor:pointer">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 3h18v2H3zm0 4h12v2H3zm0 4h18v2H3zm0 4h12v2H3zm0 4h18v2H3z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-text">PLI<span>ALU</span></div>
+        <div class="logo-sub">Optimiseur de découpe</div>
+      </div>
     </div>
-    <div>
-      <div class="logo-text">PLI<span>ALU</span></div>
-      <div class="logo-sub">Optimiseur de découpe</div>
-    </div>
-  </div>
+  </a>
   <div class="header-actions">
     <div class="spinner" id="globalSpinner"></div>
     <button class="btn btn-secondary btn-sm" onclick="importCSV()" title="Importer CSV">
