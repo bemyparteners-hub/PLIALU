@@ -24,10 +24,10 @@
     .toolbar-group{display:flex;align-items:center;gap:4px}
     .toolbar-sep{width:1px;height:24px;background:#dde3e8;margin:0 4px}
     .tool-btn{padding:7px 12px;border:1.5px solid #dde3e8;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;background:#fff;color:#1a2e38;transition:.15s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
-    .tool-btn:hover{border-color:#0d2933;background:#f8fafb}
+    .tool-btn:hover{border-color:#0d2933;background:#f8fafc}
     .tool-btn.active{background:#0d2933;color:#e8fc69;border-color:#0d2933}
-    .tool-btn.danger{color:#d9534f}
-    .tool-btn.danger:hover{background:#d9534f;color:#fff;border-color:#d9534f}
+    .tool-btn.danger{color:var(--danger)}
+    .tool-btn.danger:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
 
     .swatch{width:22px;height:22px;border-radius:50%;border:2px solid #dde3e8;cursor:pointer;transition:.15s;flex-shrink:0}
     .swatch:hover{transform:scale(1.15)}
@@ -50,7 +50,7 @@
     #angleHint{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(13,41,51,0.82);color:#e8fc69;padding:5px 14px;border-radius:6px;font-size:12px;font-weight:600;z-index:35;pointer-events:none;white-space:nowrap;display:none}
     /* Résultat angle */
     #angleResult{position:absolute;display:none;background:#fff;border:1.5px solid #0d2933;border-radius:10px;padding:10px 14px;z-index:36;font-size:13px;font-weight:600;color:#1a2e38;box-shadow:0 4px 14px rgba(0,0,0,.13);white-space:nowrap;min-width:180px}
-    #angleResult .ar-val{font-size:22px;font-weight:800;color:#c62828;display:block;margin-bottom:6px}
+    #angleResult .ar-val{font-size:22px;font-weight:800;color:var(--danger);display:block;margin-bottom:6px}
     #angleResult .ar-btns{display:flex;gap:6px}
     #angleResult .ar-btn{padding:4px 10px;border:1.5px solid #dde3e8;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;background:#f0f4f8;color:#1a2e38;transition:.15s}
     #angleResult .ar-btn:hover{border-color:#0d2933}
@@ -66,7 +66,7 @@
     .text-label{position:absolute;cursor:grab;user-select:none;-webkit-user-select:none;z-index:10;font-family:'Segoe UI',sans-serif;font-weight:600;white-space:nowrap;padding:2px 4px;border-radius:3px;transition:box-shadow .15s}
     .text-label:hover{box-shadow:0 0 0 2px rgba(232,252,105,0.6)}
     .text-label.dragging{cursor:grabbing;box-shadow:0 0 0 2px #e8fc69;opacity:.85}
-    .text-label .del-label{display:none;position:absolute;top:-10px;left:-10px;width:18px;height:18px;background:#d9534f;color:#fff;border:none;border-radius:50%;font-size:10px;cursor:pointer;align-items:center;justify-content:center;line-height:1}
+    .text-label .del-label{display:none;position:absolute;top:-10px;left:-10px;width:18px;height:18px;background:var(--danger);color:#fff;border:none;border-radius:50%;font-size:10px;cursor:pointer;align-items:center;justify-content:center;line-height:1}
     .text-label:hover .del-label{display:flex}
     .resize-handle{position:absolute;width:10px;height:10px;background:#0d2933;border:2px solid #e8fc69;border-radius:2px;display:none;z-index:15}
     .text-label:hover .resize-handle,.text-label.dragging .resize-handle{display:block}
@@ -76,7 +76,7 @@
 
     .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 
-    .msg-ok{display:none;padding:10px 16px;background:#e6f9ee;color:#1a7a42;border-radius:8px;font-size:13px;font-weight:600;margin-top:10px;align-items:center;gap:6px}
+    .msg-ok{display:none;padding:10px 16px;background:var(--success-bg);color:var(--success-text);border-radius:8px;font-size:13px;font-weight:600;margin-top:10px;align-items:center;gap:6px}
     .msg-ok.show{display:inline-flex}
 
     .saved-list{margin-top:4px}
@@ -86,7 +86,7 @@
     .saved-item-name{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .saved-item-date{font-size:11px;color:#6b7a80}
     .saved-item-del{background:none;border:none;color:#c0c8cc;cursor:pointer;font-size:16px;padding:4px;transition:.15s}
-    .saved-item-del:hover{color:#d9534f}
+    .saved-item-del:hover{color:var(--danger)}
 
     @media(max-width:600px){
       .toolbar{gap:4px;padding:8px}

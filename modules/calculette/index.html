@@ -9,7 +9,7 @@
   <style>
     /* ════ RESET ════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; color: #1a2e35; }
+    body { font-family: var(--font-sans); background: var(--bg-app); color: var(--text-primary); }
 
     /* ════ HERO ════ */
     .hero {
@@ -149,7 +149,7 @@
       margin-bottom: 48px;
     }
     .info-band span { font-size: 24px; }
-    .info-band p { font-size: 14px; color: #1a2e35; line-height: 1.5; }
+    .info-band p { font-size: 14px; color: var(--text-primary); line-height: 1.5; }
     .info-band strong { color: #0d2933; }
 
     /* ════ FOOTER ════ */
@@ -273,7 +273,7 @@
 
   <!-- Reset global -->
   <div style="text-align:center;margin-bottom:48px">
-    <button onclick="if(confirm('Effacer TOUTE la m\u00e9moire du projet (calculette, devis, dessinateur) ?\n\nCette action est irr\u00e9versible.')){localStorage.removeItem('plialu_project_data');localStorage.removeItem('plialu-devis');localStorage.removeItem('plialu-devis-dessins');alert('M\u00e9moire effac\u00e9e avec succ\u00e8s !');}" style="background:#fff;color:#6b7a80;border:2px solid #e2e8f0;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='#d9534f';this.style.color='#d9534f'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#6b7a80'">🗑️ Effacer toute m&eacute;moire</button>
+    <button class="btn btn-reset" onclick="if(confirm('Effacer TOUTE la m\u00e9moire du projet (calculette, devis, dessinateur) ?\n\nCette action est irr\u00e9versible.')){localStorage.removeItem('plialu_project_data');localStorage.removeItem('plialu-devis');localStorage.removeItem('plialu-devis-dessins');alert('M\u00e9moire effac\u00e9e avec succ\u00e8s !');}">🗑️ Effacer toute m&eacute;moire</button>
   </div>
 
 </div>
