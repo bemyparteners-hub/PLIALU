@@ -16,12 +16,24 @@ Outil web statique interne pour le façonnage aluminium sur mesure : calcul de p
 
 ```
 /
-├── index.html          # Page d'accueil / tableau de bord
-├── calcul.html         # Calculette de prix
-├── devis.html          # Générateur de devis PDF
-├── dessinateur.html    # Outil de dessin canvas
+├── index.html              # Page d'accueil / tableau de bord
+├── calcul.html             # Calculette de prix
+├── devis.html              # Générateur de devis PDF
+├── dessinateur.html        # Outil de dessin canvas
+├── configurateur.html      # Configurateur de pièces (SVG paramétrique)
 ├── README.md
-└── CLAUDE.md
+├── CLAUDE.md
+├── LICENSE
+├── AUDIT.md                # Audit historique de structure
+├── contacts.local.example.json
+├── .claude/
+│   └── skills/             # Slash-commands Claude Code (10 skills)
+├── assets/
+│   └── pieces/             # Catalogue d'images PNG (197 fichiers)
+├── maxcut/
+│   └── index.html          # Optimiseur de découpe aluminium (autonome)
+└── tools/
+    └── fold_configurator_export.py   # Prototype Python (export HTML)
 ```
 
 ---
@@ -67,7 +79,7 @@ Outil web statique interne pour le façonnage aluminium sur mesure : calcul de p
 **Objectif** : Constituer et exporter un devis PDF professionnel.
 
 **Sections** :
-1. **Infos devis** : Numéro (auto DEV-ANNÉE-###), date, validité (j), chantier, référence client, commercial (radio : QM / JPB / TR / GB avec nom/titre/tél/email codés en dur)
+1. **Infos devis** : Numéro (auto DEV-ANNÉE-###), date, validité (j), chantier, référence client, commercial (radio : QM / JPB / TR / GB — données réelles chargées depuis `contacts.local.json` / `window.PLIALU_CONTACTS`, gitignoré ; placeholders sinon)
 2. **Client** : Raison sociale, contact, email, tél, adresse
 3. **Lignes** : tableau éditable — Désignation, RAL, DVP mm, Longueur mm, Qté, PU HT, Total HT
    - Import depuis calculette (vide `plialu-devis` après import)
