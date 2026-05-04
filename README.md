@@ -12,11 +12,23 @@ HTML / CSS / JS vanilla, sans build, déployés sur GitHub Pages depuis `main`.
 | `/modules/calculette/calcul.html` | `modules/calculette/calcul.html` | Calculette de prix (matière + MO + sous-traitance → PV HT) |
 | `/modules/calculette/devis.html` | `modules/calculette/devis.html` | Génération de devis PDF (jsPDF + autoTable + pdf-lib) |
 | `/modules/calculette/dessinateur.html` | `modules/calculette/dessinateur.html` | Croquis techniques canvas |
-| `/modules/calculette/configurateur.html` | `modules/calculette/configurateur.html` | Configurateur de pièces (gammes / matières / SVG) |
+| `/modules/configurateur/` | `modules/configurateur/index.html` | Configurateur de pièces (gammes / matières / SVG) |
 | `/modules/maxcut/` | `modules/maxcut/index.html` | Optimiseur de plan de découpe aluminium |
 
 Pour ajouter un module, créer `modules/<nom>/index.html` puis ajouter une carte
 dans le hub `index.html` (un `<a class="card">`).
+
+### Couplage Calculette ↔ Configurateur
+
+La calculette et le configurateur sont **techniquement indépendants**
+(déploiement, navigation, versioning) mais **fonctionnellement liés** par le
+workflow `configurer → devis`. Le couplage est assuré par :
+
+- des **liens croisés dans les navbars** des deux modules ;
+- la **convention `localStorage['plialu-devis']`** partagée par origine, qui
+  transporte les lignes du configurateur vers le devis sans appel direct.
+
+Tout autre module ajouté reste libre d'utiliser ou non cette convention.
 
 ## Structure du dépôt
 
@@ -35,9 +47,11 @@ dans le hub `index.html` (un `<a class="card">`).
 │   │   ├── calcul.html
 │   │   ├── devis.html
 │   │   ├── dessinateur.html
-│   │   ├── configurateur.html
-│   │   ├── CLAUDE.md         Documentation projet (module)
+│   │   ├── CLAUDE.md         Documentation du module
 │   │   └── contacts.local.example.json
+│   ├── configurateur/
+│   │   ├── index.html        Configurateur de pièces (autonome)
+│   │   └── CLAUDE.md         Documentation du module
 │   └── maxcut/
 │       └── index.html        Optimiseur de découpe
 ├── assets/
