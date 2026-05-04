@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLIALU — Configurateur</title>
+<style>
+/* ── RESET & BASE ── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;color:#1a2e38;min-height:100vh}
+
+/* ── NAV (identique calcul.html) ── */
+.nav{background:#0d2933;padding:0 24px;display:flex;align-items:center;gap:8px;height:52px;position:sticky;top:0;z-index:100}
+.nav-logo{color:#e8fc69;font-weight:800;font-size:17px;margin-right:16px;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.nav-logo span{background:#e8fc69;color:#0d2933;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+.nav-btn{background:transparent;border:none;color:#a0bcc4;padding:8px 18px;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;transition:.2s;text-decoration:none;display:inline-flex;align-items:center}
+.nav-btn:hover{color:#fff}
+.nav-btn.active{background:#e8fc69;color:#0d2933}
+
+/* ── PAGE ── */
+.page{max-width:1200px;margin:24px auto;padding:0 16px}
+.page-header{margin-bottom:16px}
+.page-header h1{font-size:20px;font-weight:800;color:#0d2933}
+.page-header p{font-size:13px;color:#6b7a80;margin-top:4px}
+
+/* ── CARD ── */
+.card{background:#fff;border-radius:12px;padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.card-title{font-size:12px;font-weight:800;color:#1a2e38;text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #e8fc69;display:flex;align-items:center;justify-content:space-between}
+
+/* ── FORM BASE ── */
+label{display:block;font-size:10px;font-weight:700;color:#6b7a80;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+input,select{width:100%;padding:9px 11px;border:1.5px solid #dde3e8;border-radius:8px;font-size:14px;background:#fff;color:#1a2e38;transition:border .2s;font-family:'Segoe UI',sans-serif}
+input:focus,select:focus{outline:none;border-color:#0d2933}
+input::placeholder{color:#b0bec5}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button{opacity:.5}
+
+/* ── 3-PANNEAU LAYOUT ── */
+.cfg-layout{display:grid;grid-template-columns:210px 1fr 230px;gap:14px;align-items:start;margin-bottom:16px}
+
+/* ── PANNEAU GAMMES ── */
+.gamme-list{display:flex;flex-direction:column;gap:4px}
+.gamme-btn{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:8px;cursor:pointer;background:#f8fafc;color:#1a2e38;font-size:13px;font-weight:600;text-align:left;transition:.15s;width:100%}
+.gamme-btn:hover{border-color:#0d2933;background:#eef3f5}
+.gamme-btn.active{background:#0d2933;border-color:#0d2933;color:#e8fc69}
+.gamme-thumb{flex-shrink:0;width:42px;height:32px;display:flex;align-items:center;justify-content:center}
+.gamme-thumb svg{overflow:visible}
+.gamme-btn:not(.active) .gamme-thumb svg{stroke:#4a6572}
+.gamme-btn.active .gamme-thumb svg{stroke:#e8fc69}
+.gamme-label{flex:1;min-width:0}
+.gamme-label strong{display:block;font-size:12px;font-weight:700}
+.gamme-label span{display:block;font-size:10px;opacity:.7;margin-top:1px}
+
+/* ── PANNEAU ARTICLES ── */
+.panel-articles{display:flex;flex-direction:column;gap:0}
+.article-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.article-btn{padding:6px 14px;border:1.5px solid #dde3e8;border-radius:20px;cursor:pointer;font-size:12px;font-weight:700;background:#f8fafc;color:#1a2e38;transition:.15s;text-align:center;line-height:1.3}
+.article-btn:hover{border-color:#0d2933}
+.article-btn.active{background:#e8fc69;border-color:#0d2933;color:#0d2933}
+.article-btn small{display:block;font-size:10px;font-weight:600;opacity:.65;margin-top:1px}
+.iso-wrap{position:relative;background:#fafbfc;border:1.5px solid #e2e8f0;border-radius:10px;overflow:hidden;flex:1;height:280px;display:flex;align-items:center;justify-content:center}
+#isoCanvas{display:block;width:100%;height:100%}
+.iso-placeholder{color:#b0bec5;font-size:12px;font-weight:600;text-align:center;pointer-events:none}
+.iso-badge{position:absolute;top:8px;right:8px;background:rgba(13,41,51,.8);color:#e8fc69;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;letter-spacing:.3px}
+
+/* ── PANNEAU PARAMÈTRES ── */
+.param-sep{height:1px;background:#f0f4f8;margin:12px 0}
+.param-field{margin-bottom:12px}
+.param-field:last-child{margin-bottom:0}
+
+/* ── SAISIES ── */
+.saisies-row{display:grid;grid-template-columns:1fr 160px;gap:12px;margin-bottom:14px}
+.saisies-section{margin-bottom:14px}
+.saisies-section-lbl{font-size:10px;font-weight:800;color:#6b7a80;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.saisies-section-lbl::after{content:'';flex:1;height:1px;background:#eef1f4}
+.faces-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.angles-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+/* Champ avec unité */
+.field-unit{position:relative}
+.field-unit input{padding-right:36px}
+.field-unit .unit{position:absolute;right:10px;bottom:10px;font-size:10px;font-weight:700;color:#9ab0b8;pointer-events:none;font-family:'Segoe UI',sans-serif}
+/* Champ désactivé (face/angle non applicable) */
+.dim-off label{color:#c8d5d9}
+.dim-off input{background:#f8fafc;color:#c8d5d9;border-style:dashed;cursor:not-allowed}
+
+/* ── RÉSULTATS ── */
+.result-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
+.result-box{background:#f8fafc;border-radius:8px;padding:14px;text-align:center;border:1.5px solid #e2e8f0}
+.result-box .lbl{font-size:10px;font-weight:700;color:#6b7a80;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.result-box .val{font-size:15px;font-weight:800;color:#0d2933}
+.result-box.highlight{background:#0d2933;border-color:#0d2933}
+.result-box.highlight .lbl{color:#a0bcc4}
+.result-box.highlight .val{color:#e8fc69;font-size:20px}
+.result-box.has-value{border-color:#cbff00;border-width:2px}
+
+/* ── ACTIONS ── */
+.actions-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.btn-primary{background:#e8fc69;color:#0d2933;border:none;border-radius:8px;padding:12px 24px;font-size:14px;font-weight:800;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:7px;font-family:'Segoe UI',sans-serif}
+.btn-primary:hover{background:#d4f040;transform:translateY(-1px)}
+.btn-secondary{background:#fff;color:#0d2933;border:1.5px solid #dde3e8;border-radius:8px;padding:11px 20px;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:7px;font-family:'Segoe UI',sans-serif}
+.btn-secondary:hover{border-color:#0d2933}
+.btn-reset{background:#fff;color:#6b7a80;border:1.5px solid #dde3e8;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:7px;font-family:'Segoe UI',sans-serif}
+.btn-reset:hover{border-color:#d9534f;color:#d9534f}
+.msg-ok{background:#dcfce7;color:#166534;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;display:none;align-items:center;gap:6px}
+
+/* ── SAVE INDICATOR ── */
+#save-indicator{position:fixed;bottom:20px;right:20px;background:rgba(13,41,51,.88);color:#e8fc69;padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;z-index:200;opacity:0;transition:opacity .35s;pointer-events:none;letter-spacing:.3px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .cfg-layout{grid-template-columns:1fr 1fr;grid-template-rows:auto auto}
+  .panel-gammes{grid-column:1/3;grid-row:2}
+  .gamme-list{flex-direction:row;flex-wrap:wrap}
+  .gamme-btn{width:auto;flex:1;min-width:110px}
+  .panel-articles{grid-column:1/2;grid-row:1}
+  .panel-params{grid-column:2/3;grid-row:1}
+  .faces-grid{grid-template-columns:repeat(3,1fr)}
+  .angles-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:600px){
+  .cfg-layout{grid-template-columns:1fr}
+  .panel-articles,.panel-params,.panel-gammes{grid-column:1;grid-row:auto}
+  .saisies-row{grid-template-columns:1fr}
+  .faces-grid,.angles-grid{grid-template-columns:repeat(2,1fr)}
+  .result-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="nav">
+  <a href="index.html" style="text-decoration:none">
+    <div class="nav-logo"><span>o</span> PLIALU</div>
+  </a>
+  <a class="nav-btn" href="calcul.html">Calculette</a>
+  <a class="nav-btn" href="devis.html">Devis</a>
+  <a class="nav-btn" href="dessinateur.html">Dessinateur</a>
+  <a class="nav-btn active" href="configurateur.html">Configurateur</a>
+</nav>
+
+<div class="page">
+
+  <div class="page-header">
+    <h1>⚙️ Configurateur de pièces</h1>
+    <p>Sélectionnez une gamme, un article, renseignez les cotes — le DVP et le prix se calculent automatiquement.</p>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       3 PANNEAUX
+  ══════════════════════════════════════ -->
+  <div class="cfg-layout">
+
+    <!-- ── PANNEAU GAMMES ── -->
+    <div class="card panel-gammes" style="padding:14px">
+      <div class="card-title">Gammes</div>
+      <div class="gamme-list" id="gammeList">
+
+        <button class="gamme-btn active" data-gamme="bavette">
+          <div class="gamme-thumb">
+            <svg width="42" height="32" viewBox="0 0 42 32" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="4,8 26,8 26,26"/>
+            </svg>
+          </div>
+          <div class="gamme-label"><strong>Bavette</strong><span>Bv1 … Bv4</span></div>
+        </button>
+
+        <button class="gamme-btn" data-gamme="couvertine">
+          <div class="gamme-thumb">
+            <svg width="42" height="32" viewBox="0 0 42 32" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="4,26 4,10 21,10 21,6 38,6 38,10 38,26"/>
+            </svg>
+          </div>
+          <div class="gamme-label"><strong>Couvertine</strong><span>Cv1 … Cv3</span></div>
+        </button>
+
+        <button class="gamme-btn" data-gamme="corniere">
+          <div class="gamme-thumb">
+            <svg width="42" height="32" viewBox="0 0 42 32" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="8,6 8,26 34,26"/>
+            </svg>
+          </div>
+          <div class="gamme-label"><strong>Cornière</strong><span>Cr1 … Cr2</span></div>
+        </button>
+
+        <button class="gamme-btn" data-gamme="eclisse_ext">
+          <div class="gamme-thumb">
+            <svg width="42" height="32" viewBox="0 0 42 32" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6,26 6,16 22,16 22,8 36,8"/>
+            </svg>
+          </div>
+          <div class="gamme-label"><strong>Eclisse ext</strong><span>EE1</span></div>
+        </button>
+
+        <button class="gamme-btn" data-gamme="eclisse_int">
+          <div class="gamme-thumb">
+            <svg width="42" height="32" viewBox="0 0 42 32" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6,8 6,18 22,18 22,26 36,26"/>
+            </svg>
+          </div>
+          <div class="gamme-label"><strong>Eclisse int</strong><span>EI1</span></div>
+        </button>
+
+        <button class="gamme-btn" data-gamme="couvre_joint">
+          <div class="gamme-thumb">
+            <svg width="42" height="32" viewBox="0 0 42 32" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="4,20 12,20 12,8 30,8 30,20 38,20"/>
+            </svg>
+          </div>
+          <div class="gamme-label"><strong>CJ ext plat</strong><span>CJ1</span></div>
+        </button>
+
+        <button class="gamme-btn" data-gamme="bouchon">
+          <div class="gamme-thumb">
+            <svg width="42" height="32" viewBox="0 0 42 32" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="8" y="9" width="26" height="14" rx="1"/>
+            </svg>
+          </div>
+          <div class="gamme-label"><strong>Bouchon</strong><span>Bo1</span></div>
+        </button>
+
+        <button class="gamme-btn" data-gamme="releve_biseau">
+          <div class="gamme-thumb">
+            <svg width="42" height="32" viewBox="0 0 42 32" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6,26 6,10 36,4"/>
+            </svg>
+          </div>
+          <div class="gamme-label"><strong>Relevé biseau</strong><span>Rb1 … Rb2</span></div>
+        </button>
+
+        <button class="gamme-btn" data-gamme="releve_droit">
+          <div class="gamme-thumb">
+            <svg width="42" height="32" viewBox="0 0 42 32" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6,26 6,8 36,8"/>
+            </svg>
+          </div>
+          <div class="gamme-label"><strong>Relevé droit</strong><span>Rd1 … Rd2</span></div>
+        </button>
+
+        <button class="gamme-btn" data-gamme="autres">
+          <div class="gamme-thumb">
+            <svg width="42" height="32" viewBox="0 0 42 32" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="4,22 14,10 24,22 34,10"/>
+            </svg>
+          </div>
+          <div class="gamme-label"><strong>Autres</strong><span>Pièce libre</span></div>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- ── PANNEAU ARTICLES + VUE ISO ── -->
+    <div class="card panel-articles">
+      <div class="card-title">
+        <span id="articlePanelTitle">Articles — Bavette</span>
+      </div>
+
+      <!-- Sélecteur d'article (pills) -->
+      <div class="article-tabs" id="articleTabs">
+        <button class="article-btn active" data-article="Bv1">Bv1<small>1 pli</small></button>
+        <button class="article-btn" data-article="Bv2">Bv2<small>2 plis</small></button>
+        <button class="article-btn" data-article="Bv3">Bv3<small>3 plis</small></button>
+        <button class="article-btn" data-article="Bv4">Bv4<small>4 plis</small></button>
+      </div>
+
+      <!-- Vue isométrique canvas -->
+      <div class="iso-wrap">
+        <canvas id="isoCanvas"></canvas>
+        <div class="iso-badge" id="isoBadge">Bv1 — 1 pli</div>
+      </div>
+    </div>
+
+    <!-- ── PANNEAU PARAMÈTRES ── -->
+    <div class="card panel-params">
+      <div class="card-title">Paramètres</div>
+
+      <div class="param-field">
+        <label for="paramMatiere">Matière</label>
+        <select id="paramMatiere">
+          <option value="alu_laque">ALU Laqué</option>
+          <option value="alu_brut">ALU Brut</option>
+          <option value="alu_anodise">ALU Anodisé</option>
+          <option value="ac_galva">AC Galvanisé</option>
+          <option value="ac_laque">AC Laqué</option>
+          <option value="inox_304">Inox 304</option>
+          <option value="inox_316">Inox 316</option>
+          <option value="autre">Autre</option>
+        </select>
+      </div>
+
+      <div class="param-field">
+        <label for="paramEpaisseur">Épaisseur</label>
+        <select id="paramEpaisseur">
+          <option value="0.6">0,6 mm</option>
+          <option value="0.75" selected>0,75 mm</option>
+          <option value="1.0">1,0 mm</option>
+          <option value="1.2">1,2 mm</option>
+          <option value="1.5">1,5 mm</option>
+          <option value="2.0">2,0 mm</option>
+        </select>
+      </div>
+
+      <div class="param-sep"></div>
+
+      <div class="param-field">
+        <label for="paramRal">RAL</label>
+        <input type="text" id="paramRal" placeholder="ex: 7016">
+      </div>
+
+      <div class="param-field">
+        <label for="paramFinition">Finition</label>
+        <select id="paramFinition">
+          <option value="M">Mat</option>
+          <option value="B">Brillant</option>
+          <option value="NF">Non fini</option>
+          <option value="ANO">Anodisé</option>
+          <option value="BRT">Brut</option>
+        </select>
+      </div>
+
+      <div class="param-field">
+        <label for="paramQte">Quantité</label>
+        <div class="field-unit">
+          <input type="number" id="paramQte" value="1" min="1" step="1">
+          <span class="unit">u.</span>
+        </div>
+      </div>
+
+      <div class="param-sep"></div>
+
+      <div class="param-field">
+        <label for="paramTauxMo">Taux MO (€/s)</label>
+        <input type="number" id="paramTauxMo" value="0.017" step="0.001">
+      </div>
+
+      <div class="param-field">
+        <label for="paramCoefMarge">Coeff marge</label>
+        <input type="number" id="paramCoefMarge" value="0.65" step="0.01" min="0.1" max="1">
+      </div>
+    </div>
+
+  </div><!-- /cfg-layout -->
+
+
+  <!-- ══════════════════════════════════════
+       SAISIES — Cotes et dimensions
+  ══════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-title">Saisies — Cotes &amp; Longueur</div>
+
+    <!-- Repère + Longueur -->
+    <div class="saisies-row">
+      <div>
+        <label for="saisieRepere">Repère / Référence</label>
+        <input type="text" id="saisieRepere" placeholder="ex: BA10, CV-RDC-nord…">
+      </div>
+      <div>
+        <label for="saisieLg">Longueur</label>
+        <div class="field-unit">
+          <input type="number" id="saisieLg" placeholder="ex: 3000" min="1">
+          <span class="unit">mm</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Faces A B C D E -->
+    <div class="saisies-section">
+      <div class="saisies-section-lbl">Faces (développé)</div>
+      <div class="faces-grid">
+
+        <div class="field-unit" id="fieldA">
+          <label for="saisieA">Face A</label>
+          <input type="number" id="saisieA" placeholder="340" min="0">
+          <span class="unit">mm</span>
+        </div>
+
+        <div class="field-unit" id="fieldB">
+          <label for="saisieB">Face B</label>
+          <input type="number" id="saisieB" placeholder="30" min="0">
+          <span class="unit">mm</span>
+        </div>
+
+        <div class="field-unit" id="fieldC">
+          <label for="saisieC">Face C</label>
+          <input type="number" id="saisieC" placeholder="10" min="0">
+          <span class="unit">mm</span>
+        </div>
+
+        <div class="field-unit dim-off" id="fieldD">
+          <label for="saisieD">Face D</label>
+          <input type="number" id="saisieD" placeholder="—" min="0" disabled>
+          <span class="unit">mm</span>
+        </div>
+
+        <div class="field-unit dim-off" id="fieldE">
+          <label for="saisieE">Face E</label>
+          <input type="number" id="saisieE" placeholder="—" min="0" disabled>
+          <span class="unit">mm</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Angles de pli -->
+    <div class="saisies-section" style="margin-bottom:0">
+      <div class="saisies-section-lbl">Angles de pli</div>
+      <div class="angles-grid">
+
+        <div class="field-unit" id="fieldPliA">
+          <label for="saisiePliA">∠ pli A</label>
+          <input type="number" id="saisiePliA" value="90" min="1" max="179">
+          <span class="unit">°</span>
+        </div>
+
+        <div class="field-unit" id="fieldPliB">
+          <label for="saisiePliB">∠ pli B</label>
+          <input type="number" id="saisiePliB" value="90" min="1" max="179">
+          <span class="unit">°</span>
+        </div>
+
+        <div class="field-unit dim-off" id="fieldPliC">
+          <label for="saisiePliC">∠ pli C</label>
+          <input type="number" id="saisiePliC" placeholder="—" min="1" max="179" disabled>
+          <span class="unit">°</span>
+        </div>
+
+        <div class="field-unit dim-off" id="fieldPliD">
+          <label for="saisiePliD">∠ pli D</label>
+          <input type="number" id="saisiePliD" placeholder="—" min="1" max="179" disabled>
+          <span class="unit">°</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       RÉSULTATS
+  ══════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-title">Résultats calculés</div>
+    <div class="result-grid">
+
+      <div class="result-box highlight">
+        <div class="lbl">DVP calculé</div>
+        <div class="val" id="resDvp">—</div>
+      </div>
+
+      <div class="result-box">
+        <div class="lbl">Surface (×qté)</div>
+        <div class="val" id="resSurface">—</div>
+      </div>
+
+      <div class="result-box highlight">
+        <div class="lbl">Prix unitaire HT</div>
+        <div class="val" id="resPrixUnit">—</div>
+      </div>
+
+      <div class="result-box">
+        <div class="lbl">Prix total HT</div>
+        <div class="val" id="resPrixTotal">—</div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:12px;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end">
+      <div>
+        <label for="result-designation">Désignation générée</label>
+        <input type="text" id="result-designation" readonly placeholder="Sélectionnez un article et saisissez les cotes…"
+               style="background:#f8fafc;font-size:12px;font-weight:600;color:#1a2e38">
+      </div>
+      <div>
+        <label for="result-ref-mat">Réf. matière</label>
+        <input type="text" id="result-ref-mat" readonly placeholder="AL15-7016M"
+               style="background:#f8fafc;font-size:12px;font-weight:700;color:#0d2933;letter-spacing:.4px;width:110px;text-align:center">
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       ACTIONS
+  ══════════════════════════════════════ -->
+  <div class="card">
+    <div class="card-title">Actions</div>
+    <div class="actions-row">
+      <button class="btn-primary" id="btnAjouterDevis">➕ Ajouter au devis</button>
+      <button class="btn-secondary" id="btnTelechargerPng">📥 Télécharger vue ISO</button>
+      <div class="msg-ok" id="msgOk">✅ Ajouté au devis !</div>
+    </div>
+  </div>
+
+  <!-- ── RESET ── -->
+  <div class="card" style="text-align:center">
+    <button class="btn-reset" id="btnResetMemoire">🗑️ Effacer toute mémoire</button>
+  </div>
+
+</div><!-- /page -->
+
+<div id="save-indicator"></div>
+
+<script>
+(() => {
+// ══════════════════════════════════════════
+// DONNÉES MÉTIER
+// ══════════════════════════════════════════
+const GAMMES = {
+  bavette:   { label:'Bavette',    articles:{
+    Bv1:{ plis:1, faces:['A','B'],               angles:['pliA'] },
+    Bv2:{ plis:2, faces:['A','B','C'],            angles:['pliA','pliB'] },
+    Bv3:{ plis:3, faces:['A','B','C','D'],        angles:['pliA','pliB','pliC'] },
+    Bv4:{ plis:4, faces:['A','B','C','D','E'],    angles:['pliA','pliB','pliC','pliD'] }
+  }},
+  couvertine:{ label:'Couvertine', articles:{
+    Cv1:{ plis:2, faces:['A','B','C'],            angles:['pliA','pliB'] },
+    Cv2:{ plis:3, faces:['A','B','C','D'],        angles:['pliA','pliB','pliC'] },
+    Cv3:{ plis:4, faces:['A','B','C','D','E'],    angles:['pliA','pliB','pliC','pliD'] }
+  }},
+  corniere:  { label:'Cornière',   articles:{
+    Co1:{ plis:1, faces:['A','B'],               angles:['pliA'] },
+    Co2:{ plis:2, faces:['A','B','C'],            angles:['pliA','pliB'] }
+  }},
+  eclisse_ext:   { label:'Eclisse ext',    articles:{
+    EE1:{ plis:1, faces:['A','B'],               angles:['pliA'] }
+  }},
+  eclisse_int:   { label:'Eclisse int',    articles:{
+    EI1:{ plis:1, faces:['A','B'],               angles:['pliA'] }
+  }},
+  couvre_joint:  { label:'CJ ext plat',   articles:{
+    CJ1:{ plis:2, faces:['A','B','C'],            angles:['pliA','pliB'] }
+  }},
+  bouchon:       { label:'Bouchon',       articles:{
+    Bo1:{ plis:0, faces:['A','B'],               angles:[] }
+  }},
+  releve_biseau: { label:'Relevé biseau', articles:{
+    Rb1:{ plis:1, faces:['A','B'],               angles:['pliA'] },
+    Rb2:{ plis:2, faces:['A','B','C'],            angles:['pliA','pliB'] }
+  }},
+  releve_droit:  { label:'Relevé droit',  articles:{
+    Rd1:{ plis:1, faces:['A','B'],               angles:['pliA'] },
+    Rd2:{ plis:2, faces:['A','B','C'],            angles:['pliA','pliB'] }
+  }},
+  autres:    { label:'Autres',     articles:{
+    Au1:{ plis:1, faces:['A','B'],               angles:['pliA'] },
+    Au2:{ plis:2, faces:['A','B','C'],            angles:['pliA','pliB'] },
+    Au3:{ plis:3, faces:['A','B','C','D'],        angles:['pliA','pliB','pliC'] },
+    Au4:{ plis:4, faces:['A','B','C','D','E'],    angles:['pliA','pliB','pliC','pliD'] }
+  }}
+};
+
+const MATIERES = {
+  'AC75-7032': { label:'Laqué RAL 7032',   tarifM2:18.50 },
+  'AC75-9010': { label:'Laqué RAL 9010',   tarifM2:18.50 },
+  'AC75-7016': { label:'Laqué RAL 7016',   tarifM2:18.50 },
+  'AC75-9006': { label:'Laqué RAL 9006',   tarifM2:18.50 },
+  'AC75-AUTRE':{ label:'Laqué autre RAL',  tarifM2:19.00 },
+  'ALU-BRUT':  { label:'Aluminium brut',   tarifM2:14.00 },
+  'ALU-ANOD':  { label:'Aluminium anodisé',tarifM2:22.00 },
+  'INOX-304':  { label:'Inox 304',         tarifM2:32.00 },
+  'AUTRE':     { label:'Autre matière',    tarifM2: 0    }
+};
+
+const EPAISSEURS = {
+  '0.6':  { label:'0,6 mm',  mm:0.6,  coeff:0.85 },
+  '0.75': { label:'0,75 mm', mm:0.75, coeff:1.00 },
+  '1.0':  { label:'1,0 mm',  mm:1.0,  coeff:1.15 },
+  '1.2':  { label:'1,2 mm',  mm:1.2,  coeff:1.25 },
+  '1.5':  { label:'1,5 mm',  mm:1.5,  coeff:1.40 },
+  '2.0':  { label:'2,0 mm',  mm:2.0,  coeff:1.65 }
+};
+
+const GAMME_ABBREV = {
+  bavette:       'Bv',
+  couvertine:    'C',
+  corniere:      'Co',
+  eclisse_ext:   'EclExt',
+  eclisse_int:   'EclInt',
+  couvre_joint:  'CJEXTplat',
+  bouchon:       'Bouch',
+  releve_biseau: 'Rbiseau',
+  releve_droit:  'Relevé',
+  autres:        ''
+};
+
+const EP_REF = {
+  '0.6':'06', '0.75':'075', '1.0':'10', '1.2':'12', '1.5':'15', '2.0':'20'
+};
+
+// ══════════════════════════════════════════
+// ÉTAT
+// ══════════════════════════════════════════
+let activeGamme   = 'bavette';
+let activeArticle = 'Bv1';
+const SESSION_KEY = 'plialu-configurateur-session';
+
+// ══════════════════════════════════════════
+// INIT SELECTS depuis les données
+// ══════════════════════════════════════════
+function initSelects() {
+  document.getElementById('paramMatiere').innerHTML =
+    Object.entries(MATIERES).map(([k,v]) =>
+      `<option value="${k}">${v.label}</option>`).join('');
+  document.getElementById('paramEpaisseur').innerHTML =
+    Object.entries(EPAISSEURS).map(([k,v]) =>
+      `<option value="${k}"${k==='0.75'?' selected':''}>${v.label}</option>`).join('');
+}
+
+// ══════════════════════════════════════════
+// MISE À JOUR DU PANNEAU ARTICLES
+// ══════════════════════════════════════════
+function updateArticleTabs(gammeKey) {
+  const g = GAMMES[gammeKey];
+  document.getElementById('articlePanelTitle').textContent = 'Articles — ' + g.label;
+  document.getElementById('articleTabs').innerHTML =
+    Object.entries(g.articles).map(([k,a]) =>
+      `<button class="article-btn" data-article="${k}">${k}<small>${a.plis} pli${a.plis>1?'s':''}</small></button>`
+    ).join('');
+  document.querySelectorAll('.article-btn').forEach(btn =>
+    btn.addEventListener('click', () => selectArticle(btn.dataset.article))
+  );
+}
+
+// ══════════════════════════════════════════
+// ACTIVATION / DÉSACTIVATION DES CHAMPS
+// ══════════════════════════════════════════
+function updateFields(articleKey) {
+  const art = GAMMES[activeGamme].articles[articleKey];
+  ['A','B','C','D','E'].forEach(f => {
+    const on  = art.faces.includes(f);
+    const wrap = document.getElementById('field' + f);
+    const inp  = document.getElementById('saisie' + f);
+    wrap.classList.toggle('dim-off', !on);
+    inp.disabled = !on;
+    if (!on) inp.value = '';
+  });
+  ['pliA','pliB','pliC','pliD'].forEach(a => {
+    const on   = art.angles.includes(a);
+    const key  = a[0].toUpperCase() + a.slice(1); // pliA → PliA
+    const wrap = document.getElementById('field' + key);
+    const inp  = document.getElementById('saisie' + key);
+    wrap.classList.toggle('dim-off', !on);
+    inp.disabled = !on;
+    if (!on) inp.value = '';
+    else if (!inp.value) inp.value = '90';
+  });
+  document.getElementById('isoBadge').textContent =
+    articleKey + ' — ' + art.plis + ' pli' + (art.plis>1?'s':'');
+}
+
+// ══════════════════════════════════════════
+// APPLY STATE — synchronise le DOM avec l'état
+// ══════════════════════════════════════════
+function applyState() {
+  document.querySelectorAll('.gamme-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.gamme === activeGamme));
+  updateArticleTabs(activeGamme);
+  updateFields(activeArticle);
+  document.querySelectorAll('.article-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.article === activeArticle));
+  drawIso();
+  calculeResultats();
+}
+
+// ══════════════════════════════════════════
+// SÉLECTIONS
+// ══════════════════════════════════════════
+function selectGamme(key) {
+  if (!GAMMES[key]) return;
+  activeGamme   = key;
+  activeArticle = Object.keys(GAMMES[key].articles)[0];
+  applyState();
+  saveSession();
+}
+
+function selectArticle(key) {
+  if (!GAMMES[activeGamme].articles[key]) return;
+  activeArticle = key;
+  updateFields(key);
+  document.querySelectorAll('.article-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.article === key));
+  saveSession();
+}
+
+// Gamme buttons (HTML statique)
+document.querySelectorAll('.gamme-btn').forEach(btn =>
+  btn.addEventListener('click', () => selectGamme(btn.dataset.gamme))
+);
+
+// ══════════════════════════════════════════
+// SAVE / LOAD LOCALSTORAGE
+// ══════════════════════════════════════════
+function saveSession() {
+  try {
+    localStorage.setItem(SESSION_KEY, JSON.stringify({
+      gamme: activeGamme, article: activeArticle,
+      matiere:    document.getElementById('paramMatiere').value,
+      epaisseur:  document.getElementById('paramEpaisseur').value,
+      ral:        document.getElementById('paramRal').value,
+      finition:   document.getElementById('paramFinition').value,
+      qte:        document.getElementById('paramQte').value,
+      tauxMo:     document.getElementById('paramTauxMo').value,
+      coefMarge:  document.getElementById('paramCoefMarge').value,
+      repere:     document.getElementById('saisieRepere').value,
+      lg:         document.getElementById('saisieLg').value,
+      A:  document.getElementById('saisieA').value,
+      B:  document.getElementById('saisieB').value,
+      C:  document.getElementById('saisieC').value,
+      D:  document.getElementById('saisieD').value,
+      E:  document.getElementById('saisieE').value,
+      pliA: document.getElementById('saisiePliA').value,
+      pliB: document.getElementById('saisiePliB').value,
+      pliC: document.getElementById('saisiePliC').value,
+      pliD: document.getElementById('saisiePliD').value
+    }));
+    showSaveIndicator();
+  } catch(e) {}
+}
+
+function loadSession() {
+  let s;
+  try { s = JSON.parse(localStorage.getItem(SESSION_KEY)); } catch(e) {}
+  if (!s) return;
+  if (s.gamme   && GAMMES[s.gamme])                       activeGamme   = s.gamme;
+  if (s.article && GAMMES[activeGamme].articles[s.article]) activeArticle = s.article;
+  applyState();
+  // Restaurer les valeurs (seulement sur les champs actifs)
+  const vals = {
+    paramMatiere:s.matiere, paramEpaisseur:s.epaisseur,
+    paramRal:s.ral, paramFinition:s.finition, paramQte:s.qte,
+    paramTauxMo:s.tauxMo, paramCoefMarge:s.coefMarge,
+    saisieRepere:s.repere, saisieLg:s.lg,
+    saisieA:s.A, saisieB:s.B, saisieC:s.C, saisieD:s.D, saisieE:s.E,
+    saisiePliA:s.pliA, saisiePliB:s.pliB, saisiePliC:s.pliC, saisiePliD:s.pliD
+  };
+  Object.entries(vals).forEach(([id, val]) => {
+    if (val == null || val === '') return;
+    const el = document.getElementById(id);
+    if (el && !el.disabled) el.value = val;
+  });
+}
+
+// Auto-save + redraw + calcul sur tout input / change
+document.querySelectorAll('input, select').forEach(el => {
+  el.addEventListener('input',  () => { saveSession(); drawIso(); calculeResultats(); });
+  el.addEventListener('change', () => { saveSession(); drawIso(); calculeResultats(); });
+});
+
+// Redraw au resize (recalcule la taille du canvas)
+window.addEventListener('resize', drawIso);
+
+// ══════════════════════════════════════════
+// RESET
+// ══════════════════════════════════════════
+document.getElementById('btnResetMemoire').addEventListener('click', () => {
+  if (!confirm('Effacer toute la mémoire du projet ?')) return;
+  [SESSION_KEY,'plialu_project_data','plialu-devis','plialu-devis-dessins']
+    .forEach(k => localStorage.removeItem(k));
+  location.reload();
+});
+
+// ══════════════════════════════════════════
+// INDICATEUR DE SAUVEGARDE
+// ══════════════════════════════════════════
+function showSaveIndicator() {
+  const el = document.getElementById('save-indicator');
+  if (!el) return;
+  el.textContent = '💾 Sauvegardé';
+  el.style.opacity = '1';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.opacity = '0'; }, 1800);
+}
+
+// ══════════════════════════════════════════
+// CALCULS DVP + PRIX
+// ══════════════════════════════════════════
+let _calcTimer = null;
+function calculeResultats() {
+  clearTimeout(_calcTimer);
+  _calcTimer = setTimeout(_doCalculer, 150);
+}
+
+function _doCalculer() {
+  const art       = GAMMES[activeGamme].articles[activeArticle];
+  const faceVals  = art.faces.map(f =>
+    parseFloat(document.getElementById('saisie' + f).value) || 0);
+  const angleVals = art.angles.map(a => {
+    const key = a[0].toUpperCase() + a.slice(1);
+    return parseFloat(document.getElementById('saisie' + key).value) || 90;
+  });
+  const Lg        = parseFloat(document.getElementById('saisieLg').value)       || 0;
+  const epKey     = document.getElementById('paramEpaisseur').value;
+  const matKey    = document.getElementById('paramMatiere').value;
+  const qte       = Math.max(1, parseInt(document.getElementById('paramQte').value) || 1);
+  const coefMarge = parseFloat(document.getElementById('paramCoefMarge').value)  || 0.65;
+
+  const ep  = EPAISSEURS[epKey] || { mm:0.75, coeff:1.0 };
+  const mat = MATIERES[matKey]  || { tarifM2:0, label:'?' };
+
+  const elDvp  = document.getElementById('resDvp');
+  const elSurf = document.getElementById('resSurface');
+  const elPU   = document.getElementById('resPrixUnit');
+  const elPT   = document.getElementById('resPrixTotal');
+  const elDesg = document.getElementById('result-designation');
+  const boxes  = [elDvp, elSurf, elPU, elPT]
+    .map(el => el && el.closest('.result-box')).filter(Boolean);
+
+  // ── Reset helpers ──
+  const reset = () => {
+    [elDvp, elSurf, elPU, elPT].forEach(el => { if (el) el.textContent = '—'; });
+    boxes.forEach(b => b.classList.remove('has-value'));
+    if (elDesg) elDesg.value = '';
+  };
+
+  const DVPsum = faceVals.reduce((s, v) => s + v, 0);
+  if (DVPsum === 0 || Lg === 0) { reset(); return; }
+
+  // ── DVP = somme faces − pertes aux plis ──
+  // perte_par_pli = ép_mm × (angle / 90) × 0.4
+  const pertes = angleVals.reduce((s, a) => s + ep.mm * (a / 90) * 0.4, 0);
+  const DVP    = Math.max(0, DVPsum - pertes);
+
+  // ── Surface (m²) ──
+  const surf = (DVP / 1000) * (Lg / 1000);
+
+  // ── Prix unitaire HT ──
+  // Formule cohérente avec calcul.html : PV = coût / coeff_marge
+  // coût = surface × tarif × coeff_épaisseur
+  const coutBrut = surf * mat.tarifM2 * ep.coeff;
+  const prixUnit = coefMarge > 0 ? coutBrut / coefMarge : coutBrut;
+  const prixTot  = prixUnit * qte;
+
+  // ── Référence matière : AL{ep}-{RAL}{finition} ──
+  const finition = document.getElementById('paramFinition').value;
+  const ralRaw   = document.getElementById('paramRal').value.trim();
+  const ralClean = ralRaw.replace(/^RAL\s*/i, '').replace(/\s+/g, '').toUpperCase() || 'BR';
+  const refMat   = `AL${EP_REF[epKey] || epKey}-${ralClean}${finition}`;
+
+  // ── Référence pièce : abbrev + face max active ──
+  const abbrev   = GAMME_ABBREV[activeGamme] || '';
+  const maxFace  = faceVals.filter(v => v > 0).reduce((m, v) => Math.max(m, v), 0);
+  const refPiece = maxFace > 0 ? `${abbrev}${maxFace}` : abbrev;
+
+  // ── Désignation auto ──
+  const facesStr = art.faces
+    .map((f, i) => faceVals[i] > 0 ? faceVals[i] : null)
+    .filter(v => v !== null).join('+');
+  const desig = facesStr
+    ? `${GAMMES[activeGamme].label} ${refPiece} - ${refMat} - ${facesStr} - Lg ${Lg}mm`
+    : '';
+
+  // ── Affichage ──
+  if (elDvp)  elDvp.textContent  = DVP.toFixed(1) + ' mm';
+  if (elSurf) elSurf.textContent = surf.toFixed(4) + ' m²';
+  if (elPU)   elPU.textContent   = prixUnit.toFixed(2) + ' €';
+  if (elPT)   elPT.textContent   = prixTot.toFixed(2) + ' €';
+  boxes.forEach(b => b.classList.add('has-value'));
+  if (elDesg) elDesg.value = desig;
+  const elRefMat = document.getElementById('result-ref-mat');
+  if (elRefMat) elRefMat.value = refMat;
+  const repEl = document.getElementById('saisieRepere');
+  if (repEl && !repEl.value) repEl.placeholder = refPiece || 'ex: BA10';
+}
+
+// ══════════════════════════════════════════
+// VUE ISOMÉTRIQUE — canvas
+// ══════════════════════════════════════════
+let _isoTimer = null;
+function drawIso() {
+  clearTimeout(_isoTimer);
+  _isoTimer = setTimeout(_renderIso, 150);
+}
+
+function _renderIso() {
+  const canvas = document.getElementById('isoCanvas');
+  if (!canvas) return;
+  const ctx  = canvas.getContext('2d');
+  const wrap = canvas.parentElement;
+  const W    = wrap.clientWidth  || 600;
+  const H    = wrap.clientHeight || 280;
+  const dpr  = window.devicePixelRatio || 1;
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  ctx.clearRect(0, 0, W, H);
+
+  const art      = GAMMES[activeGamme].articles[activeArticle];
+  const faceVals = art.faces.map(f =>
+    parseFloat(document.getElementById('saisie' + f).value) || 0);
+  const angleVals = art.angles.map(a => {
+    const key = a[0].toUpperCase() + a.slice(1);
+    return parseFloat(document.getElementById('saisie' + key).value) || 90;
+  });
+  const Lg  = parseFloat(document.getElementById('saisieLg').value) || 0;
+  const DVP = faceVals.reduce((s, v) => s + v, 0);
+
+  if (DVP === 0) {
+    ctx.fillStyle = '#b0bec5';
+    ctx.font = '600 12px "Segoe UI",sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('Saisissez les cotes pour afficher la pièce', W / 2, H / 2);
+    return;
+  }
+
+  // ── 1. Profil 2D en mm ──
+  // direction 180° = vers la gauche (dx=-1), comme la référence métier
+  // Tourner de -(180-angle) après chaque face : pli 90° = virage 90° vers le bas
+  let dirDeg = 180;
+  const profile = [{ x: 0, y: 0 }];
+  for (let i = 0; i < faceVals.length; i++) {
+    const rad  = dirDeg * Math.PI / 180;
+    const prev = profile[profile.length - 1];
+    profile.push({ x: prev.x + Math.cos(rad) * faceVals[i],
+                   y: prev.y + Math.sin(rad) * faceVals[i] });
+    if (i < angleVals.length) dirDeg -= (180 - angleVals[i]);
+  }
+
+  // ── 2. Projection isométrique ──
+  // screenX = (px - z) * cos30
+  // screenY = py + (px + z) * sin30
+  // px/py = coordonnées profil (y+ = bas), z = profondeur extrusion
+  const c30 = Math.cos(Math.PI / 6);   // ≈ 0.866
+  const s30 = Math.sin(Math.PI / 6);   // 0.5
+  const toIso = (px, py, z = 0) => ({
+    x: (px - z) * c30,
+    y:  py + (px + z) * s30
+  });
+
+  // Lg visuel capé pour que le profil reste lisible (Lg souvent >> DVP)
+  const LgVis = Lg > 0 ? Math.min(Lg, DVP * 2.5) : DVP * 1.5;
+
+  // ── 3. Bounding box en coordonnées iso brutes (scale=1) → fitScale ──
+  const rawPts = [];
+  profile.forEach(p => {
+    rawPts.push(toIso(p.x, p.y, 0));
+    rawPts.push(toIso(p.x, p.y, LgVis));
+  });
+  const rxs = rawPts.map(p => p.x), rys = rawPts.map(p => p.y);
+  const bx0 = Math.min(...rxs), bx1 = Math.max(...rxs);
+  const by0 = Math.min(...rys), by1 = Math.max(...rys);
+  const bw = bx1 - bx0 || 1, bh = by1 - by0 || 1;
+  const PAD = 52;
+  const sc  = Math.min((W - PAD * 2) / bw, (H - PAD * 2) / bh);
+  const ox  = W / 2 - (bx0 + bw / 2) * sc;
+  const oy  = H / 2 - (by0 + bh / 2) * sc;
+
+  const toScreen = (px, py, z = 0) => {
+    const p = toIso(px, py, z);
+    return { x: p.x * sc + ox, y: p.y * sc + oy };
+  };
+
+  // Centroïde en coordonnées écran (sert à orienter les normales des labels)
+  const cent = toScreen(
+    profile.reduce((s, p) => s + p.x, 0) / profile.length,
+    profile.reduce((s, p) => s + p.y, 0) / profile.length, 0);
+
+  // ── 4. Quads extrudés (une face par segment) ──
+  for (let i = 0; i < faceVals.length; i++) {
+    if (faceVals[i] === 0) continue;
+    const a = toScreen(profile[i].x,   profile[i].y,   0);
+    const b = toScreen(profile[i+1].x, profile[i+1].y, 0);
+    const c = toScreen(profile[i+1].x, profile[i+1].y, LgVis);
+    const d = toScreen(profile[i].x,   profile[i].y,   LgVis);
+    // Face "horizontale" (dy ≤ dx) → rose pâle ; verticale → rose soutenu
+    const horiz = Math.abs(profile[i+1].y - profile[i].y) <=
+                  Math.abs(profile[i+1].x - profile[i].x);
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+    ctx.lineTo(c.x, c.y); ctx.lineTo(d.x, d.y);
+    ctx.closePath();
+    ctx.fillStyle = horiz ? 'rgba(255,182,220,0.5)' : 'rgba(220,150,190,0.4)';
+    ctx.fill();
+    ctx.strokeStyle = '#333'; ctx.lineWidth = 1.2; ctx.stroke();
+  }
+
+  // ── 5. Profil arrière (z=LgVis) puis profil avant (z=0) ──
+  const strokeProfil = (z, lw, col) => {
+    ctx.beginPath();
+    const s0 = toScreen(profile[0].x, profile[0].y, z);
+    ctx.moveTo(s0.x, s0.y);
+    for (let i = 1; i < profile.length; i++) {
+      const p = toScreen(profile[i].x, profile[i].y, z);
+      ctx.lineTo(p.x, p.y);
+    }
+    ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.stroke();
+  };
+  strokeProfil(LgVis, 1,   '#888');  // arrière
+  strokeProfil(0,     2,   '#111');  // avant
+
+  // ── 6. Labels des faces (A, B, C…) en magenta ──
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  art.faces.forEach((face, i) => {
+    if (faceVals[i] === 0) return;
+    const mid = toScreen(
+      (profile[i].x + profile[i+1].x) / 2,
+      (profile[i].y + profile[i+1].y) / 2, 0);
+    // Normale perpendiculaire au segment (espace écran), orientée vers l'extérieur
+    const sa = toScreen(profile[i].x, profile[i].y, 0);
+    const sb = toScreen(profile[i+1].x, profile[i+1].y, 0);
+    const sdx = sb.x - sa.x, sdy = sb.y - sa.y;
+    const slen = Math.hypot(sdx, sdy) || 1;
+    let nx = -sdy / slen, ny = sdx / slen;
+    if ((cent.x - mid.x) * nx + (cent.y - mid.y) * ny > 0) { nx = -nx; ny = -ny; }
+    const lx = mid.x + nx * 18, ly = mid.y + ny * 18;
+    ctx.font = 'bold 11px "Segoe UI",sans-serif';
+    ctx.fillStyle = '#e60090';
+    ctx.fillText(face, lx, ly);
+    if (faceVals[i] >= 5) {
+      ctx.font = '9px "Segoe UI",sans-serif';
+      ctx.fillStyle = '#b3006e';
+      ctx.fillText(faceVals[i] + ' mm', lx, ly + 13);
+    }
+  });
+
+  // ── 7. Labels angles (pliA, pliB…) en rouge ──
+  art.angles.forEach((angle, i) => {
+    const p = toScreen(profile[i + 1].x, profile[i + 1].y, 0);
+    ctx.font = 'bold 10px "Segoe UI",sans-serif';
+    ctx.fillStyle = '#cc0000';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText(angleVals[i] + '°', p.x + 6, p.y - 9);
+  });
+
+  // ── 8. Label Lg en magenta sur l'arête de longueur ──
+  if (Lg > 0) {
+    const pa = toScreen(profile[0].x, profile[0].y, 0);
+    const pb = toScreen(profile[0].x, profile[0].y, LgVis);
+    ctx.font = 'bold 10px "Segoe UI",sans-serif';
+    ctx.fillStyle = '#e60090';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    ctx.fillText('Lg = ' + Lg + ' mm', (pa.x + pb.x) / 2, Math.min(pa.y, pb.y) - 4);
+  }
+}
+
+// ══════════════════════════════════════════
+// AJOUTER AU DEVIS
+// ══════════════════════════════════════════
+function _getMatiereCode(matKey) {
+  if (matKey.startsWith('INOX')) return 'IN';
+  if (matKey.startsWith('ALU'))  return 'ALU';
+  if (matKey.startsWith('AC'))   return 'ALU'; // laqué alu
+  return '';
+}
+
+document.getElementById('btnAjouterDevis').addEventListener('click', () => {
+  // Force le calcul immédiat (contourne le debounce de 150ms)
+  clearTimeout(_calcTimer);
+  _doCalculer();
+
+  const desig  = (document.getElementById('result-designation') || {}).value || '';
+  const dvpTxt = (document.getElementById('resDvp') || {}).textContent || '—';
+  if (!desig || dvpTxt === '—') {
+    alert('Saisissez les cotes et la longueur avant d\'ajouter au devis.');
+    return;
+  }
+
+  const dvp    = parseFloat(dvpTxt)  || 0;
+  const puTxt  = (document.getElementById('resPrixUnit') || {}).textContent || '0';
+  const prixUn = parseFloat(puTxt)   || 0;
+  const Lg     = parseFloat(document.getElementById('saisieLg').value)    || 0;
+  const qte    = Math.max(1, parseInt(document.getElementById('paramQte').value) || 1);
+  const matKey = document.getElementById('paramMatiere').value;
+  const epKey  = document.getElementById('paramEpaisseur').value;
+  const ral    = document.getElementById('paramRal').value.trim();
+
+  // Force rendu ISO immédiat pour avoir l'image à jour
+  clearTimeout(_isoTimer);
+  _renderIso();
+  const canvas      = document.getElementById('isoCanvas');
+  const canvasImage = (canvas && dvp > 0) ? canvas.toDataURL('image/png') : null;
+
+  const ligne = {
+    id:          Date.now(),
+    designation: desig,
+    matiere:     _getMatiereCode(matKey),
+    ral:         ral,
+    ep:          (EPAISSEURS[epKey] || {}).label || epKey,
+    dvp:         dvp,
+    lg:          Lg,
+    qte:         qte,
+    puHT:        prixUn,
+    canvasImage: canvasImage
+  };
+
+  try {
+    const stock = JSON.parse(localStorage.getItem('plialu-devis') || '[]');
+    stock.push(ligne);
+    localStorage.setItem('plialu-devis', JSON.stringify(stock));
+  } catch(e) {
+    alert('Erreur lors de l\'ajout au devis (localStorage plein ?).');
+    return;
+  }
+
+  const msg = document.getElementById('msgOk');
+  if (msg) {
+    msg.style.display = 'block';
+    clearTimeout(msg._t);
+    msg._t = setTimeout(() => { msg.style.display = 'none'; }, 2500);
+  }
+});
+
+// ══════════════════════════════════════════
+// TÉLÉCHARGER VUE ISO (PNG)
+// ══════════════════════════════════════════
+document.getElementById('btnTelechargerPng').addEventListener('click', () => {
+  clearTimeout(_isoTimer);
+  _renderIso();
+
+  const dvpTxt = (document.getElementById('resDvp') || {}).textContent || '—';
+  if (dvpTxt === '—') {
+    alert('Saisissez les cotes pour générer la vue isométrique.');
+    return;
+  }
+
+  const canvas = document.getElementById('isoCanvas');
+  if (!canvas) return;
+
+  const desig    = (document.getElementById('result-designation') || {}).value || 'piece';
+  const safeName = desig.replace(/[^a-z0-9]+/gi, '_').slice(0, 50);
+  const a        = document.createElement('a');
+  a.href         = canvas.toDataURL('image/png');
+  a.download     = 'ISO_' + safeName + '.png';
+  a.click();
+});
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+initSelects();   // 1. peupler les <select> depuis les données
+applyState();    // 2. état par défaut (bavette / Bv1)
+loadSession();   // 3. écraser avec session sauvegardée si elle existe
+
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PLIALU — Dessinateur</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;color:#1a2e38;min-height:100vh}
+
+    .nav{background:#0d2933;padding:0 24px;display:flex;align-items:center;gap:8px;height:52px;position:sticky;top:0;z-index:100}
+    .nav-logo{color:#e8fc69;font-weight:800;font-size:17px;margin-right:16px;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+    .nav-logo span{background:#e8fc69;color:#0d2933;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+    .nav-btn{background:transparent;border:none;color:#a0bcc4;padding:8px 18px;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;transition:.2s;text-decoration:none;display:inline-flex;align-items:center}
+    .nav-btn:hover{color:#fff}
+    .nav-btn.active{background:#e8fc69;color:#0d2933}
+
+    .page{max-width:960px;margin:28px auto;padding:0 16px}
+
+    .card{background:#fff;border-radius:12px;padding:22px 24px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+    .card-title{font-size:13px;font-weight:800;color:#1a2e38;text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #e8fc69}
+
+    label{display:block;font-size:10px;font-weight:700;color:#6b7a80;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+    input[type="text"],textarea{width:100%;padding:10px 12px;border:1.5px solid #dde3e8;border-radius:8px;font-size:14px;background:#fff;color:#1a2e38;transition:border .2s;font-family:'Segoe UI',sans-serif}
+    input:focus,textarea:focus{outline:none;border-color:#0d2933}
+    input::placeholder,textarea::placeholder{color:#b0bec5}
+
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    @media(max-width:600px){.grid2{grid-template-columns:1fr}}
+
+    .toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:10px;padding:10px 12px;background:#f0f4f8;border-radius:10px}
+    .toolbar-group{display:flex;align-items:center;gap:4px}
+    .toolbar-sep{width:1px;height:24px;background:#dde3e8;margin:0 4px}
+    .tool-btn{padding:7px 12px;border:1.5px solid #dde3e8;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;background:#fff;color:#1a2e38;transition:.15s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+    .tool-btn:hover{border-color:#0d2933;background:#f8fafb}
+    .tool-btn.active{background:#0d2933;color:#e8fc69;border-color:#0d2933}
+    .tool-btn.danger{color:#d9534f}
+    .tool-btn.danger:hover{background:#d9534f;color:#fff;border-color:#d9534f}
+
+    .swatch{width:22px;height:22px;border-radius:50%;border:2px solid #dde3e8;cursor:pointer;transition:.15s;flex-shrink:0}
+    .swatch:hover{transform:scale(1.15)}
+    .swatch.active{border-color:#0d2933;box-shadow:0 0 0 2px #e8fc69}
+
+    .stroke-btn{width:32px;height:28px;border:1.5px solid #dde3e8;border-radius:6px;cursor:pointer;background:#fff;display:flex;align-items:center;justify-content:center;transition:.15s}
+    .stroke-btn:hover{border-color:#0d2933}
+    .stroke-btn.active{background:#0d2933;border-color:#0d2933}
+    .stroke-btn.active .stroke-line{background:#e8fc69}
+    .stroke-line{border-radius:2px;background:#1a2e38}
+
+    .canvas-wrap{position:relative;border:1.5px solid #dde3e8;border-radius:10px;overflow:hidden;background:#fff;touch-action:none}
+    #drawCanvas{display:block;width:100%;cursor:crosshair}
+
+    /* Draw HUD — live cotation overlay */
+    #drawHUD{position:absolute;display:none;pointer-events:none;background:rgba(13,41,51,0.87);color:#e8fc69;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:700;z-index:30;white-space:nowrap;font-family:'Segoe UI',sans-serif}
+    /* Guide canvas (croix fictives) */
+    #guideCanvas{position:absolute;top:0;left:0;pointer-events:none;z-index:5}
+    /* Outil angle — aide contextuelle */
+    #angleHint{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(13,41,51,0.82);color:#e8fc69;padding:5px 14px;border-radius:6px;font-size:12px;font-weight:600;z-index:35;pointer-events:none;white-space:nowrap;display:none}
+    /* Résultat angle */
+    #angleResult{position:absolute;display:none;background:#fff;border:1.5px solid #0d2933;border-radius:10px;padding:10px 14px;z-index:36;font-size:13px;font-weight:600;color:#1a2e38;box-shadow:0 4px 14px rgba(0,0,0,.13);white-space:nowrap;min-width:180px}
+    #angleResult .ar-val{font-size:22px;font-weight:800;color:#c62828;display:block;margin-bottom:6px}
+    #angleResult .ar-btns{display:flex;gap:6px}
+    #angleResult .ar-btn{padding:4px 10px;border:1.5px solid #dde3e8;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;background:#f0f4f8;color:#1a2e38;transition:.15s}
+    #angleResult .ar-btn:hover{border-color:#0d2933}
+    /* Scale input */
+    #scaleInput{width:64px;padding:5px 8px;border:1.5px solid #dde3e8;border-radius:6px;font-size:13px;font-weight:600;color:#1a2e38;background:#fff;transition:border .2s}
+    #scaleInput:focus{outline:none;border-color:#0d2933}
+
+    /* Text input overlay */
+    #textOverlay{position:absolute;display:none;z-index:20}
+    #textOverlay input{font-size:16px;padding:4px 8px;border:2px solid #0d2933;border-radius:6px;outline:none;background:#fff;min-width:140px;font-family:'Segoe UI',sans-serif}
+
+    /* Draggable text labels */
+    .text-label{position:absolute;cursor:grab;user-select:none;-webkit-user-select:none;z-index:10;font-family:'Segoe UI',sans-serif;font-weight:600;white-space:nowrap;padding:2px 4px;border-radius:3px;transition:box-shadow .15s}
+    .text-label:hover{box-shadow:0 0 0 2px rgba(232,252,105,0.6)}
+    .text-label.dragging{cursor:grabbing;box-shadow:0 0 0 2px #e8fc69;opacity:.85}
+    .text-label .del-label{display:none;position:absolute;top:-10px;left:-10px;width:18px;height:18px;background:#d9534f;color:#fff;border:none;border-radius:50%;font-size:10px;cursor:pointer;align-items:center;justify-content:center;line-height:1}
+    .text-label:hover .del-label{display:flex}
+    .resize-handle{position:absolute;width:10px;height:10px;background:#0d2933;border:2px solid #e8fc69;border-radius:2px;display:none;z-index:15}
+    .text-label:hover .resize-handle,.text-label.dragging .resize-handle{display:block}
+    .resize-handle.ne{top:-5px;right:-5px;cursor:ne-resize}
+    .resize-handle.sw{bottom:-5px;left:-5px;cursor:sw-resize}
+    .resize-handle.se{bottom:-5px;right:-5px;cursor:se-resize}
+
+    .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .btn-primary{background:#e8fc69;color:#0d2933;border:none;border-radius:8px;padding:12px 22px;font-size:14px;font-weight:800;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px}
+    .btn-primary:hover{filter:brightness(.93)}
+    .btn-secondary{background:#fff;color:#0d2933;border:1.5px solid #dde3e8;border-radius:8px;padding:12px 22px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px}
+    .btn-secondary:hover{border-color:#0d2933}
+
+    .msg-ok{display:none;padding:10px 16px;background:#e6f9ee;color:#1a7a42;border-radius:8px;font-size:13px;font-weight:600;margin-top:10px;align-items:center;gap:6px}
+    .msg-ok.show{display:inline-flex}
+
+    .saved-list{margin-top:4px}
+    .saved-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid #eef1f4;border-radius:8px;margin-bottom:8px;background:#fafbfc}
+    .saved-item img{width:80px;height:50px;object-fit:contain;border-radius:4px;border:1px solid #dde3e8;background:#fff}
+    .saved-item-info{flex:1;min-width:0}
+    .saved-item-name{font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .saved-item-date{font-size:11px;color:#6b7a80}
+    .saved-item-del{background:none;border:none;color:#c0c8cc;cursor:pointer;font-size:16px;padding:4px;transition:.15s}
+    .saved-item-del:hover{color:#d9534f}
+
+    @media(max-width:600px){
+      .toolbar{gap:4px;padding:8px}
+      .tool-btn{padding:6px 8px;font-size:12px}
+      .btn-primary,.btn-secondary{padding:10px 14px;font-size:13px}
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" style="text-decoration:none;">
+    <div class="nav-logo"><span>o</span> PLIALU</div>
+  </a>
+  <a class="nav-btn" href="calcul.html">Calculette</a>
+  <a class="nav-btn" href="devis.html">Devis</a>
+  <a class="nav-btn active" href="dessinateur.html">Dessinateur</a>
+  <a class="nav-btn" href="configurateur.html">Configurateur</a>
+</nav>
+
+<div class="page">
+
+  <div class="card">
+    <div class="card-title">Référence du dessin</div>
+    <div class="grid2">
+      <div>
+        <label for="refName">Nom / Référence de la pièce</label>
+        <input type="text" id="refName" placeholder="Ex : Bavette acrotère lot B2">
+      </div>
+      <div>
+        <label for="refNotes">Notes / Commentaires</label>
+        <input type="text" id="refNotes" placeholder="Ex : RAL 7016, ép. 10/10">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Zone de dessin</div>
+
+    <div class="toolbar">
+      <div class="toolbar-group">
+        <button class="tool-btn active" data-tool="pen" title="Tracer une ligne">✏️ Crayon</button>
+        <button class="tool-btn" data-tool="eraser" title="Gomme">🧹 Gomme</button>
+        <button class="tool-btn" data-tool="text" title="Ajouter un texte (double-clic pour modifier)">🔤 Texte</button>
+        <button class="tool-btn" data-tool="angle" title="Mesurer l'angle entre 2 segments : clic A, sommet, clic C">📐 Mesurer ∠</button>
+      </div>
+
+      <div class="toolbar-sep"></div>
+
+      <div class="toolbar-group">
+        <div class="swatch active" data-color="#1a2e38" style="background:#1a2e38" title="Noir"></div>
+        <div class="swatch" data-color="#1565c0" style="background:#1565c0" title="Bleu"></div>
+        <div class="swatch" data-color="#c62828" style="background:#c62828" title="Rouge"></div>
+      </div>
+
+      <div class="toolbar-sep"></div>
+
+      <div class="toolbar-group">
+        <button class="stroke-btn" data-size="2" title="Fin"><div class="stroke-line" style="width:12px;height:2px"></div></button>
+        <button class="stroke-btn active" data-size="4" title="Moyen"><div class="stroke-line" style="width:12px;height:4px"></div></button>
+        <button class="stroke-btn" data-size="8" title="Épais"><div class="stroke-line" style="width:12px;height:6px"></div></button>
+      </div>
+
+      <div class="toolbar-sep"></div>
+
+      <div class="toolbar-group">
+        <button class="tool-btn" id="btnUndo" title="Annuler">↩️ Annuler</button>
+        <button class="tool-btn danger" id="btnClear" title="Tout effacer">🗑️ Effacer</button>
+      </div>
+
+      <div class="toolbar-sep"></div>
+
+      <div class="toolbar-group" style="align-items:center;gap:5px">
+        <span style="font-size:10px;font-weight:700;color:#6b7a80;text-transform:uppercase;letter-spacing:.5px">Échelle</span>
+        <span style="font-size:12px;font-weight:600;color:#6b7a80;margin-right:1px">1:</span>
+        <input type="number" id="scaleInput" value="100" min="1" max="10000" title="Dénominateur de l'échelle (ex: 100 pour 1:100)">
+      </div>
+    </div>
+
+    <div class="canvas-wrap" id="canvasWrap">
+      <canvas id="drawCanvas" width="900" height="500"></canvas>
+      <div id="textOverlay">
+        <input type="text" id="textInput" placeholder="Saisir texte…">
+      </div>
+      <canvas id="guideCanvas"></canvas>
+      <div id="drawHUD"></div>
+      <div id="angleHint"></div>
+      <div id="angleResult"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Actions</div>
+    <div class="actions">
+      <button class="btn-secondary" id="btnDownload">📥 Télécharger en PNG</button>
+      <button class="btn-primary" id="btnSave">➕ Enregistrer &amp; Ajouter au devis</button>
+    </div>
+    <div class="msg-ok" id="msgOk">✅ Dessin enregistré et ajouté au devis !</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Dessins enregistrés</div>
+    <div id="savedList" class="saved-list">
+      <p style="color:#6b7a80;font-size:13px">Aucun dessin enregistré.</p>
+    </div>
+  </div>
+
+  <!-- RESET GLOBAL -->
+  <div class="card" style="text-align:center">
+    <button class="btn-secondary" style="color:#6b7a80;border-color:#dde3e8" onclick="if(confirm('Effacer TOUTE la m\u00e9moire du projet (calculette, devis, dessinateur) ?')){localStorage.removeItem('plialu_project_data');localStorage.removeItem('plialu-devis');localStorage.removeItem('plialu-devis-dessins');location.reload();}">🗑️ Effacer toute m\u00e9moire</button>
+  </div>
+
+</div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('drawCanvas');
+  const ctx = canvas.getContext('2d');
+  const wrap = document.getElementById('canvasWrap');
+
+  function resizeCanvas() {
+    const rect = wrap.getBoundingClientRect();
+    const w = rect.width;
+    const h = 500;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // Guide canvas — même taille, même DPR
+    guideCanvas.width = w * dpr;
+    guideCanvas.height = h * dpr;
+    guideCanvas.style.width = w + 'px';
+    guideCanvas.style.height = h + 'px';
+    gctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    restoreFromHistory();
+  }
+
+  let tool = 'pen';
+  let color = '#1a2e38';
+  let lineWidth = 4;
+  let drawing = false;
+  let history = [];
+  let startPoint = null;
+  let snapshotBeforeLine = null;
+
+  // ── Cotation / échelle ──
+  const hud = document.getElementById('drawHUD');
+  let scale = 100;       // dénominateur de 1:N
+  const SNAP_PX = 15;   // rayon de snap (px)
+  let lastSegEnd = null; // fin du dernier segment — snap d'enchaînement
+  // ── Canvas de guides (croix fictives) ──
+  const guideCanvas = document.getElementById('guideCanvas');
+  const gctx = guideCanvas.getContext('2d');
+
+  document.getElementById('scaleInput').addEventListener('input', e => {
+    const v = parseInt(e.target.value);
+    if (v > 0) scale = v;
+  });
+
+  // 1 px CSS ≈ 0.2646 mm à 96 dpi → mm réel = px * (25.4/96) * scale
+  function pxToMm(px) {
+    return Math.round(px * (25.4 / 96) * scale);
+  }
+
+  // Angle d'un segment (°, 0° = droite, 90° = haut, sens trigo)
+  function segAngleDeg(from, to) {
+    const dx = to.x - from.x;
+    const dy = -(to.y - from.y); // inverser Y canvas
+    let a = Math.atan2(dy, dx) * 180 / Math.PI;
+    if (a < 0) a += 360;
+    return a;
+  }
+
+  // ══════════════════════════════════════════
+  // Guides (croix fictives) — canvas overlay
+  // ══════════════════════════════════════════
+  function clearGuides() {
+    gctx.clearRect(0, 0, wrap.clientWidth, 500);
+  }
+
+  function drawGuides(p) {
+    const w = wrap.clientWidth;
+    const h = 500;
+    gctx.clearRect(0, 0, w, h);
+
+    if (tool !== 'pen' && tool !== 'angle') return;
+
+    // ── Croix pointillée dès le 1er clic ──
+    if (tool === 'pen') {
+      gctx.save();
+      gctx.strokeStyle = 'rgba(100,149,237,0.38)';
+      gctx.lineWidth = 1;
+      gctx.setLineDash([5, 5]);
+      // Verticale
+      gctx.beginPath(); gctx.moveTo(p.x, 0); gctx.lineTo(p.x, h); gctx.stroke();
+      // Horizontale
+      gctx.beginPath(); gctx.moveTo(0, p.y); gctx.lineTo(w, p.y);  gctx.stroke();
+      gctx.restore();
+    }
+
+  }
+
+  // ══════════════════════════════════════════
+  // Outil "Mesurer angle" — 3 clics : A, sommet B, C
+  // ══════════════════════════════════════════
+  let anglePts = [];  // accumule jusqu'à 3 points
+  const angleHint   = document.getElementById('angleHint');
+  const angleResult = document.getElementById('angleResult');
+
+  const ANGLE_HINTS = [
+    'Clic 1/3 — point A (premier bras)',
+    'Clic 2/3 — sommet de l\'angle',
+    'Clic 3/3 — point C (deuxième bras)',
+  ];
+
+  function setAngleHint(idx) {
+    if (idx < 0) { angleHint.style.display = 'none'; return; }
+    angleHint.textContent = ANGLE_HINTS[idx];
+    angleHint.style.display = 'block';
+  }
+
+  function computeAngle(a, b, c) {
+    const v1x = a.x - b.x, v1y = a.y - b.y;
+    const v2x = c.x - b.x, v2y = c.y - b.y;
+    const dot = v1x*v2x + v1y*v2y;
+    const cos = dot / (Math.hypot(v1x, v1y) * Math.hypot(v2x, v2y));
+    return Math.round(Math.acos(Math.max(-1, Math.min(1, cos))) * 180 / Math.PI);
+  }
+
+  function drawAngleOverlay(cursor) {
+    const w = wrap.clientWidth, h = 500;
+    gctx.clearRect(0, 0, w, h);
+    gctx.save();
+    gctx.strokeStyle = 'rgba(198,40,40,0.7)';
+    gctx.lineWidth = 1.5;
+    gctx.setLineDash([4, 4]);
+
+    if (anglePts.length >= 1) {
+      // Point A
+      gctx.beginPath();
+      gctx.arc(anglePts[0].x, anglePts[0].y, 5, 0, Math.PI * 2);
+      gctx.fillStyle = 'rgba(198,40,40,0.7)';
+      gctx.fill();
+    }
+    if (anglePts.length === 1) {
+      // Ligne A → curseur
+      gctx.beginPath(); gctx.moveTo(anglePts[0].x, anglePts[0].y); gctx.lineTo(cursor.x, cursor.y); gctx.stroke();
+    }
+    if (anglePts.length >= 2) {
+      // Point B (sommet)
+      gctx.beginPath();
+      gctx.arc(anglePts[1].x, anglePts[1].y, 5, 0, Math.PI * 2);
+      gctx.fillStyle = '#c62828';
+      gctx.fill();
+      // Ligne A → B
+      gctx.beginPath(); gctx.moveTo(anglePts[0].x, anglePts[0].y); gctx.lineTo(anglePts[1].x, anglePts[1].y); gctx.stroke();
+      // Ligne B → curseur
+      gctx.beginPath(); gctx.moveTo(anglePts[1].x, anglePts[1].y); gctx.lineTo(cursor.x, cursor.y); gctx.stroke();
+      // Angle live au sommet
+      const ang = computeAngle(anglePts[0], anglePts[1], cursor);
+      gctx.font = 'bold 13px "Segoe UI", sans-serif';
+      gctx.fillStyle = '#c62828';
+      gctx.setLineDash([]);
+      gctx.lineWidth = 3;
+      gctx.strokeStyle = 'rgba(255,255,255,0.9)';
+      const tx = anglePts[1].x + 18, ty = anglePts[1].y - 10;
+      gctx.strokeText(ang + '°', tx, ty);
+      gctx.fillText(ang + '°', tx, ty);
+    }
+    gctx.restore();
+  }
+
+  function showAngleResult(vertex, ang) {
+    angleResult.innerHTML =
+      `<span class="ar-val">${ang}°</span>` +
+      `<div class="ar-btns">` +
+        `<button class="ar-btn" id="arCopy">Copier</button>` +
+        `<button class="ar-btn" id="arClose">Fermer</button>` +
+      `</div>`;
+    // Positionner près du sommet
+    const rx = Math.min(vertex.x + 20, wrap.clientWidth - 200);
+    const ry = Math.max(vertex.y - 80, 10);
+    angleResult.style.left = rx + 'px';
+    angleResult.style.top  = ry + 'px';
+    angleResult.style.display = 'block';
+    document.getElementById('arCopy').addEventListener('click', () => {
+      navigator.clipboard?.writeText(ang + '°').catch(() => {});
+      document.getElementById('arCopy').textContent = 'Copié !';
+    });
+    document.getElementById('arClose').addEventListener('click', () => {
+      angleResult.style.display = 'none';
+    });
+  }
+
+  function resetAngleTool() {
+    anglePts = [];
+    setAngleHint(-1);
+    clearGuides();
+  }
+
+  // ── Guides sur survol (hors dessin actif) ──
+  canvas.addEventListener('mousemove', (e) => {
+    if (drawing) return; // géré dans moveDraw
+    const p = getPos(e);
+    if (tool === 'angle') { drawAngleOverlay(p); return; }
+    if (tool !== 'pen') { clearGuides(); return; }
+    drawGuides(p);
+  });
+
+  canvas.addEventListener('mouseleave', () => {
+    clearGuides();
+    if (tool === 'angle' && anglePts.length > 0) drawAngleOverlay({ x: -9999, y: -9999 });
+  });
+
+  // ── Effacer guides quand on change d'outil ──
+  document.querySelectorAll('[data-tool]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      resetAngleTool();
+      angleResult.style.display = 'none';
+      clearGuides();
+      if (btn.dataset.tool === 'angle') setAngleHint(0);
+    });
+  });
+
+  // ── Text labels (draggable overlays) ──
+  let textLabels = []; // {id, text, x, y, color, fontSize, el}
+
+  function saveState() {
+    history.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+    if (history.length > 50) history.shift();
+  }
+
+  function restoreFromHistory() {
+    if (history.length) {
+      ctx.putImageData(history[history.length - 1], 0, 0);
+    } else {
+      fillWhite();
+    }
+  }
+
+  function fillWhite() {
+    const w = canvas.width / (window.devicePixelRatio || 1);
+    const h = canvas.height / (window.devicePixelRatio || 1);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  function clearCanvas() {
+    saveState();
+    fillWhite();
+    textLabels.forEach(t => t.el.remove());
+    textLabels = [];
+    lastSegEnd = null;
+    clearGuides();
+  }
+
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const src = e.touches && e.touches.length ? e.touches[0] : (e.changedTouches && e.changedTouches.length ? e.changedTouches[0] : e);
+    return { x: src.clientX - rect.left, y: src.clientY - rect.top };
+  }
+
+  function drawLine(from, to) {
+    ctx.beginPath();
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(to.x, to.y);
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lineWidth;
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.stroke();
+  }
+
+  // ══════════════════════════════════════════
+  // Drawing — straight lines (pen) + freehand (eraser)
+  // ══════════════════════════════════════════
+  function startDraw(e) {
+    if (tool === 'text') return;
+    e.preventDefault();
+    const p = getPos(e);
+
+    // ── Outil angle : accumule 3 points ──
+    if (tool === 'angle') {
+      anglePts.push({ ...p });
+      if (anglePts.length === 3) {
+        const ang = computeAngle(anglePts[0], anglePts[1], anglePts[2]);
+        showAngleResult(anglePts[1], ang);
+        clearGuides();
+        anglePts = [];
+        setAngleHint(0); // prêt pour une nouvelle mesure
+      } else {
+        setAngleHint(anglePts.length);
+      }
+      return;
+    }
+
+    drawing = true;
+    saveState();
+
+    if (tool === 'pen') {
+      // Snap au dernier point si proche
+      if (lastSegEnd && Math.hypot(p.x - lastSegEnd.x, p.y - lastSegEnd.y) < SNAP_PX) {
+        startPoint = { ...lastSegEnd };
+      } else {
+        startPoint = p;
+        lastSegEnd = null;
+      }
+      snapshotBeforeLine = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.lineWidth = lineWidth * 5;
+    }
+  }
+
+  function moveDraw(e) {
+    if (!drawing) return;
+    e.preventDefault();
+    const p = getPos(e);
+
+    if (tool === 'pen') {
+      ctx.putImageData(snapshotBeforeLine, 0, 0);
+      drawLine(startPoint, p);
+
+      // HUD live
+      const dist = Math.hypot(p.x - startPoint.x, p.y - startPoint.y);
+      const mm   = pxToMm(dist);
+      const deg  = Math.round(segAngleDeg(startPoint, p));
+      hud.textContent = `${mm} mm  ·  ${deg}°`;
+      hud.style.display = 'block';
+      // Positionner le HUD sans déborder
+      const hudW = 140;
+      const hudX = (p.x + 16 + hudW < wrap.clientWidth) ? p.x + 16 : p.x - hudW - 4;
+      const hudY = (p.y - 38 > 0) ? p.y - 38 : p.y + 8;
+      hud.style.left = hudX + 'px';
+      hud.style.top  = hudY + 'px';
+      // Guides aussi pendant le drag
+      drawGuides(p);
+    } else {
+      hud.style.display = 'none';
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+    }
+  }
+
+  function endDraw(e) {
+    if (!drawing) return;
+    drawing = false;
+    hud.style.display = 'none';
+
+    if (tool === 'pen' && startPoint) {
+      if (e.type !== 'mouseleave') {
+        const p = getPos(e);
+        ctx.putImageData(snapshotBeforeLine, 0, 0);
+        drawLine(startPoint, p);
+
+        const dist = Math.hypot(p.x - startPoint.x, p.y - startPoint.y);
+        if (dist > 4) {
+          lastSegEnd = { ...p };
+        }
+      }
+      startPoint = null;
+      snapshotBeforeLine = null;
+    }
+
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  canvas.addEventListener('mousedown', startDraw);
+  canvas.addEventListener('mousemove', moveDraw);
+  canvas.addEventListener('mouseup', endDraw);
+  canvas.addEventListener('mouseleave', endDraw);
+  canvas.addEventListener('touchstart', startDraw, { passive: false });
+  canvas.addEventListener('touchmove', moveDraw, { passive: false });
+  canvas.addEventListener('touchend', endDraw);
+
+  // ══════════════════════════════════════════
+  // Text tool — creates draggable labels
+  // ══════════════════════════════════════════
+  const textOverlay = document.getElementById('textOverlay');
+  const textInput = document.getElementById('textInput');
+
+  canvas.addEventListener('click', (e) => {
+    if (tool !== 'text') return;
+    const p = getPos(e);
+    textOverlay.style.display = 'block';
+    textOverlay.style.left = p.x + 'px';
+    textOverlay.style.top = (p.y - 16) + 'px';
+    textInput.value = '';
+    textInput.style.color = color;
+    textInput.focus();
+    textInput._pos = p;
+  });
+
+  function commitText() {
+    const txt = textInput.value.trim();
+    if (textInput._editLbl) {
+      // Modifier un label existant
+      if (txt) {
+        textInput._editLbl.text = txt;
+        textInput._editLbl.el.firstChild.nodeValue = txt;
+      }
+      textInput._editLbl = null;
+    } else if (txt && textInput._pos) {
+      const p = textInput._pos;
+      const fontSize = Math.max(14, lineWidth * 4);
+      createTextLabel(txt, p.x, p.y, color, fontSize);
+    }
+    textOverlay.style.display = 'none';
+    textInput._pos = null;
+  }
+
+  textInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); commitText(); }
+    if (e.key === 'Escape') { textOverlay.style.display = 'none'; textInput._pos = null; }
+  });
+  textInput.addEventListener('blur', commitText);
+
+  // ══════════════════════════════════════════
+  // Draggable + resizable text label system
+  // ══════════════════════════════════════════
+  function createTextLabel(text, x, y, col, fontSize) {
+    const id = 'lbl-' + Date.now();
+    const el = document.createElement('div');
+    el.className = 'text-label';
+    el.style.left = x + 'px';
+    el.style.top = (y - fontSize) + 'px';
+    el.style.fontSize = fontSize + 'px';
+    el.style.color = col;
+    el.style.pointerEvents = 'auto';
+    el.textContent = text;
+
+    // Double-clic → rééditer le texte
+    el.addEventListener('dblclick', (ev) => {
+      ev.stopPropagation();
+      textOverlay.style.display = 'block';
+      textOverlay.style.left = el.offsetLeft + 'px';
+      textOverlay.style.top  = el.offsetTop  + 'px';
+      textInput.value = lbl.text;
+      textInput.style.color    = lbl.color;
+      textInput.style.fontSize = lbl.fontSize + 'px';
+      textInput._editLbl = lbl;
+      textInput._pos = null;
+      textInput.focus();
+      textInput.select();
+    });
+
+    const lbl = { id, text, x, y: y - fontSize, color: col, fontSize, el };
+
+    // Delete button
+    const del = document.createElement('button');
+    del.className = 'del-label';
+    del.textContent = '✕';
+    del.addEventListener('click', (e) => {
+      e.stopPropagation();
+      el.remove();
+      textLabels = textLabels.filter(t => t.id !== id);
+      setTimeout(saveDessinateurData, 80);
+    });
+    el.appendChild(del);
+
+    // ── Resize handles ──
+    let isResizing = false;
+    let resizeCorner = '';
+    let resizeStartX = 0, resizeStartY = 0;
+    let resizeStartFontSize = 0;
+    let resizeStartLeft = 0, resizeStartTop = 0;
+
+    ['ne', 'sw', 'se'].forEach(corner => {
+      const handle = document.createElement('div');
+      handle.className = 'resize-handle ' + corner;
+      handle.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        isResizing = true;
+        resizeCorner = corner;
+        resizeStartX = e.clientX;
+        resizeStartY = e.clientY;
+        resizeStartFontSize = lbl.fontSize;
+        resizeStartLeft = el.offsetLeft;
+        resizeStartTop = el.offsetTop;
+      });
+      el.appendChild(handle);
+    });
+
+    // ── Drag logic ──
+    let isDragging = false;
+    let dragOffsetX = 0, dragOffsetY = 0;
+
+    function onDragStart(e) {
+      if (isResizing) return;
+      e.preventDefault();
+      e.stopPropagation();
+      isDragging = true;
+      el.classList.add('dragging');
+      const src = e.touches ? e.touches[0] : e;
+      dragOffsetX = src.clientX - el.offsetLeft;
+      dragOffsetY = src.clientY - el.offsetTop;
+    }
+
+    function onDocMouseMove(e) {
+      if (isDragging) {
+        e.preventDefault();
+        const src = e.touches ? e.touches[0] : e;
+        let nx = src.clientX - dragOffsetX;
+        let ny = src.clientY - dragOffsetY;
+        nx = Math.max(0, Math.min(nx, wrap.clientWidth - el.offsetWidth));
+        ny = Math.max(0, Math.min(ny, 500 - el.offsetHeight));
+        el.style.left = nx + 'px';
+        el.style.top = ny + 'px';
+        lbl.x = nx; lbl.y = ny;
+      }
+      if (isResizing) {
+        e.preventDefault();
+        const dx = e.clientX - resizeStartX;
+        const dy = e.clientY - resizeStartY;
+        let delta;
+        if (resizeCorner === 'se') delta = (dx + dy) / 2;
+        else if (resizeCorner === 'sw') delta = (-dx + dy) / 2;
+        else delta = (dx - dy) / 2; // ne
+        const newSize = Math.max(8, Math.min(200, Math.round(resizeStartFontSize + delta)));
+        lbl.fontSize = newSize;
+        el.style.fontSize = newSize + 'px';
+        // Anchor bottom for top handle (ne)
+        if (resizeCorner === 'ne') {
+          el.style.top = (resizeStartTop - (newSize - resizeStartFontSize)) + 'px';
+        }
+      }
+    }
+
+    function onDocMouseUp() {
+      if (isDragging) { isDragging = false; el.classList.remove('dragging'); }
+      if (isResizing) { isResizing = false; }
+    }
+
+    el.addEventListener('mousedown', onDragStart);
+    document.addEventListener('mousemove', onDocMouseMove);
+    document.addEventListener('mouseup', onDocMouseUp);
+    el.addEventListener('touchstart', onDragStart, { passive: false });
+    document.addEventListener('touchmove', (e) => {
+      if (isDragging) { onDocMouseMove(e); }
+    }, { passive: false });
+    document.addEventListener('touchend', onDocMouseUp);
+
+    wrap.appendChild(el);
+    textLabels.push(lbl);
+    setTimeout(saveDessinateurData, 80); // sauvegarde après ajout d'un label
+  }
+
+  // ══════════════════════════════════════════
+  // Render text labels onto canvas (for export)
+  // ══════════════════════════════════════════
+  function renderLabelsToCanvas(targetCtx, dpr) {
+    textLabels.forEach(lbl => {
+      targetCtx.save();
+      targetCtx.globalCompositeOperation = 'source-over';
+      targetCtx.font = `600 ${lbl.fontSize}px 'Segoe UI', sans-serif`;
+      targetCtx.fillStyle = lbl.color;
+      // el.offsetLeft/Top gives the current position in the wrapper
+      const x = lbl.el.offsetLeft;
+      const y = lbl.el.offsetTop + lbl.fontSize; // baseline offset
+      targetCtx.fillText(lbl.text, x, y);
+      targetCtx.restore();
+    });
+  }
+
+  // ══════════════════════════════════════════
+  // Toolbar — tool selection
+  // ══════════════════════════════════════════
+  document.querySelectorAll('[data-tool]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-tool]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      tool = btn.dataset.tool;
+      if (tool === 'eraser') canvas.style.cursor = 'cell';
+      else if (tool === 'text') canvas.style.cursor = 'text';
+      else canvas.style.cursor = 'crosshair';
+    });
+  });
+
+  document.querySelectorAll('.swatch').forEach(sw => {
+    sw.addEventListener('click', () => {
+      document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+      sw.classList.add('active');
+      color = sw.dataset.color;
+    });
+  });
+
+  document.querySelectorAll('.stroke-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.stroke-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      lineWidth = parseInt(btn.dataset.size);
+    });
+  });
+
+  // ── Undo ──
+  document.getElementById('btnUndo').addEventListener('click', () => {
+    if (history.length > 0) {
+      history.pop();
+      if (history.length > 0) {
+        ctx.putImageData(history[history.length - 1], 0, 0);
+      } else {
+        fillWhite();
+      }
+      lastSegEnd = null;
+      clearGuides();
+    }
+  });
+
+  // ── Clear ──
+  document.getElementById('btnClear').addEventListener('click', () => {
+    if (confirm('Effacer tout le dessin ?')){ clearCanvas(); setTimeout(saveDessinateurData, 80); }
+  });
+
+  // ══════════════════════════════════════════
+  // Export — renders labels onto canvas then exports
+  // ══════════════════════════════════════════
+  function getCanvasDataURL() {
+    const dpr = window.devicePixelRatio || 1;
+    const tmp = document.createElement('canvas');
+    tmp.width = canvas.width;
+    tmp.height = canvas.height;
+    const tctx = tmp.getContext('2d');
+    // White bg
+    tctx.fillStyle = '#ffffff';
+    tctx.fillRect(0, 0, tmp.width, tmp.height);
+    // Draw canvas content
+    tctx.drawImage(canvas, 0, 0);
+    // Draw text labels on top
+    tctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    renderLabelsToCanvas(tctx, dpr);
+    return tmp.toDataURL('image/png');
+  }
+
+  // ── Download PNG ──
+  document.getElementById('btnDownload').addEventListener('click', () => {
+    const name = document.getElementById('refName').value.trim() || 'plialu-dessin';
+    const a = document.createElement('a');
+    a.href = getCanvasDataURL();
+    a.download = name.replace(/[^a-zA-Z0-9àâéèêëïîôùûüçÀÉ_-]/g, '_') + '.png';
+    a.click();
+  });
+
+  // ── Save & add to devis ──
+  document.getElementById('btnSave').addEventListener('click', () => {
+    const nom = document.getElementById('refName').value.trim();
+    if (!nom) {
+      alert('Veuillez saisir un nom / référence pour le dessin.');
+      document.getElementById('refName').focus();
+      return;
+    }
+
+    const item = {
+      id: 'D' + Date.now(),
+      nom: nom,
+      notes: document.getElementById('refNotes').value.trim(),
+      date: new Date().toLocaleString('fr-FR'),
+      imageBase64: getCanvasDataURL()
+    };
+
+    let dessins = [];
+    try { dessins = JSON.parse(localStorage.getItem('plialu-devis-dessins')) || []; } catch (e) {}
+    dessins.push(item);
+    localStorage.setItem('plialu-devis-dessins', JSON.stringify(dessins));
+
+    const msg = document.getElementById('msgOk');
+    msg.classList.add('show');
+    setTimeout(() => msg.classList.remove('show'), 3500);
+
+    renderSavedList();
+  });
+
+  // ── Render saved drawings ──
+  function renderSavedList() {
+    const container = document.getElementById('savedList');
+    let dessins = [];
+    try { dessins = JSON.parse(localStorage.getItem('plialu-devis-dessins')) || []; } catch (e) {}
+
+    if (!dessins.length) {
+      container.innerHTML = '<p style="color:#6b7a80;font-size:13px">Aucun dessin enregistré.</p>';
+      return;
+    }
+
+    container.innerHTML = dessins.map((d, i) => `
+      <div class="saved-item">
+        <img src="${d.imageBase64}" alt="${d.nom}">
+        <div class="saved-item-info">
+          <div class="saved-item-name">${escHtml(d.nom)}</div>
+          ${d.notes ? `<div class="saved-item-date">${escHtml(d.notes)}</div>` : ''}
+        </div>
+        <button class="saved-item-del" data-idx="${i}" title="Supprimer">✕</button>
+      </div>
+    `).join('');
+
+    container.querySelectorAll('.saved-item-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.idx);
+        dessins.splice(idx, 1);
+        localStorage.setItem('plialu-devis-dessins', JSON.stringify(dessins));
+        renderSavedList();
+      });
+    });
+  }
+
+  function escHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  // ═══════ SAUVEGARDE AUTOMATIQUE ═══════
+  const SAVE_KEY = 'plialu_project_data';
+
+  function getProjectData(){
+    try { return JSON.parse(localStorage.getItem(SAVE_KEY)) || {}; } catch(e){ return {}; }
+  }
+  function showSaveIndicator(){
+    let el = document.getElementById('save-indicator');
+    if(!el){ el = document.createElement('div'); el.id='save-indicator'; el.style.cssText='position:fixed;bottom:20px;right:20px;background:rgba(13,41,51,0.88);color:#e8fc69;padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;z-index:200;opacity:0;transition:opacity .35s;pointer-events:none;letter-spacing:.3px'; document.body.appendChild(el); }
+    el.textContent = '\uD83D\uDCBE Projet sauvegard\u00e9';
+    el.style.opacity = '1';
+    clearTimeout(el._t);
+    el._t = setTimeout(() => { el.style.opacity = '0'; }, 1800);
+  }
+
+  function saveDessinateurData(){
+    const data = getProjectData();
+    data.dessinateur = {
+      refName: document.getElementById('refName').value,
+      refNotes: document.getElementById('refNotes').value,
+      scale: scale,
+      color: color,
+      lineWidth: lineWidth,
+      tool: tool,
+      textLabels: textLabels.map(l => ({
+        id: l.id, text: l.text, x: l.el.offsetLeft, y: l.el.offsetTop,
+        color: l.color, fontSize: l.fontSize
+      })),
+      canvasData: canvas.toDataURL('image/png')
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+    showSaveIndicator();
+  }
+
+  function loadDessinateurData(){
+    const d = getProjectData().dessinateur;
+    if(!d) return;
+    if(d.refName) document.getElementById('refName').value = d.refName;
+    if(d.refNotes) document.getElementById('refNotes').value = d.refNotes;
+    if(d.scale){ scale = d.scale; document.getElementById('scaleInput').value = d.scale; }
+    if(d.color){
+      color = d.color;
+      document.querySelectorAll('.swatch').forEach(s => s.classList.toggle('active', s.dataset.color === d.color));
+    }
+    if(d.lineWidth){
+      lineWidth = d.lineWidth;
+      document.querySelectorAll('.stroke-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.size) === d.lineWidth));
+    }
+    // Restaurer le canvas
+    if(d.canvasData){
+      const img = new Image();
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0);
+        saveState(); // ajouter dans l'historique pour undo
+      };
+      img.src = d.canvasData;
+    }
+    // Restaurer les labels texte
+    if(d.textLabels && d.textLabels.length){
+      d.textLabels.forEach(l => {
+        createTextLabel(l.text, l.x, l.y + l.fontSize, l.color, l.fontSize);
+      });
+    }
+  }
+
+  // Auto-save sur les champs texte
+  document.getElementById('refName').addEventListener('input', saveDessinateurData);
+  document.getElementById('refNotes').addEventListener('input', saveDessinateurData);
+
+  // Auto-save après chaque trait — listeners additionnels simples
+  // (le setTimeout garantit qu'ils s'exécutent après endDraw)
+  canvas.addEventListener('mouseup', () => setTimeout(saveDessinateurData, 80));
+  canvas.addEventListener('touchend', () => setTimeout(saveDessinateurData, 80));
+
+  // Save quand on change d'outil/couleur/épaisseur
+  document.querySelectorAll('[data-tool], .swatch, .stroke-btn').forEach(b => {
+    b.addEventListener('click', () => setTimeout(saveDessinateurData, 50));
+  });
+
+  // ── Init ──
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+  fillWhite();
+  loadDessinateurData();
+  renderSavedList();
+})();
+</script>
+</body>
+</html>

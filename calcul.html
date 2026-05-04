@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLIALU — Calculette</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;color:#1a2e38;min-height:100vh}
+
+.nav{background:#0d2933;padding:0 24px;display:flex;align-items:center;gap:8px;height:52px;position:sticky;top:0;z-index:100}
+.nav-logo{color:#e8fc69;font-weight:800;font-size:17px;margin-right:16px;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.nav-logo span{background:#e8fc69;color:#0d2933;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+.nav-btn{background:transparent;border:none;color:#a0bcc4;padding:8px 18px;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;transition:.2s;text-decoration:none;display:inline-flex;align-items:center}
+.nav-btn:hover{color:#fff}
+.nav-btn.active{background:#e8fc69;color:#0d2933}
+
+.page{max-width:900px;margin:28px auto;padding:0 16px}
+
+.card{background:#fff;border-radius:12px;padding:22px 24px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.card-title{font-size:13px;font-weight:800;color:#1a2e38;text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #e8fc69}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+label{display:block;font-size:10px;font-weight:700;color:#6b7a80;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+input,select{width:100%;padding:10px 12px;border:1.5px solid #dde3e8;border-radius:8px;font-size:14px;background:#fff;color:#1a2e38;transition:border .2s}
+input:focus,select:focus{outline:none;border-color:#0d2933}
+input::placeholder{color:#b0bec5}
+
+.btn-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.cat-btn{padding:8px 16px;border:2px solid #dde3e8;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;background:#f8fafc;color:#1a2e38;transition:.2s}
+.cat-btn:hover{border-color:#0d2933}
+.cat-btn.active{background:#0d2933;color:#e8fc69;border-color:#0d2933}
+
+.mat-btn{padding:8px 16px;border:2px solid #dde3e8;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;background:#f8fafc;color:#1a2e38;transition:.2s}
+.mat-btn:hover{border-color:#1e40af}
+.mat-btn.active{background:#1e40af;color:#fff;border-color:#1e40af}
+
+.ep-btn{padding:8px 14px;border:2px solid #dde3e8;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;background:#f8fafc;color:#1a2e38;transition:.2s}
+.ep-btn:hover{border-color:#0d2933}
+.ep-btn.active{background:#e8fc69;color:#0d2933;border-color:#0d2933}
+
+.mo-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+.mo-bloc{background:#f8fafc;border-radius:10px;padding:14px;border:1.5px solid #e2e8f0}
+.mo-title{font-size:11px;font-weight:700;color:#4a6572;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.mo-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mo-row label{font-size:10px}
+.mo-row input{font-size:12px;padding:7px 9px}
+
+.coef-section{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:4px}
+.coef-bloc{border-radius:10px;padding:16px;text-align:center}
+.coef-bloc label{font-size:11px;font-weight:800;margin-bottom:8px;display:block;text-transform:uppercase;letter-spacing:.5px}
+.coef-bloc input{text-align:center;font-size:22px;font-weight:800;border:none;background:transparent;width:100%;padding:4px 0}
+.coef-bloc .coef-desc{font-size:11px;margin-top:6px;opacity:.75}
+.coef-mat{background:#dbeafe;border:2px solid #93c5fd}
+.coef-mat label,.coef-mat input,.coef-mat .coef-desc{color:#1e3a8a}
+.coef-transport{background:#fef3c7;border:2px solid #fcd34d}
+.coef-transport label,.coef-transport input,.coef-transport .coef-desc{color:#92400e}
+.coef-marge{background:#dcfce7;border:2px solid #86efac}
+.coef-marge label,.coef-marge input,.coef-marge .coef-desc{color:#14532d}
+
+.result-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.result-box{background:#f8fafc;border-radius:8px;padding:14px;text-align:center;border:1.5px solid #e2e8f0}
+.result-box .lbl{font-size:10px;font-weight:700;color:#6b7a80;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.result-box .val{font-size:15px;font-weight:800;color:#0d2933}
+.result-box.highlight{background:#0d2933;border-color:#0d2933}
+.result-box.highlight .lbl{color:#a0bcc4}
+.result-box.highlight .val{color:#e8fc69;font-size:20px}
+.result-box.green{background:#dcfce7;border-color:#86efac}
+.result-box.green .val{color:#166534}
+
+#r-delta-badge{border-radius:8px;padding:10px 16px;text-align:center;font-weight:700;font-size:13px;margin-top:4px;display:none}
+
+.btn-calc{background:#e8fc69;color:#0d2933;border:none;border-radius:8px;padding:12px 28px;font-size:15px;font-weight:800;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:8px;margin-top:16px}
+.btn-calc:hover{background:#d4f040;transform:translateY(-1px)}
+
+.add-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.btn-add{background:#e8fc69;color:#0d2933;border:none;border-radius:8px;padding:11px 22px;font-size:14px;font-weight:800;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:8px}
+.btn-add:hover{background:#d4f040}
+.msg-ok{background:#dcfce7;color:#166534;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;display:none;margin-top:10px}
+
+#save-indicator{position:fixed;bottom:20px;right:20px;background:rgba(13,41,51,0.88);color:#e8fc69;padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;z-index:200;opacity:0;transition:opacity .35s;pointer-events:none;letter-spacing:.3px}
+.btn-reset{background:#fff;color:#6b7a80;border:1.5px solid #dde3e8;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:7px}
+.btn-reset:hover{border-color:#d9534f;color:#d9534f}
+
+@media(max-width:650px){
+  .grid2,.grid3,.mo-grid,.coef-section,.result-grid,.add-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" style="text-decoration:none;">
+    <div class="nav-logo"><span>o</span> PLIALU</div>
+  </a>
+  <a class="nav-btn active" href="calcul.html">Calculette</a>
+  <a class="nav-btn" href="devis.html">Devis</a>
+  <a class="nav-btn" href="dessinateur.html">Dessinateur</a>
+  <a class="nav-btn" href="configurateur.html">Configurateur</a>
+</nav>
+
+<div class="page">
+
+<!-- 1 — CATÉGORIE -->
+<div class="card">
+  <div class="card-title">1 — Catégorie de pièce</div>
+  <div class="btn-group" id="cat-btns">
+    <button class="cat-btn active" onclick="setCategorie('bavette',this)">Bavette</button>
+    <button class="cat-btn" onclick="setCategorie('couvertine',this)">Couvertine</button>
+    <button class="cat-btn" onclick="setCategorie('accessoire',this)">Accessoire</button>
+    <button class="cat-btn" onclick="setCategorie('rails',this)">Rails</button>
+    <button class="cat-btn" onclick="setCategorie('autres',this)">Autres</button>
+  </div>
+</div>
+
+<!-- 2 — MATIÈRE & ÉPAISSEUR -->
+<div class="card">
+  <div class="card-title">2 — Matière & Épaisseur</div>
+
+  <label>Matière</label>
+  <div class="btn-group" id="mat-btns" style="margin-bottom:16px">
+    <button class="mat-btn active" onclick="setMatiere('aluminium',this)">ALU</button>
+    <button class="mat-btn" onclick="setMatiere('acier',this)">AC</button>
+    <button class="mat-btn" onclick="setMatiere('inox',this)">IN</button>
+    <button class="mat-btn" onclick="setMatiere('autre',this)">Autre</button>
+  </div>
+
+  <label>Épaisseur</label>
+  <div class="btn-group" id="ep-btns" style="margin-bottom:16px"></div>
+
+  <div>
+    <label>Prix matière (€/m²)</label>
+    <input type="number" id="prix-mat" value="18.54" step="0.01">
+  </div>
+  <input type="hidden" id="ral-calc" value="">
+</div>
+
+<!-- 3 — DIMENSIONS & MO -->
+<div class="card">
+  <div class="card-title">3 — Dimensions & Main d'œuvre</div>
+
+  <div class="grid2" style="margin-bottom:16px">
+    <div>
+      <label>DVP — Développé (mm)</label>
+      <input type="number" id="dvp" placeholder="ex: 300">
+    </div>
+    <div>
+      <label>Longueur (mm)</label>
+      <input type="number" id="longueur" value="3000">
+    </div>
+  </div>
+
+  <div class="mo-grid">
+    <div class="mo-bloc">
+      <div class="mo-title">⏱ Cisaillage</div>
+      <div class="mo-row">
+        <div><label>NB Passes</label><input type="number" id="nb-cis" value="1" min="0"></div>
+        <div><label>Tps/Passe (s)</label><input type="number" id="t-cis" value="50" min="0"></div>
+      </div>
+    </div>
+    <div class="mo-bloc">
+      <div class="mo-title">⏱ Pliage</div>
+      <div class="mo-row">
+        <div><label>NB Passes</label><input type="number" id="nb-pli" value="4" min="0"></div>
+        <div><label>Tps/Passe (s)</label><input type="number" id="t-pli" value="30" min="0"></div>
+      </div>
+    </div>
+    <div class="mo-bloc">
+      <div class="mo-title">⏱ Poinçonnage</div>
+      <div class="mo-row">
+        <div><label>NB Passes</label><input type="number" id="nb-poinc" value="1" min="0"></div>
+        <div><label>Tps/Passe (s)</label><input type="number" id="t-poinc" value="50" min="0"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <label>Taux MO (€/seconde)</label>
+      <input type="number" id="taux-mo-sec" value="0.017" step="0.001">
+    </div>
+    <div>
+      <label>Temps total calculé</label>
+      <input type="text" id="r-temps" readonly placeholder="—" style="background:#f8fafc;color:#0d2933;font-weight:700">
+    </div>
+  </div>
+</div>
+
+<!-- 4 — SOUS-TRAITANCE -->
+<div class="card" style="border:2px solid #e8fc69">
+  <div class="card-title">4 — Sous-traitance</div>
+  <div class="grid3">
+    <div>
+      <label>Laquage (€/m²)</label>
+      <input type="number" id="st-laquage" value="0" step="0.01">
+    </div>
+    <div>
+      <label>Soudure (€ fixe)</label>
+      <input type="number" id="st-soudure" value="0" step="0.01">
+    </div>
+    <div>
+      <label>Transport (€ fixe)</label>
+      <input type="number" id="st-transp" value="0" step="0.01">
+    </div>
+  </div>
+</div>
+
+<!-- 5 — COEFFICIENTS -->
+<div class="card">
+  <div class="card-title">5 — Coefficients</div>
+  <div class="coef-section">
+    <div class="coef-bloc coef-mat">
+      <label>Coeff Chute</label>
+      <input type="number" id="coef-chute" value="0.9" step="0.01">
+      <div class="coef-desc">Coefficient de chute matière</div>
+    </div>
+    <div class="coef-bloc coef-transport">
+      <label>Coeff Transport</label>
+      <input type="number" id="coef-port" value="0.9" step="0.01">
+      <div class="coef-desc">Port de frais & frais fixes</div>
+    </div>
+    <div class="coef-bloc coef-marge">
+      <label>Coeff Marge</label>
+      <input type="number" id="coef-marge" value="0.65" step="0.01">
+      <div class="coef-desc">Objectif de marge brute</div>
+    </div>
+  </div>
+</div>
+
+<!-- 6 — RÉSULTATS -->
+<div class="card">
+  <div class="card-title">6 — Résultats</div>
+
+  <div class="result-grid">
+    <div class="result-box">
+      <div class="lbl">Matière + Chute</div>
+      <div class="val" id="r-mat">—</div>
+    </div>
+    <div class="result-box">
+      <div class="lbl">Main d'œuvre</div>
+      <div class="val" id="r-mo">—</div>
+    </div>
+    <div class="result-box">
+      <div class="lbl">Sous-traitance</div>
+      <div class="val" id="r-st">—</div>
+    </div>
+    <div class="result-box">
+      <div class="lbl">Prix de revient</div>
+      <div class="val" id="r-pr">—</div>
+    </div>
+  </div>
+
+  <div class="result-grid">
+    <div class="result-box highlight">
+      <div class="lbl">PV HT</div>
+      <div class="val" id="r-pv">—</div>
+    </div>
+    <div class="result-box">
+      <div class="lbl">Prix / m²</div>
+      <div class="val" id="r-m2">—</div>
+    </div>
+    <div class="result-box green">
+      <div class="lbl">Marge brute</div>
+      <div class="val" id="r-mgb">—</div>
+    </div>
+    <div class="result-box">
+      <div class="lbl">Coeff / Mat</div>
+      <div class="val" id="r-coef-mat">—</div>
+    </div>
+  </div>
+
+  <div id="r-delta-badge"></div>
+
+  <button class="btn-calc" onclick="calculer()">⚡ Calculer</button>
+</div>
+
+<!-- 7 — AJOUTER AU DEVIS -->
+<div class="card">
+  <div class="card-title">7 — Ajouter au devis</div>
+  <div class="add-grid">
+    <div>
+      <label>Désignation</label>
+      <input type="text" id="add-desig" placeholder="Description de la pièce">
+    </div>
+    <div>
+      <label>RAL affiché sur devis</label>
+      <input type="text" id="add-ral" placeholder="ex: RAL 9006">
+    </div>
+    <div>
+      <label>Quantité</label>
+      <input type="number" id="add-qte" value="1" min="1">
+    </div>
+  </div>
+  <button class="btn-add" onclick="ajouterAuDevis()">+ Ajouter au devis</button>
+  <div class="msg-ok" id="msg-ok">✅ Ligne ajoutée au devis avec succès !</div>
+</div>
+
+<!-- RESET GLOBAL -->
+<div class="card" style="text-align:center">
+  <button class="btn-reset" onclick="if(confirm('Effacer TOUTE la m\u00e9moire du projet (calculette, devis, dessinateur) ?')){localStorage.removeItem('plialu_project_data');localStorage.removeItem('plialu-devis');localStorage.removeItem('plialu-devis-dessins');location.reload();}">🗑️ Effacer toute m\u00e9moire</button>
+</div>
+
+</div>
+
+<div id="save-indicator"></div>
+
+<script>
+const CATEGORIES = {
+  bavette:    { label:'Bavette'    },
+  couvertine: { label:'Couvertine' },
+  accessoire: { label:'Accessoire' },
+  rails:      { label:'Rails'      },
+  autres:     { label:'Autres'     }
+};
+
+const MATIERES = {
+  aluminium: { label:'ALU', epaisseurs:['10/10','15/10','20/10','25/10','30/10'] },
+  acier:     { label:'AC',  epaisseurs:['10/10','15/10','20/10','25/10','30/10'] },
+  inox:      { label:'IN',  epaisseurs:['10/10','15/10','20/10','25/10','30/10'] },
+  autre:     { label:'Autre',     epaisseurs:['10/10','15/10','20/10','25/10','30/10'] }
+};
+
+const PRIX_BASE = { aluminium:18.54, acier:12.00, inox:28.00, autre:0 };
+
+let categorieActive = 'bavette';
+let matiereActive   = 'aluminium';
+let epaisseurActive = '15/10';
+let dernierResultat = null;
+
+// ═══════ SAUVEGARDE AUTOMATIQUE ═══════
+const SAVE_KEY = 'plialu_project_data';
+
+function getProjectData(){
+  try { return JSON.parse(localStorage.getItem(SAVE_KEY)) || {}; } catch(e){ return {}; }
+}
+function saveCalcData(){
+  const data = getProjectData();
+  data.calcul = {
+    categorie: categorieActive,
+    matiere: matiereActive,
+    epaisseur: epaisseurActive,
+    prixMat: document.getElementById('prix-mat').value,
+    dvp: document.getElementById('dvp').value,
+    longueur: document.getElementById('longueur').value,
+    nbCis: document.getElementById('nb-cis').value,
+    tCis: document.getElementById('t-cis').value,
+    nbPli: document.getElementById('nb-pli').value,
+    tPli: document.getElementById('t-pli').value,
+    nbPoinc: document.getElementById('nb-poinc').value,
+    tPoinc: document.getElementById('t-poinc').value,
+    tauxMoSec: document.getElementById('taux-mo-sec').value,
+    stLaquage: document.getElementById('st-laquage').value,
+    stSoudure: document.getElementById('st-soudure').value,
+    stTransp: document.getElementById('st-transp').value,
+    coefChute: document.getElementById('coef-chute').value,
+    coefPort: document.getElementById('coef-port').value,
+    coefMarge: document.getElementById('coef-marge').value,
+    addDesig: document.getElementById('add-desig').value,
+    addRal: document.getElementById('add-ral').value,
+    addQte: document.getElementById('add-qte').value,
+    dernierResultat: dernierResultat
+  };
+  localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  showSaveIndicator();
+}
+function loadCalcData(){
+  const d = getProjectData().calcul;
+  // buildEpBtns doit TOUJOURS être appelé (boutons épaisseur)
+  if(d && d.categorie){
+    categorieActive = d.categorie;
+    document.querySelectorAll('#cat-btns .cat-btn').forEach(b => {
+      b.classList.toggle('active', b.textContent.trim().toLowerCase() === CATEGORIES[d.categorie]?.label?.toLowerCase());
+    });
+  }
+  if(d && d.matiere){
+    matiereActive = d.matiere;
+    document.querySelectorAll('#mat-btns .mat-btn').forEach(b => {
+      b.classList.toggle('active', b.textContent.trim() === MATIERES[d.matiere]?.label);
+    });
+  }
+  if(d && d.epaisseur) epaisseurActive = d.epaisseur;
+  buildEpBtns(); // toujours construire les boutons
+  if(!d) return; // sortir si pas de données sauvegardées
+  if(d.prixMat) document.getElementById('prix-mat').value = d.prixMat;
+  if(d.dvp) document.getElementById('dvp').value = d.dvp;
+  if(d.longueur) document.getElementById('longueur').value = d.longueur;
+  if(d.nbCis !== undefined) document.getElementById('nb-cis').value = d.nbCis;
+  if(d.tCis !== undefined) document.getElementById('t-cis').value = d.tCis;
+  if(d.nbPli !== undefined) document.getElementById('nb-pli').value = d.nbPli;
+  if(d.tPli !== undefined) document.getElementById('t-pli').value = d.tPli;
+  if(d.nbPoinc !== undefined) document.getElementById('nb-poinc').value = d.nbPoinc;
+  if(d.tPoinc !== undefined) document.getElementById('t-poinc').value = d.tPoinc;
+  if(d.tauxMoSec) document.getElementById('taux-mo-sec').value = d.tauxMoSec;
+  if(d.stLaquage !== undefined) document.getElementById('st-laquage').value = d.stLaquage;
+  if(d.stSoudure !== undefined) document.getElementById('st-soudure').value = d.stSoudure;
+  if(d.stTransp !== undefined) document.getElementById('st-transp').value = d.stTransp;
+  if(d.coefChute) document.getElementById('coef-chute').value = d.coefChute;
+  if(d.coefPort) document.getElementById('coef-port').value = d.coefPort;
+  if(d.coefMarge) document.getElementById('coef-marge').value = d.coefMarge;
+  if(d.addDesig) document.getElementById('add-desig').value = d.addDesig;
+  if(d.addRal) document.getElementById('add-ral').value = d.addRal;
+  if(d.addQte) document.getElementById('add-qte').value = d.addQte;
+  if(d.dernierResultat && d.dernierResultat.matChute !== undefined){
+    dernierResultat = d.dernierResultat;
+    const r = dernierResultat;
+    document.getElementById('r-mat').textContent = r.matChute.toFixed(2) + ' \u20ac';
+    document.getElementById('r-mo').textContent  = r.moEuros.toFixed(2) + ' \u20ac';
+    document.getElementById('r-st').textContent  = r.stTotal.toFixed(2) + ' \u20ac';
+    document.getElementById('r-pr').textContent  = r.prHT.toFixed(2) + ' \u20ac';
+    document.getElementById('r-pv').textContent  = r.pvHT.toFixed(2) + ' \u20ac';
+    document.getElementById('r-m2').textContent  = r.prixM2.toFixed(2) + ' \u20ac/m\u00b2';
+    document.getElementById('r-mgb').textContent = (r.mgb * 100).toFixed(1) + ' %';
+    document.getElementById('r-coef-mat').textContent = r.coefSurMat.toFixed(3);
+    // Restaurer le temps calculé
+    if(r.tempsTotalSec !== undefined){
+      const tMin = Math.floor(r.tempsTotalSec / 60);
+      const tSec = r.tempsTotalSec % 60;
+      document.getElementById('r-temps').value = r.tempsTotalSec < 60
+        ? r.tempsTotalSec + 's'
+        : tMin + 'min ' + tSec + 's';
+    }
+    // Restaurer le badge de marge (bandeau coloré)
+    const badge = document.getElementById('r-delta-badge');
+    const delta = r.pvHT - r.matChute;
+    const baseStyle = 'display:block;border-radius:8px;padding:10px 16px;text-align:center;font-weight:700;font-size:13px;margin-top:8px;';
+    if(r.mgb >= 0.45)       badge.style.cssText = baseStyle + 'background:#dcfce7;color:#166534';
+    else if(r.mgb >= 0.35)  badge.style.cssText = baseStyle + 'background:#fef9c3;color:#854d0e';
+    else                    badge.style.cssText = baseStyle + 'background:#fee2e2;color:#991b1b';
+    badge.textContent = 'Marge brute : ' + (r.mgb*100).toFixed(1) + '% \u2014 Delta mat : ' + delta.toFixed(2) + ' \u20ac';
+  }
+}
+function showSaveIndicator(){
+  const el = document.getElementById('save-indicator');
+  if(!el) return;
+  el.textContent = '\uD83D\uDCBE Projet sauvegard\u00e9';
+  el.style.opacity = '1';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.opacity = '0'; }, 1800);
+}
+
+// Auto-save sur changement de tout input
+function initAutoSave(){
+  document.querySelectorAll('input, select').forEach(el => {
+    el.addEventListener('input', saveCalcData);
+    el.addEventListener('change', saveCalcData);
+  });
+}
+
+window.addEventListener('DOMContentLoaded', () => { loadCalcData(); initAutoSave(); });
+
+function buildEpBtns(){
+  document.getElementById('ep-btns').innerHTML =
+    MATIERES[matiereActive].epaisseurs.map(ep =>
+      `<button class="ep-btn${ep === epaisseurActive ? ' active' : ''}"
+        onclick="setEpaisseur('${ep}',this)">${ep}</button>`
+    ).join('');
+}
+
+function setCategorie(key, btn){
+  categorieActive = key;
+  document.querySelectorAll('#cat-btns .cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  saveCalcData();
+}
+
+function setMatiere(key, btn){
+  matiereActive   = key;
+  epaisseurActive = MATIERES[key].epaisseurs[1] || MATIERES[key].epaisseurs[0];
+  document.querySelectorAll('#mat-btns .mat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildEpBtns();
+  document.getElementById('prix-mat').value = PRIX_BASE[key] ?? 18.54;
+  saveCalcData();
+}
+
+function setEpaisseur(ep, btn){
+  epaisseurActive = ep;
+  document.querySelectorAll('#ep-btns .ep-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  saveCalcData();
+}
+
+function calculer(){
+  const prixMat = parseFloat(document.getElementById('prix-mat').value)  || 18.54;
+  const dvp     = parseFloat(document.getElementById('dvp').value)       || 0;
+  const lg      = parseFloat(document.getElementById('longueur').value)  || 0;
+
+  if(!dvp || !lg){ alert('Renseignez le DVP et la longueur.'); return; }
+
+  const nbCis   = parseFloat(document.getElementById('nb-cis').value)   || 0;
+  const tCis    = parseFloat(document.getElementById('t-cis').value)    || 50;
+  const nbPli   = parseFloat(document.getElementById('nb-pli').value)   || 0;
+  const tPli    = parseFloat(document.getElementById('t-pli').value)    || 30;
+  const nbPoinc = parseFloat(document.getElementById('nb-poinc').value) || 0;
+  const tPoinc  = parseFloat(document.getElementById('t-poinc').value)  || 50;
+
+  const tauxSec = parseFloat(document.getElementById('taux-mo-sec').value) || 0.017;
+
+  const stLaquage = parseFloat(document.getElementById('st-laquage').value) || 0;
+  const stSoudure = parseFloat(document.getElementById('st-soudure').value) || 0;
+  const stTransp  = parseFloat(document.getElementById('st-transp').value)  || 0;
+
+  const coefChute = parseFloat(document.getElementById('coef-chute').value) || 0.9;
+  const coefPort  = parseFloat(document.getElementById('coef-port').value)  || 0.9;
+  const coefMarge = parseFloat(document.getElementById('coef-marge').value) || 0.65;
+
+  const surface  = (dvp / 1000) * (lg / 1000);
+  const matBrut  = surface * prixMat;
+  const matChute = matBrut / coefChute;
+
+  const tempsTotalSec = (nbCis * tCis) + (nbPli * tPli) + (nbPoinc * tPoinc);
+  const moEuros   = tempsTotalSec * tauxSec;
+
+  const stTotal = (stLaquage > 0 ? surface * stLaquage : 0) + stSoudure + stTransp;
+
+  const prHT = matChute + moEuros + stTotal;
+
+  const pvFinal = prHT / (coefPort * coefMarge);
+
+  const prixM2     = surface > 0 ? pvFinal / surface : 0;
+  const coefSurMat = matChute > 0 ? pvFinal / matChute : 0;
+  const mgb        = pvFinal > 0 ? (pvFinal - prHT) / pvFinal : 0;
+
+  dernierResultat = { matChute, moEuros, stTotal, prHT, pvHT:pvFinal, prixM2, coefSurMat, mgb, dvp, lg, surface, tempsTotalSec };
+
+  const tMin = Math.floor(tempsTotalSec / 60);
+  const tSec = tempsTotalSec % 60;
+  document.getElementById('r-temps').value = tempsTotalSec < 60
+    ? tempsTotalSec + 's'
+    : tMin + 'min ' + tSec + 's';
+
+  document.getElementById('r-mat').textContent      = matChute.toFixed(2) + ' €';
+  document.getElementById('r-mo').textContent       = moEuros.toFixed(2)  + ' €';
+  document.getElementById('r-st').textContent       = stTotal.toFixed(2)  + ' €';
+  document.getElementById('r-pr').textContent       = prHT.toFixed(2)     + ' €';
+  document.getElementById('r-pv').textContent       = pvFinal.toFixed(2)  + ' €';
+  document.getElementById('r-m2').textContent       = prixM2.toFixed(2)   + ' €/m²';
+  document.getElementById('r-mgb').textContent      = (mgb * 100).toFixed(1) + ' %';
+  document.getElementById('r-coef-mat').textContent = coefSurMat.toFixed(3);
+
+  const badge = document.getElementById('r-delta-badge');
+  const delta = pvFinal - matChute;
+  if(mgb >= 0.45){
+    badge.style.cssText = 'display:block;border-radius:8px;padding:10px 16px;text-align:center;font-weight:700;font-size:13px;margin-top:8px;background:#dcfce7;color:#166534';
+  } else if(mgb >= 0.35){
+    badge.style.cssText = 'display:block;border-radius:8px;padding:10px 16px;text-align:center;font-weight:700;font-size:13px;margin-top:8px;background:#fef9c3;color:#854d0e';
+  } else {
+    badge.style.cssText = 'display:block;border-radius:8px;padding:10px 16px;text-align:center;font-weight:700;font-size:13px;margin-top:8px;background:#fee2e2;color:#991b1b';
+  }
+  badge.textContent = 'Marge brute : ' + (mgb*100).toFixed(1) + '% — Delta mat : ' + delta.toFixed(2) + ' €';
+  badge.style.display = 'block';
+
+  const ral = document.getElementById('ral-calc').value;
+  const cat = CATEGORIES[categorieActive].label;
+  document.getElementById('add-desig').value = cat + ' ' + Math.round(dvp) + '*' + Math.round(lg);
+  document.getElementById('add-ral').value   = ral;
+  document.getElementById('add-qte').value   = 1;
+  saveCalcData();
+}
+
+function ajouterAuDevis(){
+  if(!dernierResultat){ alert('Lancez d\'abord un calcul.'); return; }
+
+  const desig = document.getElementById('add-desig').value || 'Pièce sans désignation';
+  const ral   = document.getElementById('add-ral').value;
+  const qte   = parseInt(document.getElementById('add-qte').value) || 1;
+
+  const lignes = JSON.parse(localStorage.getItem('plialu-devis') || '[]');
+  lignes.push({
+    id:          Date.now(),
+    designation: desig,
+    matiere:     MATIERES[matiereActive].label,
+    ral,
+    ep:          epaisseurActive,
+    dvp:         Math.round(dernierResultat.dvp),
+    lg:          Math.round(dernierResultat.lg),
+    qte,
+    puHT:        parseFloat(dernierResultat.pvHT.toFixed(2))
+  });
+  localStorage.setItem('plialu-devis', JSON.stringify(lignes));
+
+  const msg = document.getElementById('msg-ok');
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display = 'none', 3000);
+}
+</script>
+</body>
+</html>
