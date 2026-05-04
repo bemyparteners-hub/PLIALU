@@ -4,18 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PLIALU — Configurateur</title>
+<link rel="stylesheet" href="../../shared/tokens.css">
+<link rel="stylesheet" href="../../shared/components/navbar.css">
+<link rel="stylesheet" href="../../shared/components/buttons.css">
+<link rel="stylesheet" href="../../shared/components/card.css">
+<link rel="stylesheet" href="../../shared/components/form.css">
 <style>
 /* ── RESET & BASE ── */
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;color:#1a2e38;min-height:100vh}
-
-/* ── NAV (identique calcul.html) ── */
-.nav{background:#0d2933;padding:0 24px;display:flex;align-items:center;gap:8px;height:52px;position:sticky;top:0;z-index:100}
-.nav-logo{color:#e8fc69;font-weight:800;font-size:17px;margin-right:16px;letter-spacing:1px;display:flex;align-items:center;gap:8px}
-.nav-logo span{background:#e8fc69;color:#0d2933;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
-.nav-btn{background:transparent;border:none;color:#a0bcc4;padding:8px 18px;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;transition:.2s;text-decoration:none;display:inline-flex;align-items:center}
-.nav-btn:hover{color:#fff}
-.nav-btn.active{background:#e8fc69;color:#0d2933}
+body{font-family:var(--font-sans);background:var(--bg-app);color:var(--text-primary);min-height:100vh}
 
 /* ── PAGE ── */
 .page{max-width:1200px;margin:24px auto;padding:0 16px}
@@ -23,15 +20,8 @@ body{font-family:'Segoe UI',sans-serif;background:#f0f4f8;color:#1a2e38;min-heig
 .page-header h1{font-size:20px;font-weight:800;color:#0d2933}
 .page-header p{font-size:13px;color:#6b7a80;margin-top:4px}
 
-/* ── CARD ── */
-.card{background:#fff;border-radius:12px;padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
-.card-title{font-size:12px;font-weight:800;color:#1a2e38;text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #e8fc69;display:flex;align-items:center;justify-content:space-between}
 
-/* ── FORM BASE ── */
-label{display:block;font-size:10px;font-weight:700;color:#6b7a80;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
-input,select{width:100%;padding:9px 11px;border:1.5px solid #dde3e8;border-radius:8px;font-size:14px;background:#fff;color:#1a2e38;transition:border .2s;font-family:'Segoe UI',sans-serif}
-input:focus,select:focus{outline:none;border-color:#0d2933}
-input::placeholder{color:#b0bec5}
+/* ── FORM (overrides locaux) ── */
 input[type=number]{-moz-appearance:textfield}
 input[type=number]::-webkit-inner-spin-button{opacity:.5}
 
@@ -91,16 +81,10 @@ input[type=number]::-webkit-inner-spin-button{opacity:.5}
 .result-box.highlight{background:#0d2933;border-color:#0d2933}
 .result-box.highlight .lbl{color:#a0bcc4}
 .result-box.highlight .val{color:#e8fc69;font-size:20px}
-.result-box.has-value{border-color:#cbff00;border-width:2px}
+.result-box.has-value{border-color:var(--accent);border-width:2px}
 
 /* ── ACTIONS ── */
 .actions-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.btn-primary{background:#e8fc69;color:#0d2933;border:none;border-radius:8px;padding:12px 24px;font-size:14px;font-weight:800;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:7px;font-family:'Segoe UI',sans-serif}
-.btn-primary:hover{background:#d4f040;transform:translateY(-1px)}
-.btn-secondary{background:#fff;color:#0d2933;border:1.5px solid #dde3e8;border-radius:8px;padding:11px 20px;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:7px;font-family:'Segoe UI',sans-serif}
-.btn-secondary:hover{border-color:#0d2933}
-.btn-reset{background:#fff;color:#6b7a80;border:1.5px solid #dde3e8;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:7px;font-family:'Segoe UI',sans-serif}
-.btn-reset:hover{border-color:#d9534f;color:#d9534f}
 .msg-ok{background:#dcfce7;color:#166534;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;display:none;align-items:center;gap:6px}
 
 /* ── SAVE INDICATOR ── */
@@ -130,14 +114,17 @@ input[type=number]::-webkit-inner-spin-button{opacity:.5}
 
 <!-- ── NAV ── -->
 <nav class="nav">
-  <a href="../../index.html" title="Retour au hub CRM" style="text-decoration:none;color:inherit;cursor:pointer">
-    <div class="nav-logo"><span>o</span> PLIALU</div>
+  <a class="nav-brand" href="../../index.html" title="Retour au hub CRM">
+    <span class="nav-mark">P</span>
+    <span class="nav-title">PLIALU</span>
   </a>
-  <a class="nav-btn" href="../../index.html">🏠 Hub</a>
-  <a class="nav-btn" href="../calculette/calcul.html">Calculette</a>
-  <a class="nav-btn" href="../calculette/devis.html">Devis</a>
-  <a class="nav-btn" href="../calculette/dessinateur.html">Dessinateur</a>
-  <a class="nav-btn active" href="index.html">Configurateur</a>
+  <ul class="nav-links">
+    <li><a class="nav-btn" href="../../index.html">🏠 Hub</a></li>
+    <li><a class="nav-btn" href="../calculette/calcul.html">Calculette</a></li>
+    <li><a class="nav-btn" href="../calculette/devis.html">Devis</a></li>
+    <li><a class="nav-btn" href="../calculette/dessinateur.html">Dessinateur</a></li>
+    <li><a class="nav-btn nav-btn--active" href="index.html">Configurateur</a></li>
+  </ul>
 </nav>
 
 <div class="page">
@@ -484,15 +471,15 @@ input[type=number]::-webkit-inner-spin-button{opacity:.5}
   <div class="card">
     <div class="card-title">Actions</div>
     <div class="actions-row">
-      <button class="btn-primary" id="btnAjouterDevis">➕ Ajouter au devis</button>
-      <button class="btn-secondary" id="btnTelechargerPng">📥 Télécharger vue ISO</button>
+      <button class="btn btn-primary" id="btnAjouterDevis">➕ Ajouter au devis</button>
+      <button class="btn btn-secondary" id="btnTelechargerPng">📥 Télécharger vue ISO</button>
       <div class="msg-ok" id="msgOk">✅ Ajouté au devis !</div>
     </div>
   </div>
 
   <!-- ── RESET ── -->
   <div class="card" style="text-align:center">
-    <button class="btn-reset" id="btnResetMemoire">🗑️ Effacer toute mémoire</button>
+    <button class="btn btn-reset" id="btnResetMemoire">🗑️ Effacer toute mémoire</button>
   </div>
 
 </div><!-- /page -->

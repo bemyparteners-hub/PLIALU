@@ -1,0 +1,122 @@
+/* ============================================================
+ * PLIALU — Boutons (canonique)
+ * ------------------------------------------------------------
+ * Pattern double-classe : .btn (base) + variante (.btn-primary,
+ * .btn-secondary, .btn-danger, .btn-reset). Modifieurs de taille
+ * .btn-sm / .btn-lg / .btn-icon.
+ *
+ * Markup attendu :
+ *   <button class="btn btn-primary">…</button>
+ *   <a class="btn btn-secondary" href="…">…</a>
+ *   <button class="btn btn-danger btn-sm">…</button>
+ *
+ * 100 % token-driven. Les valeurs CSS spécifiques (largeur de
+ * bordure, dimension d'icône) sont déclarées comme variables
+ * locales scopées sur `.btn`.
+ * ============================================================ */
+
+.btn {
+  --_border-width:  1.5px;
+  --_focus-width:   2px;
+  --_icon-size:     44px;
+  --_lift:          1px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: 800;
+  line-height: 1.2;
+  background: transparent;
+  color: inherit;
+  border: var(--_border-width) solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s,
+    transform 0.15s,
+    box-shadow 0.2s;
+}
+
+.btn:focus-visible {
+  outline: var(--_focus-width) solid var(--accent);
+  outline-offset: var(--_focus-width);
+}
+
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Primaire (jaune accent) ─────────────────────────────── */
+.btn-primary {
+  background: var(--accent);
+  color: var(--brand-900);
+}
+.btn-primary:hover {
+  background: var(--accent-hover);
+  transform: translateY(calc(-1 * var(--_lift)));
+}
+
+/* ── Secondaire (fond clair, bordure) ────────────────────── */
+.btn-secondary {
+  background: var(--bg-elevated);
+  color: var(--brand-900);
+  border-color: var(--border-soft);
+  font-weight: 700;
+}
+.btn-secondary:hover {
+  border-color: var(--brand-900);
+}
+
+/* ── Danger (rouge) ──────────────────────────────────────── */
+.btn-danger {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  font-weight: 700;
+}
+.btn-danger:hover {
+  background: var(--danger-border);
+}
+
+/* ── Reset (neutre, hover rouge) ─────────────────────────── */
+.btn-reset {
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  border-color: var(--border-soft);
+  font-weight: 600;
+  padding: var(--space-2) var(--space-5);
+  font-size: var(--text-sm);
+}
+.btn-reset:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* ── Modifieurs de taille ─────────────────────────────────── */
+.btn-sm {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.btn-lg {
+  padding: var(--space-4) var(--space-8);
+  font-size: var(--text-lg);
+}
+
+.btn-icon {
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+  padding: 0;
+  border-radius: var(--radius);
+}

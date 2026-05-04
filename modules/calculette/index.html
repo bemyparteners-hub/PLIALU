@@ -4,42 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PLIALU — Accueil</title>
+  <link rel="stylesheet" href="../../shared/tokens.css">
+  <link rel="stylesheet" href="../../shared/components/navbar.css">
   <style>
     /* ════ RESET ════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f4f6f8; color: #1a2e35; }
-
-    /* ════ NAVBAR ════ */
-    .navbar {
-      background: #0d2933;
-      padding: 0 32px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
-    }
-    .navbar-brand {
-      font-size: 20px;
-      font-weight: 800;
-      color: #e8fc69;
-      letter-spacing: 1px;
-    }
-    .navbar-links { display: flex; gap: 8px; }
-    .navbar-links a {
-      color: rgba(255,255,255,0.75);
-      text-decoration: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all .2s;
-    }
-    .navbar-links a:hover { background: rgba(232,252,105,0.15); color: #e8fc69; }
-    .navbar-links a.active { background: #e8fc69; color: #0d2933; font-weight: 700; }
+    body { font-family: var(--font-sans); background: var(--bg-app); color: var(--text-primary); }
 
     /* ════ HERO ════ */
     .hero {
@@ -179,7 +149,7 @@
       margin-bottom: 48px;
     }
     .info-band span { font-size: 24px; }
-    .info-band p { font-size: 14px; color: #1a2e35; line-height: 1.5; }
+    .info-band p { font-size: 14px; color: var(--text-primary); line-height: 1.5; }
     .info-band strong { color: #0d2933; }
 
     /* ════ FOOTER ════ */
@@ -195,25 +165,25 @@
     /* ════ RESPONSIVE ════ */
     @media (max-width: 600px) {
       .hero h1 { font-size: 28px; }
-      .navbar { padding: 0 16px; }
-      .navbar-brand { font-size: 16px; }
-      .navbar-links a { padding: 6px 10px; font-size: 12px; }
     }
   </style>
 </head>
 <body>
 
 <!-- NAVBAR -->
-<nav class="navbar">
-  <a href="../../index.html" title="Retour au hub CRM" style="text-decoration:none;color:inherit;cursor:pointer"><div class="navbar-brand">● PLIALU</div></a>
-  <div class="navbar-links">
-    <a href="../../index.html">🏠 Hub</a>
-    <a href="index.html" class="active">📋 Accueil</a>
-    <a href="calcul.html">🧮 Calculette</a>
-    <a href="devis.html">📄 Devis</a>
-    <a href="dessinateur.html">✏️ Dessinateur</a>
-    <a href="../configurateur/index.html">⚙️ Configurateur</a>
-  </div>
+<nav class="nav">
+  <a class="nav-brand" href="../../index.html" title="Retour au hub CRM">
+    <span class="nav-mark">P</span>
+    <span class="nav-title">PLIALU</span>
+  </a>
+  <ul class="nav-links">
+    <li><a class="nav-btn" href="../../index.html">🏠 Hub</a></li>
+    <li><a class="nav-btn nav-btn--active" href="index.html">Accueil</a></li>
+    <li><a class="nav-btn" href="calcul.html">Calculette</a></li>
+    <li><a class="nav-btn" href="devis.html">Devis</a></li>
+    <li><a class="nav-btn" href="dessinateur.html">Dessinateur</a></li>
+    <li><a class="nav-btn" href="../configurateur/index.html">Configurateur</a></li>
+  </ul>
 </nav>
 
 <!-- HERO -->
@@ -303,7 +273,7 @@
 
   <!-- Reset global -->
   <div style="text-align:center;margin-bottom:48px">
-    <button onclick="if(confirm('Effacer TOUTE la m\u00e9moire du projet (calculette, devis, dessinateur) ?\n\nCette action est irr\u00e9versible.')){localStorage.removeItem('plialu_project_data');localStorage.removeItem('plialu-devis');localStorage.removeItem('plialu-devis-dessins');alert('M\u00e9moire effac\u00e9e avec succ\u00e8s !');}" style="background:#fff;color:#6b7a80;border:2px solid #e2e8f0;border-radius:8px;padding:10px 24px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='#d9534f';this.style.color='#d9534f'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#6b7a80'">🗑️ Effacer toute m&eacute;moire</button>
+    <button class="btn btn-reset" onclick="if(confirm('Effacer TOUTE la m\u00e9moire du projet (calculette, devis, dessinateur) ?\n\nCette action est irr\u00e9versible.')){localStorage.removeItem('plialu_project_data');localStorage.removeItem('plialu-devis');localStorage.removeItem('plialu-devis-dessins');alert('M\u00e9moire effac\u00e9e avec succ\u00e8s !');}">🗑️ Effacer toute m&eacute;moire</button>
   </div>
 
 </div>

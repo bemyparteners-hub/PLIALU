@@ -38,9 +38,16 @@ Tout autre module ajouté reste libre d'utiliser ou non cette convention.
 ├── README.md
 ├── LICENSE
 ├── AUDIT.md                  Audit de structure (référence historique)
+├── STYLE-AUDIT.md            Audit CSS (référence historique)
 ├── .gitignore
 ├── .claude/
 │   └── skills/               Slash-commands Claude Code (10 skills)
+├── shared/                   Design system (tokens + composants)
+│   ├── tokens.css            Tokens couleurs / espacements / typo
+│   ├── theme-dark.css        Surcharges thème sombre
+│   ├── components/           navbar, buttons, card, form
+│   ├── preview.html          Aperçu visuel des composants
+│   └── README.md             Documentation du design system
 ├── modules/
 │   ├── calculette/
 │   │   ├── index.html        Accueil Calculette
@@ -63,6 +70,13 @@ Tout autre module ajouté reste libre d'utiliser ou non cette convention.
 `assets/` est partagé entre modules et reste à la racine. Les modules y
 accèdent via `../../assets/...`. `tools/` est un répertoire dev, pas un
 module utilisateur.
+
+### Design system
+
+Toutes les pages partagent un système de tokens et de composants CSS sous
+`shared/` (HTML/CSS vanilla, pas de build). Voir [`shared/README.md`](./shared/README.md)
+pour les conventions, l'ordre de chargement, et la procédure pour ajouter
+un composant ou un thème.
 
 ## Données locales (PII)
 
