@@ -11,6 +11,18 @@
  *
  * Variantes :
  *   .card-active     bordure accent (sélection / mise en avant)
+ *   .card--rich      tile riche pour grille de modules (icône en haut,
+ *                    flèche coin haut-droit, tags en bas, hover lift +
+ *                    barre accent qui apparaît). Markup :
+ *                      <a class="card card--rich" href="…">
+ *                        <span class="card-arrow">→</span>
+ *                        <div class="card-icon">🧮</div>
+ *                        <h3>Titre</h3>
+ *                        <p>Description…</p>
+ *                        <ul class="card-tags">
+ *                          <li class="card-tag">Tag</li>
+ *                        </ul>
+ *                      </a>
  *
  * Le padding canonique (22px 24px) est défini en propriétés
  * scopées locales car 22 ne fait pas partie des tokens d'espace
@@ -32,7 +44,7 @@
   padding: var(--_card-py) var(--_card-px);
   margin-bottom: var(--space-4);
   box-shadow: var(--shadow-card);
-  transition: box-shadow 0.2s, border-color 0.2s;
+  transition: box-shadow 0.2s, border-color 0.2s, transform 0.25s;
 }
 
 .card:hover {
@@ -59,4 +71,91 @@
 .card-active {
   border-color: var(--accent);
   border-width: var(--_card-active-border-width);
+}
+
+/* ============================================================
+ * Variante .card--rich : tile cliquable pour grille de modules.
+ * S'utilise typiquement sur une <a class="card card--rich">.
+ * ============================================================ */
+
+.card--rich {
+  --_rich-py:           32px;
+  --_rich-px:           28px;
+  --_rich-border-w:     2px;
+  --_rich-lift:         4px;
+  --_rich-accent-h:     4px;
+  --_rich-icon-size:    40px;
+
+  position: relative;
+  display: block;
+  padding: var(--_rich-py) var(--_rich-px);
+  border-width: var(--_rich-border-w);
+  text-decoration: none;
+  color: inherit;
+  margin-bottom: 0;
+  overflow: hidden;
+}
+
+.card--rich::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--_rich-accent-h);
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.25s;
+}
+
+.card--rich:hover {
+  transform: translateY(calc(-1 * var(--_rich-lift)));
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--brand-900);
+}
+
+.card--rich:hover::after {
+  transform: scaleX(1);
+}
+
+.card-icon {
+  font-size: var(--_rich-icon-size, 40px);
+  line-height: 1;
+  margin-bottom: var(--space-4);
+}
+
+.card-arrow {
+  --_arrow-shift: 4px;
+
+  position: absolute;
+  top: var(--space-6);
+  right: var(--space-6);
+  font-size: var(--text-xl);
+  color: var(--border-strong);
+  transition: color 0.2s, transform 0.2s;
+}
+
+.card--rich:hover .card-arrow {
+  color: var(--brand-900);
+  transform: translateX(var(--_arrow-shift));
+}
+
+.card-tags {
+  --_pill-radius: 999px;
+
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.card-tag {
+  background: var(--bg-muted);
+  color: var(--brand-900);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--_pill-radius);
+  font-size: var(--text-xs);
+  font-weight: 600;
 }
