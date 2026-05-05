@@ -54,7 +54,7 @@ dans la logique « modules d'un même CRM »).
 
 #### F-1.1 ✅ RÉSOLU — `assets/pieces/` documenté comme réservé pour usage futur
 
-- **Statut** : résolu le 2026-05-05 par `<commit-2-SHA>`. Décision
+- **Statut** : résolu le 2026-05-05 par `c29cbf5`. Décision
   utilisateur : **conserver les images** pour usage futur (aperçus
   visuels dans configurateur / devis / fiche pièce). Le dossier
   passe de « orphelin trompeur » à « réserve documentée » :
@@ -253,7 +253,7 @@ factorisation propre.
 
 #### F-6.2 ✅ RÉSOLU — `README.md` racine annoté
 
-- **Statut** : résolu le 2026-05-05 par `<commit-2-SHA>`.
+- **Statut** : résolu le 2026-05-05 par `c29cbf5`.
   L'entrée `pieces/` du tree est maintenant : « 197 PNG réservés
   pour aperçus visuels futurs (non utilisés en production, voir
   assets/pieces/README.md) ». Plus de mention trompeuse
