@@ -7,16 +7,30 @@ HTML / CSS / JS vanilla, sans build, déployés sur GitHub Pages depuis `main`.
 
 | URL (GH Pages) | Source | Rôle |
 |---|---|---|
-| `/` | `index.html` | Hub CRM — point d'entrée vers les modules |
-| `/modules/calculette/` | `modules/calculette/index.html` | Tableau de bord Calculette |
+| `/` | `index.html` | Hub CRM — sidebar permanente + hero + grille de modules |
+| `/modules/calculette/` | `modules/calculette/index.html` | Tableau de bord Calculette (3 outils internes) |
 | `/modules/calculette/calcul.html` | `modules/calculette/calcul.html` | Calculette de prix (matière + MO + sous-traitance → PV HT) |
 | `/modules/calculette/devis.html` | `modules/calculette/devis.html` | Génération de devis PDF (jsPDF + autoTable + pdf-lib) |
 | `/modules/calculette/dessinateur.html` | `modules/calculette/dessinateur.html` | Croquis techniques canvas |
 | `/modules/configurateur/` | `modules/configurateur/index.html` | Configurateur de pièces (gammes / matières / SVG) |
 | `/modules/maxcut/` | `modules/maxcut/index.html` | Optimiseur de plan de découpe aluminium |
 
-Pour ajouter un module, créer `modules/<nom>/index.html` puis ajouter une carte
-dans le hub `index.html` (un `<a class="card">`).
+### Le hub
+
+Le hub (`/index.html`) est le tableau de bord du CRM : sidebar 250 px à
+gauche (logo CRM PLIALU + sections « Outils » / « À venir » + footer),
+avec en zone principale un hero brand-foncé (badge + titre + 3 CTA) puis
+une section « Modules disponibles » qui présente les 3 modules sous forme
+de cartes riches (icône, flèche, tags). Sous 900 px la sidebar passe en
+barre horizontale au-dessus du contenu.
+
+Pour ajouter un module :
+
+1. Créer `modules/<nom>/index.html`.
+2. Ajouter un lien dans la sidebar (`<li><a class="sidebar-link" href="modules/<nom>/index.html">…</a></li>`).
+3. Ajouter une carte `card card--rich` dans la grille « Modules disponibles ».
+4. (Optionnel) Ajouter un CTA dans le hero si l'action est suffisamment
+   centrale.
 
 ### Couplage Calculette ↔ Configurateur
 

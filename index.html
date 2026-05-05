@@ -5,133 +5,215 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CRM PLIALU</title>
 <link rel="stylesheet" href="shared/tokens.css">
-<link rel="stylesheet" href="shared/components/navbar.css">
+<link rel="stylesheet" href="shared/components/sidebar.css">
 <link rel="stylesheet" href="shared/components/buttons.css">
+<link rel="stylesheet" href="shared/components/card.css">
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{height:100%}
+  /* ── Reset minimal ── */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
   body{
     font-family:var(--font-sans);
     background:var(--bg-app);
     color:var(--text-primary);
     display:flex;
-    flex-direction:column;
     min-height:100vh;
   }
-  main{
+
+  /* ── Main scrollable à droite de la sidebar ── */
+  .hub-main{
     flex:1;
-    max-width:1100px;
-    width:100%;
-    margin:0 auto;
-    padding:48px 24px 64px;
+    min-width:0; /* évite l'overflow horizontal des grilles */
+    display:flex;
+    flex-direction:column;
   }
-  .lead{
-    font-size:14px;color:#5b6c75;margin-bottom:28px;
+
+  /* ── HERO (fond brand) ── */
+  .hub-hero{
+    background:var(--brand-900);
+    color:var(--text-on-brand);
+    padding:var(--space-8) var(--space-8) calc(var(--space-8) * 1.5);
+    text-align:center;
+    position:relative;
+    overflow:hidden;
   }
-  .grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-    gap:18px;
-  }
-  .card{
-    display:flex;flex-direction:column;
-    background:#fff;
-    border:1.5px solid #e2e8f0;
-    border-radius:12px;
-    padding:22px 22px 20px;
-    text-decoration:none;
-    color:inherit;
-    transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;
-    min-height:160px;
-  }
-  .card:hover{
-    transform:translateY(-2px);
-    border-color:#0d2933;
-    box-shadow:0 8px 22px rgba(13,41,51,.08);
-  }
-  .card .icon{
-    width:42px;height:42px;border-radius:10px;
-    background:#0d2933;color:#e8fc69;
-    display:flex;align-items:center;justify-content:center;
-    font-size:20px;font-weight:900;
-    margin-bottom:14px;
-  }
-  .card h2{
-    font-size:16px;font-weight:800;letter-spacing:.02em;
-    margin-bottom:6px;
-  }
-  .card p{
-    font-size:13px;color:#5b6c75;line-height:1.45;flex:1;
-  }
-  .card .arrow{
-    margin-top:14px;font-size:12px;font-weight:700;
-    color:#0d2933;letter-spacing:.04em;text-transform:uppercase;
-  }
-  .card.placeholder{
-    border-style:dashed;
-    background:transparent;
-    color:#9aa8af;
-    cursor:default;
+  .hub-hero::before{
+    content:'';
+    position:absolute;
+    top:-80px; left:50%; transform:translateX(-50%);
+    width:600px; height:600px;
+    background:radial-gradient(circle, rgba(232,252,105,0.10) 0%, transparent 70%);
     pointer-events:none;
   }
-  .card.placeholder .icon{
-    background:transparent;border:1.5px dashed #cbd6dc;color:#9aa8af;
+  .hub-hero-inner{
+    position:relative;
+    max-width:780px;
+    margin:0 auto;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:var(--space-5);
   }
-  footer{
-    border-top:1px solid #e2e8f0;
-    padding:18px 24px;
-    font-size:12px;color:#7a8b94;
+  .hub-hero-badge{
+    display:inline-block;
+    padding:var(--space-1) var(--space-4);
+    background:var(--accent-glow);
+    color:var(--accent);
+    border:1px solid var(--accent-glow);
+    border-radius:var(--radius-lg);
+    font-size:var(--text-xs);
+    font-weight:700;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+  }
+  .hub-hero h1{
+    font-size:clamp(2rem, 5vw, 3rem);
+    font-weight:900;
+    line-height:1.15;
+    margin:0;
+  }
+  .hub-hero h1 span{ color:var(--accent); }
+  .hub-hero-ctas{
+    display:flex;
+    gap:var(--space-3);
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-top:var(--space-3);
+  }
+
+  /* ── Section "Modules disponibles" (fond clair) ── */
+  .hub-modules{
+    flex:1;
+    padding:var(--space-8) var(--space-8) calc(var(--space-8) * 2);
+    max-width:1200px;
+    width:100%;
+    margin:0 auto;
+  }
+  .hub-modules-header{
     text-align:center;
+    margin-bottom:var(--space-8);
+  }
+  .hub-modules-header h2{
+    font-size:1.625rem;
+    font-weight:800;
+    color:var(--brand-900);
+    margin:0;
+  }
+  .hub-modules-header p{
+    font-size:var(--text-base);
+    color:var(--text-muted);
+    margin-top:var(--space-2);
+  }
+  .hub-modules-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+    gap:var(--space-5);
+  }
+
+  /* ── Responsive : empile la sidebar (sidebar.css gère déjà la bascule) ── */
+  @media (max-width: 900px){
+    body{ flex-direction:column; }
+    .hub-hero{ padding:var(--space-6) var(--space-4) var(--space-8); }
+    .hub-modules{ padding:var(--space-6) var(--space-4); }
+    .hub-hero h1{ font-size:1.75rem; }
   }
 </style>
 </head>
 <body>
 
-<nav class="nav">
-  <div class="nav-brand nav-brand--static" title="Hub CRM PLIALU">
-    <span class="nav-mark">P</span>
-    <span class="nav-title nav-title--hub">
-      <span class="nav-title-prefix">CRM</span>PLIALU
+<!-- ════ SIDEBAR (250px, brand-900, permanente) ════ -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-mark">P</span>
+    <span class="sidebar-title">
+      <span class="sidebar-title-prefix">CRM</span>PLIALU
     </span>
   </div>
-</nav>
 
-<main>
-  <p class="lead">Outils internes — sélectionnez un module.</p>
+  <nav class="sidebar-section">
+    <div class="sidebar-section-label">Outils</div>
+    <ul class="sidebar-links">
+      <li><a class="sidebar-link" href="modules/calculette/index.html"><span class="sidebar-link-icon">🧮</span>Calculette</a></li>
+      <li><a class="sidebar-link" href="modules/configurateur/index.html"><span class="sidebar-link-icon">⚙️</span>Configurateur</a></li>
+      <li><a class="sidebar-link" href="modules/maxcut/index.html"><span class="sidebar-link-icon">📐</span>MAXCUT</a></li>
+    </ul>
+  </nav>
 
-  <div class="grid">
-
-    <a class="card" href="modules/calculette/index.html">
-      <div class="icon">🧮</div>
-      <h2>Calculette</h2>
-      <p>Calcul de prix, génération de devis PDF, dessinateur technique.</p>
-      <span class="arrow">Ouvrir →</span>
-    </a>
-
-    <a class="card" href="modules/configurateur/index.html">
-      <div class="icon">⚙️</div>
-      <h2>Configurateur</h2>
-      <p>Configurateur de pièces — alimente les devis.</p>
-      <span class="arrow">Ouvrir →</span>
-    </a>
-
-    <a class="card" href="modules/maxcut/index.html">
-      <div class="icon">📐</div>
-      <h2>MAXCUT</h2>
-      <p>Optimiseur de plan de découpe pour profilés aluminium.</p>
-      <span class="arrow">Ouvrir →</span>
-    </a>
-
-    <div class="card placeholder" aria-hidden="true">
-      <div class="icon">+</div>
-      <h2>Module à venir</h2>
-      <p>Emplacement réservé pour un futur module.</p>
-    </div>
-
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">À venir</div>
+    <ul class="sidebar-links">
+      <li><span class="sidebar-link sidebar-link--placeholder"><span class="sidebar-link-icon">+</span>Module à venir</span></li>
+    </ul>
   </div>
-</main>
 
-<footer>© PLIALU — Outils internes</footer>
+  <div class="sidebar-footer">© PLIALU — Outils internes</div>
+</aside>
+
+<!-- ════ MAIN ════ -->
+<main class="hub-main">
+
+  <!-- HERO -->
+  <section class="hub-hero">
+    <div class="hub-hero-inner">
+      <span class="hub-hero-badge">🏠 Outils internes PLIALU</span>
+      <h1>Tous vos outils.<br><span>Un seul endroit.</span></h1>
+      <div class="hub-hero-ctas">
+        <a class="btn btn-primary btn-lg" href="modules/calculette/index.html">🧮 Lancer la calculette</a>
+        <a class="btn btn-secondary btn-lg" href="modules/configurateur/index.html">⚙️ Configurer une pièce</a>
+        <a class="btn btn-secondary btn-lg" href="modules/maxcut/index.html">📐 Optimiser une découpe</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- GRILLE DES MODULES -->
+  <section class="hub-modules">
+    <header class="hub-modules-header">
+      <h2>Modules disponibles</h2>
+      <p>Trois outils complémentaires pour votre activité</p>
+    </header>
+
+    <div class="hub-modules-grid">
+
+      <a class="card card--rich" href="modules/calculette/index.html">
+        <span class="card-arrow" aria-hidden="true">→</span>
+        <div class="card-icon">🧮</div>
+        <h3>Calculette de prix</h3>
+        <p>Calcul du prix de vente HT à partir de la matière, des dimensions, de la main-d'œuvre et des coefficients. Marge brute et coefficient sur matière en temps réel.</p>
+        <ul class="card-tags">
+          <li class="card-tag">Prix de vente</li>
+          <li class="card-tag">Marge</li>
+          <li class="card-tag">Coefficient R</li>
+        </ul>
+      </a>
+
+      <a class="card card--rich" href="modules/configurateur/index.html">
+        <span class="card-arrow" aria-hidden="true">→</span>
+        <div class="card-icon">⚙️</div>
+        <h3>Configurateur de pièces</h3>
+        <p>Sélection d'une gamme, paramétrage des cotes A/B/C/D et calcul du DVP. Vue isométrique en temps réel et envoi direct au devis.</p>
+        <ul class="card-tags">
+          <li class="card-tag">DVP auto</li>
+          <li class="card-tag">Cotes A/B/C/D</li>
+          <li class="card-tag">Push devis</li>
+        </ul>
+      </a>
+
+      <a class="card card--rich" href="modules/maxcut/index.html">
+        <span class="card-arrow" aria-hidden="true">→</span>
+        <div class="card-icon">📐</div>
+        <h3>MAXCUT</h3>
+        <p>Optimiseur de plan de découpe pour profilés aluminium. Minimise les chutes en regroupant les pièces sur les barres standards.</p>
+        <ul class="card-tags">
+          <li class="card-tag">Optimisation</li>
+          <li class="card-tag">Plan de découpe</li>
+          <li class="card-tag">Profilés alu</li>
+        </ul>
+      </a>
+
+    </div>
+  </section>
+
+</main>
 
 </body>
 </html>
