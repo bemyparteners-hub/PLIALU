@@ -16,10 +16,12 @@ shared/
 ├── preview.html                # Aperçu visuel des composants
 ├── README.md                   # Ce fichier
 └── components/
-    ├── navbar.css              # Navbar + logo PLIALU canonique
-    ├── buttons.css             # .btn + variantes
-    ├── card.css                # .card + .card-title + .card-active
-    └── form.css                # input/select/textarea + label
+    ├── navbar.css              # Navbar horizontale + logo (modules)
+    ├── sidebar.css              # Sidebar verticale + logo (hub uniquement)
+    ├── buttons.css              # .btn + variantes
+    ├── card.css                 # .card / .card-title / .card-active /
+    │                            #   .card--rich + .card-icon / -arrow / -tags
+    └── form.css                 # input/select/textarea + label
 ```
 
 ---
@@ -73,7 +75,8 @@ Markup canonique d'un module :
 </nav>
 ```
 
-Variante hub (logo non-cliquable, `CRM PLIALU`) :
+Variante hub historique (logo non-cliquable, `CRM PLIALU`) — laissée pour
+référence, **plus utilisée** depuis que le hub adopte la sidebar :
 
 ```html
 <nav class="nav">
@@ -85,6 +88,62 @@ Variante hub (logo non-cliquable, `CRM PLIALU`) :
   </div>
 </nav>
 ```
+
+### `sidebar.css` — Sidebar (hub uniquement)
+
+Sidebar permanente de 250 px utilisée par `index.html` à la racine. Les
+modules conservent leur navbar horizontale (`navbar.css`).
+
+```html
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-mark">P</span>
+    <span class="sidebar-title">
+      <span class="sidebar-title-prefix">CRM</span>PLIALU
+    </span>
+  </div>
+
+  <nav class="sidebar-section">
+    <div class="sidebar-section-label">Outils</div>
+    <ul class="sidebar-links">
+      <li><a class="sidebar-link" href="…">
+        <span class="sidebar-link-icon">🧮</span>Calculette
+      </a></li>
+      <!-- … -->
+    </ul>
+  </nav>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">À venir</div>
+    <ul class="sidebar-links">
+      <li><span class="sidebar-link sidebar-link--placeholder">
+        <span class="sidebar-link-icon">+</span>Module à venir
+      </span></li>
+    </ul>
+  </div>
+
+  <div class="sidebar-footer">© PLIALU — Outils internes</div>
+</aside>
+```
+
+Layout côté page :
+
+```css
+body { display: flex; min-height: 100vh; }
+main { flex: 1; min-width: 0; }
+```
+
+Variantes utiles :
+
+- `.sidebar-link--active` : item courant (fond accent, texte brand) — non
+  utilisé sur le hub car il n'y a pas d'item correspondant à la page
+  d'accueil dans la liste des outils.
+- `.sidebar-link--placeholder` : emplacement réservé en pointillés,
+  non-cliquable (`pointer-events: none`, opacity 0.5).
+
+Responsive : sous **900px** la sidebar bascule en barre horizontale
+au-dessus du `main` (footer + section labels masqués, liens en pillules).
+Aucun JS requis.
 
 ### `buttons.css` — Boutons
 
@@ -103,6 +162,8 @@ Tailles : `.btn-sm`, `.btn-lg`, `.btn-icon`.
 
 ### `card.css` — Card
 
+Card simple :
+
 ```html
 <div class="card">
   <h3 class="card-title">Titre uppercase</h3>
@@ -113,6 +174,26 @@ Tailles : `.btn-sm`, `.btn-lg`, `.btn-icon`.
   <!-- bordure accent pour mise en avant -->
 </div>
 ```
+
+Card riche (tile cliquable, grille de modules) — utilisée par le hub et le
+dashboard de la calculette :
+
+```html
+<a class="card card--rich" href="…">
+  <span class="card-arrow" aria-hidden="true">→</span>
+  <div class="card-icon">🧮</div>
+  <h3>Titre du module</h3>
+  <p>Description courte.</p>
+  <ul class="card-tags">
+    <li class="card-tag">Tag</li>
+    <li class="card-tag">Tag</li>
+  </ul>
+</a>
+```
+
+`.card--rich` ajoute un effet de hover (lift + barre accent qui apparaît en
+bas) ; `.card-arrow` glisse vers la droite au survol ; `.card-tag` est une
+pillule au fond `--bg-muted`.
 
 ### `form.css` — Formulaires
 
