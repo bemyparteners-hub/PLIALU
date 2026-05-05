@@ -42,12 +42,19 @@ Classes/sélecteurs fournis par chaque shared :
 | `modules/calculette/devis.html` | ✓✓ (3) | — | ✓✓ | — | ✓✓ | ✓✓ | ✓✓ (32) |
 | `modules/calculette/dessinateur.html` | ✓✓ (11) | — | ✓✓ | — | ✓✓ | ✓✓ | ✓✓ (6) |
 | `modules/configurateur/index.html` | ✓✓ (4) | — | ✓✓ | — | ✓✓ | ✓✓ | ✓✓ (41) |
-| `modules/maxcut/index.html` | ✓✓ (134) | ✓✓ | ✓✓ | — | ✓✓ | — *(see A1)* | **⚠ INLINE** (19) |
+| `modules/maxcut/index.html` | ✓✓ (134) | — *(see note)* | ✓✓ | — | ✓✓ | — *(see A1)* | **⚠ INLINE** (19) |
 
 Les nombres entre parenthèses indiquent :
 - pour `tokens.css` : occurrences de `var(--*)` dans le `<style>` inline.
 - pour `navbar.css` / `sidebar.css` : nombre de classes shared distinctes utilisées.
 - pour `form.css` : nombre d'éléments `<input>/<select>/<textarea>/<label>` dans le markup.
+
+> **Note sur `theme-dark.css`** : le fichier existe mais n'est chargé par
+> aucune page en production (volontairement conservé, voir le commentaire
+> en tête de `shared/theme-dark.css`). Dernier consommateur : MAXCUT,
+> retiré le 2026-05-04 lors de l'unification de tous les modules en thème
+> clair. Le fichier reste prêt à être ré-utilisé sur un futur module
+> (monitoring, mode atelier basse luminosité, etc.).
 
 ---
 
@@ -110,7 +117,7 @@ Les nombres entre parenthèses indiquent :
 
 ### `modules/maxcut/index.html`
 
-- **CSS chargés** : tokens · **theme-dark** · navbar · buttons (pas de card, pas de form, pas de sidebar)
+- **CSS chargés** : tokens · navbar · buttons (pas de card, pas de form, pas de sidebar, pas de theme-dark depuis la migration en thème clair du 2026-05-04)
 - **Classes shared utilisées** :
   - `nav*` (9, dont `nav-tab`/`nav-tabs` qui sont des classes **page-spécifiques** — voir note infra) · `btn*` (8 : tous sauf `btn-reset`)
 - **Classes utilisées sans `<link>` correspondant** :

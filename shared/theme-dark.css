@@ -1,8 +1,21 @@
 /* ============================================================
  * PLIALU — Thème sombre
  * ------------------------------------------------------------
+ * Dark theme override — currently UNUSED in production.
+ * Last consumed by modules/maxcut/index.html before its switch
+ * to light theme (commit b36a6c3, 2026-05-04).
+ *
+ * Kept intentionally as a ready-to-use dark theme for future
+ * modules (e.g. monitoring dashboards, low-light workshop mode).
+ * To activate: <link rel="stylesheet" href="path/to/theme-dark.css">
+ * AFTER tokens.css.
+ *
+ * Mappings encoded here (surface inversion, status colors on dark,
+ * alpha-blended borders) reflect design decisions validated in
+ * the original audit. Avoid recreating from scratch.
+ *
  * Surcharge des tokens définis dans tokens.css pour les pages
- * en thème sombre (actuellement : modules/maxcut/index.html).
+ * en thème sombre.
  *
  * Inclusion : APRÈS tokens.css, dans le <head>.
  *   <link rel="stylesheet" href="../../shared/tokens.css">

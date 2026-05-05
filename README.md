@@ -58,7 +58,7 @@ Tout autre module ajouté reste libre d'utiliser ou non cette convention.
 │   └── skills/               Slash-commands Claude Code (10 skills)
 ├── shared/                   Design system (tokens + composants)
 │   ├── tokens.css            Tokens couleurs / espacements / typo
-│   ├── theme-dark.css        Surcharges thème sombre
+│   ├── theme-dark.css        Surcharges thème sombre (non utilisé en production, conservé pour modules futurs)
 │   ├── components/           navbar, buttons, card, form
 │   ├── preview.html          Aperçu visuel des composants
 │   └── README.md             Documentation du design system
