@@ -1,5 +1,11 @@
 # AUDIT — Dépôt PLIALU
 
+> ⚠ **HISTORICAL SNAPSHOT — état du dépôt avant refactor.**
+> Ce document décrit l'état *initial* du dépôt (3 zips, doublons,
+> drift, code mort). Conserve la trace de l'audit qui a déclenché
+> les phases de restructuration et de design system. Pour l'état
+> courant, voir `LINK-AUDIT.md` et `COHERENCE-AUDIT.md`.
+>
 > Phase 1 : audit lecture seule. Aucun fichier du dépôt n'a été modifié hormis ce rapport.
 > Date d'audit : 2026-05-04 — Branche : `claude/audit-repository-ALinL`.
 

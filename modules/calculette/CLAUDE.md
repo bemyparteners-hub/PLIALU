@@ -19,9 +19,10 @@ aluminium sur mesure : calcul de prix, génération de devis PDF, dessin techniq
 
 ## Place dans le dépôt
 
-Ce module vit sous `modules/calculette/`. Le hub CRM est à `/index.html` (racine
-du dépôt). Les assets partagés (`assets/pieces/`) sont à la racine ; depuis ce
-module, on y accède via `../../assets/pieces/`.
+Ce module vit sous `modules/calculette/`. Le hub CRM est à `/index.html`
+(racine du dépôt). Le module utilise les composants partagés sous `/shared/`
+(navbar, boutons, card, form) — voir `shared/README.md` pour la liste
+complète.
 
 ## Structure du module
 
@@ -152,20 +153,23 @@ La sauvegarde est déclenchée à chaque événement `input`/`change`. Un indica
 
 ## Design system
 
-**Couleurs** :
-- Fond header : `#0d2933` (bleu marine)
-- Accent : `#e8fc69` (jaune citron)
-- Fond page : `#f0f4f8`
-- Texte principal : `#1a2e38`
-- Succès : `#dcfce7` / bordure `#86efac`
-- Alerte : `#fef9c3` / bordure `#fcd34d`
-- Danger : `#fee2e2` / bordure `#fca5a5`
+Le module consomme le design system partagé. Source de vérité : `shared/tokens.css`
+et `shared/README.md`. Les composants utilisés ici proviennent de `shared/components/`
+(`navbar.css`, `buttons.css`, `card.css`, `form.css`).
 
-**Typographie** : Segoe UI, sans-serif — titres 800–900, corps 400–600
+Repères rapides issus des tokens (pour relecture, **ne pas modifier ici** —
+modifier dans `tokens.css`) :
+
+- Brand : `--brand-900` `#0d2933`, `--accent` `#e8fc69`
+- Surfaces : `--bg-app` `#f0f4f8`, `--bg-elevated` `#fff`, `--bg-muted` `#f8fafc`
+- Texte : `--text-primary` `#1a2e38`, `--text-muted` `#6b7a80`
+- Statuts : voir `tokens.css` (`--success-*`, `--warning-*`, `--danger-*`)
+- Police : `--font-sans` `Segoe UI, system-ui, …`
+- Échelle typo : `--text-xs` 11 / `--text-sm` 13 / `--text-base` 14 / `--text-lg` 16 / `--text-xl` 18
 
 **Responsive** : grilles 2–3 colonnes → 1 colonne sous 650 px ; navbar sticky z-index 100
 
-**Canvas** : 500 px de haut, largeur fluide, support HiDPI (devicePixelRatio)
+**Canvas** (dessinateur) : 500 px de haut, largeur fluide, support HiDPI (devicePixelRatio)
 
 ---
 
@@ -190,5 +194,6 @@ La sauvegarde est déclenchée à chaque événement `input`/`change`. Un indica
 
 ## Skills disponibles
 
-- `/performance` — Analyse des performances web
-- `/code-review` — Revue de code
+Voir `.claude/skills/` à la racine du dépôt pour la liste complète des
+slash-commands custom (accessibility, bug-fix, code-review, documentation,
+mobile, performance, refactor, security, seo, testing).
