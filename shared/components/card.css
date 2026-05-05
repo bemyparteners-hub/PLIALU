@@ -118,6 +118,20 @@
   transform: scaleX(1);
 }
 
+.card--rich h3 {
+  font-size: var(--text-xl);
+  font-weight: 800;
+  color: var(--brand-900);
+  margin: 0 0 var(--space-2);
+}
+
+.card--rich p {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0 0 var(--space-4);
+}
+
 .card-icon {
   font-size: var(--_rich-icon-size, 40px);
   line-height: 1;
