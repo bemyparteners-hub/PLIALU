@@ -1,5 +1,12 @@
 # STYLE-AUDIT — Inventaire CSS du CRM PLIALU
 
+> ⚠ **HISTORICAL SNAPSHOT — état CSS avant le design system.**
+> Ce document décrit l'inventaire *initial* des styles inline (palette
+> drift, 4 navbars distinctes, 5 logos, 12 « fausses incohérences »).
+> Il a déclenché la phase 2 (extraction des tokens et composants
+> partagés). Pour l'état courant, voir `shared/README.md`,
+> `LINK-AUDIT.md` et `COHERENCE-AUDIT.md`.
+>
 > Audit visuel **en lecture seule** des CSS inline des 7 pages du dépôt.
 > Date : 2026-05-04. Aucun fichier n'a été modifié hormis ce rapport.
 

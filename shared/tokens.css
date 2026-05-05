@@ -17,7 +17,6 @@
 :root {
   /* ── Brand ─────────────────────────────────────────────── */
   --brand-900:        #0d2933;
-  --brand-700:        #1a2e38;
   --accent:           #e8fc69;
   --accent-hover:     #d4f040;
   --accent-glow:      rgba(232, 252, 105, 0.2);
@@ -26,7 +25,6 @@
   --bg-app:           #f0f4f8;
   --bg-elevated:      #ffffff;
   --bg-muted:         #f8fafc;
-  --bg-secondary:     #fafbfc;
 
   /* ── Texte ─────────────────────────────────────────────── */
   --text-primary:     #1a2e38;

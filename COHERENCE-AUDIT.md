@@ -70,19 +70,15 @@ dans la logique « modules d'un même CRM »).
   par `nouvelle-page.html` + `plialu-data.js`, tous deux supprimés
   en phase 2 commit 7cc1622 (Q1).
 
-#### F-1.2 🟡 `tools/fold_configurator_export.py` — script Python jetable
+#### F-1.2 ✅ RÉSOLU — `tools/fold_configurator_export.py` supprimé
 
-- **Localisation** : `tools/fold_configurator_export.py` (534 lignes)
-- **Constat** : ce script écrit un HTML prototype de
-  « Configurateur de pliage » dans `/mnt/data/fold_configurator.html`
-  (path qui n'existe pas hors du notebook d'origine). Aucun
-  consommateur. Le projet a maintenant un vrai
-  `modules/configurateur/index.html` qui rend ce prototype
-  obsolète.
-- **Action recommandée** : `git rm tools/fold_configurator_export.py`
-  (l'historique git conserve le contenu si besoin de redécouvrir
-  le prototype). Si le dossier `tools/` devient vide, le supprimer
-  également.
+- **Statut** : résolu en commit 3 de Vague 1. Le script Python jetable
+  (534 lignes, écriture vers `/mnt/data/` inexistant hors notebook,
+  zéro consommateur) supprimé via `git rm`. Le dossier `tools/`
+  devenu vide a été supprimé du working tree (les répertoires vides
+  ne sont pas suivis par git). L'historique git conserve le
+  contenu si besoin de redécouvrir le prototype (`git log -- tools/`).
+  `README.md` racine mis à jour : entrée `tools/` retirée du tree.
 
 #### F-1.3 🟡 `packSheets()` — fonction JS orpheline dans MAX
 
@@ -94,21 +90,24 @@ dans la logique « modules d'un même CRM »).
   qu'elle n'est pas utilisée par un export externe. Sinon, marquer
   d'un commentaire `// kept for external export — DO NOT REMOVE`.
 
-#### F-1.4 🟡 5 tokens définis mais jamais consommés
+#### F-1.4 ✅ RÉSOLU partiellement — 2 tokens morts supprimés, 3 conservés par cohérence
 
-- **Localisation** : `shared/tokens.css`
-- **Constat** :
-  - `--bg-secondary` (#fafbfc) — utilisé seulement par `theme-dark.css` qui n'est plus chargé
-  - `--brand-700` (#1a2e38) — duplique exactement `--text-primary`, jamais utilisé directement
-  - `--success-border` (#86efac) — défini, jamais consommé
-  - `--warning-bg` (#fef3c7) — idem
-  - `--warning-border` (#fcd34d) — idem
-- **Action recommandée** :
-  - `--bg-secondary`, `--brand-700` : SUPPRIMER (vraiment morts).
-  - `--success-border`, `--warning-bg/border` : **garder** pour
-    cohérence avec la triade success/warning/danger (les tokens
-    `--danger-bg/border` existent et sont utilisés). Ce serait
-    arbitraire de ne garder que la moitié de la palette de statuts.
+- **Statut** : résolu en commit 3 de Vague 1 sur la partie
+  « vraiment morte ». Suppression dans `shared/tokens.css` de :
+  - `--brand-700` (#1a2e38) — duplique `--text-primary`, zéro usage.
+  - `--bg-secondary` (#fafbfc) — zéro consommateur en thème clair.
+  
+  `theme-dark.css` n'a **pas** été modifié : il redéfinissait
+  `--bg-secondary: #0a1f28` pour le dark mode. Garder cette
+  ligne dans le « ready-to-use override » (le fichier reste
+  cohérent comme pré-bagage pour un futur module dark).
+  L'asymétrie créée (token défini en dark mais pas en light) est
+  sans conséquence : aucune page ne charge theme-dark + ne
+  consomme `--bg-secondary`.
+- **Conservés** : `--success-border` (#86efac), `--warning-bg`
+  (#fef3c7), `--warning-border` (#fcd34d). La triade
+  success/warning/danger reste symétrique (`--danger-bg/border`
+  existent et sont utilisés).
 
 #### F-1.5 🟢 4 classes shared sans usage en production
 
@@ -259,19 +258,12 @@ factorisation propre.
   assets/pieces/README.md) ». Plus de mention trompeuse
   « partagé ».
 
-#### F-6.3 🟢 `AUDIT.md` et `STYLE-AUDIT.md` sont historiques
+#### F-6.3 ✅ RÉSOLU — `AUDIT.md` et `STYLE-AUDIT.md` annotés comme historiques
 
-- **Localisation** : `AUDIT.md`, `STYLE-AUDIT.md`
-- **Constat** : ces snapshots décrivent l'état **avant** les
-  refactors. Ils sont obsolètes au sens où ils ne reflètent pas
-  l'état actuel, mais **précieux** comme archives expliquant
-  pourquoi le code a été refactoré. La date 2026-05-04 est
-  explicitement mentionnée dans leur en-tête.
-- **Action recommandée** : ajouter en haut de chacun un encart
-  bien visible :
-  > **⚠ HISTORICAL SNAPSHOT — état du dépôt avant refactor.
-  > Conserve la trace de l'audit initial. Pour l'état courant,
-  > voir `LINK-AUDIT.md` et `COHERENCE-AUDIT.md`.**
+- **Statut** : résolu en commit 3 de Vague 1. Encart « HISTORICAL
+  SNAPSHOT » ajouté en haut de chacun des 2 fichiers, pointant vers
+  `LINK-AUDIT.md` et `COHERENCE-AUDIT.md` pour l'état courant. Les
+  fichiers restent à la racine pour servir de mémoire de projet.
 
 #### F-6.4 🟢 `LINK-AUDIT.md` à jour
 

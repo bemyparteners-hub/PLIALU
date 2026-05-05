@@ -75,15 +75,12 @@ Tout autre module ajouté reste libre d'utiliser ou non cette convention.
 │   │   └── CLAUDE.md         Documentation du module
 │   └── maxcut/
 │       └── index.html        Optimiseur de découpe
-├── assets/
-│   └── pieces/               197 PNG réservés pour aperçus visuels futurs (non utilisés en production, voir assets/pieces/README.md)
-└── tools/
-    └── fold_configurator_export.py   Script Python jetable (export HTML)
+└── assets/
+    └── pieces/               197 PNG réservés pour aperçus visuels futurs (non utilisés en production, voir assets/pieces/README.md)
 ```
 
 `assets/` est partagé entre modules et reste à la racine. Les modules y
-accèdent via `../../assets/...`. `tools/` est un répertoire dev, pas un
-module utilisateur.
+accèdent via `../../assets/...`.
 
 ### Design system
 
