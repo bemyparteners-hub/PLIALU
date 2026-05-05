@@ -35,9 +35,9 @@ body{background:var(--bg-app);color:var(--text-primary);font-family:'Segoe UI',s
 .btn-icon{background:var(--bg-elevated);border:1px solid var(--border-soft);color:var(--text-muted)}
 .btn-icon:hover{border-color:var(--accent);color:var(--accent)}
 /* CARDS */
-.card{background:var(--bg-secondary);border:1px solid var(--border-soft);border-radius:var(--radius-lg);padding:1.25rem}
-.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
-.card-title{font-size:0.875rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text-muted)}
+.max-card{background:var(--bg-secondary);border:1px solid var(--border-soft);border-radius:var(--radius-lg);padding:1.25rem}
+.max-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.max-card-title{font-size:0.875rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text-muted)}
 /* PIECES TABLE SECTION */
 .pieces-toolbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
 .pieces-toolbar-left{display:flex;gap:0.5rem;flex-wrap:wrap}
@@ -299,8 +299,8 @@ body{background:var(--bg-app);color:var(--text-primary);font-family:'Segoe UI',s
     <h1 class="section-title">Paramètres</h1>
     <p class="section-sub">Configurez le trait de scie, les informations de commande et les formats de feuilles par matière</p>
     <div class="params-grid" style="grid-template-columns:1fr">
-      <div class="card">
-        <div class="card-header"><span class="card-title">Informations commande</span></div>
+      <div class="max-card">
+        <div class="max-card-header"><span class="max-card-title">Informations commande</span></div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0.75rem 1.25rem">
           <div class="form-group" style="margin:0">
             <label class="form-label">Nom du client</label>
@@ -366,8 +366,8 @@ body{background:var(--bg-app);color:var(--text-primary);font-family:'Segoe UI',s
       <!-- STOCK ALERTS -->
       <div id="stockAlerts"></div>
       <!-- FORMAT BREAKDOWN -->
-      <div class="card" style="margin-bottom:1.5rem" id="formatBreakdownCard">
-        <div class="card-header"><span class="card-title">Détail par format</span></div>
+      <div class="max-card" style="margin-bottom:1.5rem" id="formatBreakdownCard">
+        <div class="max-card-header"><span class="max-card-title">Détail par format</span></div>
         <div class="table-wrapper">
           <table class="format-summary-table" id="formatBreakdownTable"></table>
         </div>

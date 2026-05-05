@@ -42,7 +42,7 @@ Classes/sélecteurs fournis par chaque shared :
 | `modules/calculette/devis.html` | ✓✓ (3) | — | ✓✓ | — | ✓✓ | ✓✓ | ✓✓ (32) |
 | `modules/calculette/dessinateur.html` | ✓✓ (11) | — | ✓✓ | — | ✓✓ | ✓✓ | ✓✓ (6) |
 | `modules/configurateur/index.html` | ✓✓ (4) | — | ✓✓ | — | ✓✓ | ✓✓ | ✓✓ (41) |
-| `modules/maxcut/index.html` | ✓✓ (134) | ✓✓ | ✓✓ | — | ✓✓ | **⚠ INLINE** | **⚠ INLINE** (19) |
+| `modules/maxcut/index.html` | ✓✓ (134) | ✓✓ | ✓✓ | — | ✓✓ | — *(see A1)* | **⚠ INLINE** (19) |
 
 Les nombres entre parenthèses indiquent :
 - pour `tokens.css` : occurrences de `var(--*)` dans le `<style>` inline.
@@ -127,33 +127,34 @@ Les nombres entre parenthèses indiquent :
 > définie quelque part** (shared ou inline). Donc **aucun rendu cassé**.
 > **Aucun lien `<link>` mort** détecté non plus.
 
-### A1 — Shadow-naming des classes `card` / `card-title` dans MAXCUT
+### A1 — Shadow-naming des classes `card` / `card-title` dans MAXCUT — ✅ RÉSOLU
 
-**Sévérité** : informationnelle. Pas un bug, par conception.
+**Statut** : résolu le 2026-05-04 (option (a) retenue).
 
-`modules/maxcut/index.html` utilise les classes `.card`, `.card-title`,
-`.card-header` mais **ne charge pas** `shared/components/card.css`. Ses
-définitions inline divergent volontairement du canonique :
+Les trois classes ambiguës de `modules/maxcut/index.html` ont été
+renommées avec le préfixe `max-` pour casser l'homonymie avec le
+canonique de `shared/components/card.css` :
 
-| Aspect | `card.css` (clair) | MAX inline (sombre) |
-|---|---|---|
-| `background` | `var(--bg-elevated)` | `var(--bg-secondary)` |
-| `padding` | 22px 24px | 1.25rem (≈20px partout) |
-| `box-shadow` | `var(--shadow-card)` | aucune |
-| `border-width` | 1px | 1px |
-| `.card-title` | uppercase 13px, border-bottom accent | uppercase 14px, **pas** de border-bottom |
-| `.card-header` | n'existe pas | composite header (flex space-between) |
+| Avant | Après |
+|---|---|
+| `.card` | `.max-card` |
+| `.card-header` | `.max-card-header` |
+| `.card-title` | `.max-card-title` |
 
-**Risque** : un futur contributeur qui ajoute `<div class="card">` à
-`maxcut/index.html` en s'attendant au rendu canonique aura le rendu
-sombre, et inversement. Le nom est trompeur.
+Le rendu visuel est inchangé (refactor purement nominatif, le sélecteur
+CSS et la classe HTML ont été modifiés en tandem). Les autres familles
+préfixées (`.stat-card`, `.plan-card-*`, `.mat-card-*`) n'étaient pas
+ambiguës et restent intactes.
 
-**Options pour résoudre** (à arbitrer plus tard, hors scope audit) :
-- (a) renommer en MAX : `.max-card`, `.max-card-title`, `.max-card-header`
-  pour casser l'ambiguïté ;
-- (b) charger `card.css` dans MAX et n'override que le `background` /
-  `box-shadow` pour le thème sombre, en gardant le nommage `.card` ;
-- (c) accepter le shadow-naming et le documenter (statu quo).
+**Contexte original** (laissé pour référence) :
+
+> `modules/maxcut/index.html` utilisait les classes `.card`,
+> `.card-title`, `.card-header` mais **ne chargeait pas**
+> `shared/components/card.css`. Ses définitions inline divergeaient
+> volontairement du canonique (thème sombre). Risque : un futur
+> contributeur qui ajouterait `<div class="card">` à `maxcut/index.html`
+> en s'attendant au rendu canonique aurait eu le rendu sombre, et
+> inversement.
 
 ### A2 — `form.css` non chargé dans MAXCUT alors que la page contient 19 éléments de formulaire
 
