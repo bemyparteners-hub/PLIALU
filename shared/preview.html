@@ -7,6 +7,7 @@
   <!-- tokens d'abord, puis composants -->
   <link rel="stylesheet" href="tokens.css">
   <link rel="stylesheet" href="components/navbar.css">
+  <link rel="stylesheet" href="components/sidebar.css">
   <style>
     /* ─── Styles propres à la preview, pas à intégrer ─────── */
     body {
@@ -176,6 +177,67 @@
       Le composant lui-même n'est pas modifié — seuls les tokens de surface et de texte
       sont surchargés via <code>shared/theme-dark.css</code>. La navbar reste sur
       <code>--brand-900</code> qui est invariant entre les thèmes.
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     5 — Sidebar du hub + main hero (aperçu réduit)
+════════════════════════════════════════════════════════════ -->
+<section class="preview-section">
+  <p class="preview-label">5 · Sidebar du hub (250px, brand-900) + main hero</p>
+  <div class="preview-frame" style="padding-bottom:0">
+    <!-- Wrapper pour simuler le layout flex du hub -->
+    <div style="display:flex; min-height:520px; align-items:stretch; border:1px solid var(--border-soft); border-radius:var(--radius-lg); overflow:hidden;">
+
+      <aside class="sidebar" style="position:static">
+        <div class="sidebar-header">
+          <span class="sidebar-mark">P</span>
+          <span class="sidebar-title">
+            <span class="sidebar-title-prefix">CRM</span>PLIALU
+          </span>
+        </div>
+
+        <nav class="sidebar-section">
+          <div class="sidebar-section-label">Outils</div>
+          <ul class="sidebar-links">
+            <li><a class="sidebar-link" href="#"><span class="sidebar-link-icon">🧮</span>Calculette</a></li>
+            <li><a class="sidebar-link" href="#"><span class="sidebar-link-icon">⚙️</span>Configurateur</a></li>
+            <li><a class="sidebar-link" href="#"><span class="sidebar-link-icon">📐</span>MAXCUT</a></li>
+          </ul>
+        </nav>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">À venir</div>
+          <ul class="sidebar-links">
+            <li><span class="sidebar-link sidebar-link--placeholder"><span class="sidebar-link-icon">+</span>Module à venir</span></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-footer">© PLIALU — Outils internes</div>
+      </aside>
+
+      <!-- Aperçu du hero qui ira à droite (markup minimal pour preview) -->
+      <main style="flex:1; background:var(--brand-900); color:var(--text-on-brand); padding:var(--space-8); display:flex; flex-direction:column; justify-content:center; align-items:center; gap:var(--space-5);">
+        <span style="display:inline-block; padding:var(--space-1) var(--space-4); background:var(--accent-glow); color:var(--accent); border-radius:var(--radius-lg); font-size:var(--text-xs); font-weight:700; letter-spacing:0.08em; text-transform:uppercase;">🏠 Outils internes PLIALU</span>
+        <h1 style="margin:0; font-size:2.5rem; font-weight:900; text-align:center; line-height:1.15;">
+          Tous vos outils.<br>
+          <span style="color:var(--accent);">Un seul endroit.</span>
+        </h1>
+        <div style="display:flex; gap:var(--space-3); flex-wrap:wrap; justify-content:center;">
+          <a class="btn btn-primary" href="#">🧮 Lancer la calculette</a>
+          <span style="display:none">(les CTA secondaires apparaissent sur fond brand — preview)</span>
+        </div>
+      </main>
+
+    </div>
+
+    <div class="preview-fill">
+      Layout cible du hub : <code>body { display:flex; min-height:100vh; }</code>,
+      sidebar à <code>250px</code> via <code>--_width</code> scopé, main en
+      <code>flex:1; overflow:auto;</code>.
+      Sous 900px, la sidebar bascule en barre horizontale (footer masqué,
+      labels masqués, liens en pillules).
     </div>
   </div>
 </section>
