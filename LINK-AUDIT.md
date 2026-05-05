@@ -129,7 +129,7 @@ Les nombres entre parenthèses indiquent :
 
 ### A1 — Shadow-naming des classes `card` / `card-title` dans MAXCUT — ✅ RÉSOLU
 
-**Statut** : résolu le 2026-05-04 (option (a) retenue).
+**Statut** : résolu le 2026-05-04 par `caf08b5` (option (a) — préfixe explicite — retenue).
 
 Les trois classes ambiguës de `modules/maxcut/index.html` ont été
 renommées avec le préfixe `max-` pour casser l'homonymie avec le
