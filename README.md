@@ -76,7 +76,7 @@ Tout autre module ajouté reste libre d'utiliser ou non cette convention.
 │   └── maxcut/
 │       └── index.html        Optimiseur de découpe
 ├── assets/
-│   └── pieces/               Catalogue d'images de pièces (197 PNG, partagé)
+│   └── pieces/               197 PNG réservés pour aperçus visuels futurs (non utilisés en production, voir assets/pieces/README.md)
 └── tools/
     └── fold_configurator_export.py   Script Python jetable (export HTML)
 ```

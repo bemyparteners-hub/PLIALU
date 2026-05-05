@@ -52,21 +52,23 @@ dans la logique « modules d'un même CRM »).
 
 ### 1. Code mort
 
-#### F-1.1 🔴 `assets/pieces/` — 17 Mo de PNG orphelins
+#### F-1.1 ✅ RÉSOLU — `assets/pieces/` documenté comme réservé pour usage futur
 
-- **Localisation** : `assets/pieces/` (197 fichiers PNG + 1 README + 1 .gitkeep)
-- **Constat** : `grep -rn "pieces/"` retourne **0 référence** dans le
-  HTML/CSS/JS de production. Les seules mentions sont dans la
-  documentation (qui prétend qu'ils sont « partagés ») et dans MAX
-  où `.pieces-table` désigne autre chose (un tableau de pièces à
-  découper, pas le catalogue d'images).
-- **Origine** : ces images étaient consommées par
-  `modules/calculette/nouvelle-page.html` + `plialu-data.js`,
-  tous deux supprimés en phase 2 commit 7cc1622 (Q1).
-- **Action recommandée** : `git rm -r assets/pieces/` + mise à jour
-  de la doc. Si le user veut garder les images « au cas où une
-  future page les exploite », au minimum **les sortir de la racine
-  shared** et les mettre sous `_archive/pieces/` ou similaire.
+- **Statut** : résolu le 2026-05-05 par `<commit-2-SHA>`. Décision
+  utilisateur : **conserver les images** pour usage futur (aperçus
+  visuels dans configurateur / devis / fiche pièce). Le dossier
+  passe de « orphelin trompeur » à « réserve documentée » :
+  - `assets/pieces/README.md` réécrit avec un statut explicite
+    (« currently UNUSED in production / Reserved for future
+    visual previews ») + historique d'extraction + convention
+    d'usage future + conventions de nommage.
+  - `README.md` racine annoté en conséquence.
+  - `modules/calculette/CLAUDE.md` corrigé (ne prétend plus que
+    le module dépend des images).
+- **Constat original** : `grep -rn "pieces/"` retourne **0 référence**
+  dans le HTML/CSS/JS de production. Les images étaient consommées
+  par `nouvelle-page.html` + `plialu-data.js`, tous deux supprimés
+  en phase 2 commit 7cc1622 (Q1).
 
 #### F-1.2 🟡 `tools/fold_configurator_export.py` — script Python jetable
 
@@ -234,28 +236,28 @@ factorisation propre.
 
 ### 6. Documentation
 
-#### F-6.1 🔴 `modules/calculette/CLAUDE.md` mentionne `assets/pieces/`
+#### F-6.1 ✅ RÉSOLU — `modules/calculette/CLAUDE.md` ne référence plus `assets/pieces/`
 
-- **Localisation** : `modules/calculette/CLAUDE.md:23-24`
-- **Constat** : citation littérale —
+- **Statut** : résolu le 2026-05-05 par `72c5b3f`. La section
+  « Place dans le dépôt » a été reformulée pour pointer vers les
+  vraies dépendances (composants `shared/`) et plus vers les
+  images. Un bonus a été corrigé en passant : la section
+  « Design system » avait `--warning-bg = #fef9c3` (typo, vraie
+  valeur `#fef3c7`) ; remplacée par un pointeur vers
+  `tokens.css`.
+- **Constat original** : citation littérale —
   > « Les assets partagés (`assets/pieces/`) sont à la racine ;
   > depuis ce module, on y accède via `../../assets/pieces/`. »
-  
-  C'est **faux** : le module calculette n'accède à aucune image de
-  `assets/pieces/`. La référence date de phase 2 quand `nouvelle-page.html`
-  + `plialu-data.js` consommaient ces images. Tous deux ont été
-  supprimés en phase 2.
-- **Action recommandée** :
-  - Si F-1.1 résolu (suppression des PNG) : retirer ces 2 lignes.
-  - Si les PNG restent : reformuler en « assets historiques, non
-    consommés actuellement par ce module ».
+  Faux : le module calculette n'accède à aucune image de
+  `assets/pieces/`.
 
-#### F-6.2 🟡 `README.md` racine décrit `assets/pieces/` comme « partagé »
+#### F-6.2 ✅ RÉSOLU — `README.md` racine annoté
 
-- **Localisation** : `README.md:79`
-- **Constat** : « `pieces/  Catalogue d'images de pièces (197 PNG, partagé) »
-  — adjectif « partagé » trompeur (par qui ?).
-- **Action recommandée** : aligné sur F-6.1.
+- **Statut** : résolu le 2026-05-05 par `<commit-2-SHA>`.
+  L'entrée `pieces/` du tree est maintenant : « 197 PNG réservés
+  pour aperçus visuels futurs (non utilisés en production, voir
+  assets/pieces/README.md) ». Plus de mention trompeuse
+  « partagé ».
 
 #### F-6.3 🟢 `AUDIT.md` et `STYLE-AUDIT.md` sont historiques
 
