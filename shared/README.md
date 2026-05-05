@@ -52,7 +52,18 @@ Voir `tokens.css` pour la liste complète et les valeurs.
 ### Thèmes
 
 - **Clair** (défaut) : appliqué via `<link rel="stylesheet" href="…/shared/tokens.css">`.
-- **Sombre** : ajouter `<link rel="stylesheet" href="…/shared/theme-dark.css">` **après** `tokens.css`. Surcharge `--bg-*`, `--text-*`, `--border-*`, et les couleurs de statut. Utilisé actuellement par `modules/maxcut/index.html`.
+- **Sombre** : `theme-dark.css` existe mais n'est chargé par **aucune page en production**. Pour activer un thème sombre sur un module :
+  ```html
+  <link rel="stylesheet" href="…/shared/tokens.css">
+  <link rel="stylesheet" href="…/shared/theme-dark.css"> <!-- APRÈS tokens.css -->
+  ```
+  Surcharge `--bg-*`, `--text-*`, `--border-*`, et les couleurs de statut.
+
+> **Note** : aucun module ne charge `theme-dark.css` actuellement. Dernier
+> usage : MAXCUT, retiré le 2026-05-04 lors du passage en thème clair
+> unifié. Le fichier est volontairement conservé (cf. commentaire en tête)
+> car il encode des choix design non triviaux (inversion des surfaces,
+> mappings statuts, bordures alpha-blendées) prêts à être ré-utilisés.
 
 ---
 

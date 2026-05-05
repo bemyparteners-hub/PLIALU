@@ -8,8 +8,10 @@
  * ne doit utiliser de valeur hex/px en dur — toujours via
  * var(--token).
  *
- * Le thème par défaut est CLAIR. Le thème SOMBRE (MAXCUT)
- * surcharge un sous-ensemble de tokens via theme-dark.css.
+ * Le thème par défaut est CLAIR. Tous les modules en production
+ * utilisent ce thème. Le thème SOMBRE (theme-dark.css) surcharge
+ * un sous-ensemble de tokens — il n'est actuellement chargé par
+ * aucune page mais reste disponible pour les modules futurs.
  * ============================================================ */
 
 :root {
