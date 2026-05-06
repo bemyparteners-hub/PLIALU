@@ -9,6 +9,8 @@
   <link rel="stylesheet" href="../../shared/components/buttons.css">
   <link rel="stylesheet" href="../../shared/components/card.css">
   <link rel="stylesheet" href="../../shared/components/form.css">
+  <link rel="stylesheet" href="../../shared/components/save-indicator.css">
+  <script src="../../shared/js/storage.js"></script>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:var(--font-sans);background:var(--bg-app);color:var(--text-primary);min-height:100vh}
@@ -909,23 +911,13 @@
   }
 
   // ═══════ SAUVEGARDE AUTOMATIQUE ═══════
-  const SAVE_KEY = 'plialu_project_data';
-
-  function getProjectData(){
-    try { return JSON.parse(localStorage.getItem(SAVE_KEY)) || {}; } catch(e){ return {}; }
-  }
-  function showSaveIndicator(){
-    let el = document.getElementById('save-indicator');
-    if(!el){ el = document.createElement('div'); el.id='save-indicator'; el.style.cssText='position:fixed;bottom:20px;right:20px;background:rgba(13,41,51,0.88);color:#e8fc69;padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;z-index:200;opacity:0;transition:opacity .35s;pointer-events:none;letter-spacing:.3px'; document.body.appendChild(el); }
-    el.textContent = '\uD83D\uDCBE Projet sauvegard\u00e9';
-    el.style.opacity = '1';
-    clearTimeout(el._t);
-    el._t = setTimeout(() => { el.style.opacity = '0'; }, 1800);
-  }
+  // Auto-save factorisé via shared/js/storage.js (PlialuStorage).
+  // Sous-clé "dessinateur" de l'objet racine "plialu_project_data"
+  // partagé avec calcul et devis.
+  const storage = PlialuStorage.forSubkey('plialu_project_data', 'dessinateur');
 
   function saveDessinateurData(){
-    const data = getProjectData();
-    data.dessinateur = {
+    storage.save({
       refName: document.getElementById('refName').value,
       refNotes: document.getElementById('refNotes').value,
       scale: scale,
@@ -937,13 +929,11 @@
         color: l.color, fontSize: l.fontSize
       })),
       canvasData: canvas.toDataURL('image/png')
-    };
-    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-    showSaveIndicator();
+    });
   }
 
   function loadDessinateurData(){
-    const d = getProjectData().dessinateur;
+    const d = storage.load();
     if(!d) return;
     if(d.refName) document.getElementById('refName').value = d.refName;
     if(d.refNotes) document.getElementById('refNotes').value = d.refNotes;
