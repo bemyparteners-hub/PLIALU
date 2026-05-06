@@ -19,18 +19,17 @@ Les écarts détectés sont quasi tous des **dettes mineures**
 étaient OK dans une logique « page autonome » mais le sont moins
 dans la logique « modules d'un même CRM »).
 
-**Top 3 à faire en priorité** :
+**Top 3 à faire en priorité** *(tous résolus à la date du
+2026-05-04 — voir détail par finding ci-dessous)* :
 
-1. 🔴 Supprimer `assets/pieces/` (197 PNG, **17 Mo**) — totalement
-   orphelins depuis la suppression de `nouvelle-page.html` en phase 2.
-   La documentation les présente comme « partagés » alors qu'aucun
-   module ne les charge.
-2. 🟡 Factoriser le pattern `showSaveIndicator` + `getProjectData`
-   + `SAVE_KEY` dupliqué à l'identique dans **4 fichiers HTML**
-   (calcul, devis, dessinateur, configurateur) → `shared/js/storage.js`.
-3. 🟡 Mettre à jour `modules/calculette/CLAUDE.md` qui référence
-   encore `../../assets/pieces/` comme dépendance — c'est faux
-   depuis la phase 2.
+1. ✅ ~~Supprimer~~ documenter `assets/pieces/` (197 PNG, 17 Mo) :
+   décision **conservation**, statut « réservé pour aperçus
+   visuels futurs », doc mise à jour. Voir F-1.1.
+2. ✅ Factoriser le pattern `showSaveIndicator` + `getProjectData`
+   + `SAVE_KEY` dupliqué dans 4 fichiers → `shared/js/storage.js`.
+   Voir F-2.1 (branche `refactor/shared-js-storage`, 7 commits).
+3. ✅ Mettre à jour `modules/calculette/CLAUDE.md` (référence
+   obsolète à `../../assets/pieces/`). Voir F-6.1.
 
 **Top 3 à NE PAS faire** :
 
@@ -126,31 +125,50 @@ dans la logique « modules d'un même CRM »).
 
 ### 2. Doublons
 
-#### F-2.1 🟡 Logique d'auto-save dupliquée dans 4 fichiers HTML
+#### F-2.1 ✅ RÉSOLU — `shared/js/storage.js` factorise l'auto-save
 
-- **Localisation** :
-  - `modules/calculette/calcul.html:325-326,327-...,426-...`
-  - `modules/calculette/devis.html:286,288,291`
-  - `modules/calculette/dessinateur.html:912,914,917`
-  - `modules/configurateur/index.html:751`
-- **Constat** : le triplet `const SAVE_KEY = 'plialu_project_data'`
-  + `function getProjectData()` + `function showSaveIndicator()`
-  est répété **identique** (ou quasi-identique au `0.88` près)
-  dans les 4 fichiers. C'est ~25 lignes × 4 = ~100 lignes de
-  duplication.
-  Le CSS associé `#save-indicator { … }` apparaît aussi en double
-  (calcul.html:73 + configurateur:91), avec en plus un troisième
-  duplicata via `el.style.cssText = '…'` dans le JS lui-même
-  (parce que le helper crée l'élément à la volée s'il n'existe
-  pas dans le DOM).
-- **Action recommandée** : créer
-  `shared/js/storage.js` exposant `window.PlialuStorage = {
-  saveKey, getProjectData(), saveProjectData(data),
-  showSaveIndicator() }`. Charger via `<script src="…/storage.js">`
-  dans les 4 pages. Supprimer les définitions locales.
-  Bénéfice : ~80 lignes en moins, point unique de mise à jour si
-  le format de stockage évolue. Risque : faible (refactor
-  mécanique, JS).
+- **Statut** : résolu le 2026-05-04 par la branche
+  `refactor/shared-js-storage` (7 commits) :
+
+  | # | SHA | Commit |
+  |---|---|---|
+  | 1 | `1fac6d7` | `feat(shared): add storage helpers` |
+  | 2 | `8fa6f05` | `refactor(calculette/calcul): use PlialuStorage` |
+  | 3 | `ed821f8` | `refactor(calculette/devis): use PlialuStorage` |
+  | 4 | `bb85955` | `refactor(calculette/dessinateur): use PlialuStorage` |
+  | 5 | `4f9dd44` | `refactor(configurateur): use PlialuStorage` |
+  | 6 | `974cc8e` | `chore: drop static save-indicator markup and CSS` |
+  | 7 | (ce commit) | `docs: resolve F-2.1 and document shared/js/` |
+
+  78 lignes JS dupliquées remplacées par 110 lignes shared (gain
+  net −26 lignes + 1 source de vérité unique pour le format de
+  stockage et l'indicateur visuel).
+
+- **API factorisée** dans `shared/js/storage.js` (cf. `shared/README.md`
+  section *JS partagé*) :
+
+  ```js
+  // Une clé propre (configurateur)
+  const storage = PlialuStorage.forKey('plialu-configurateur-session');
+  // Une sous-clé d'un objet racine partagé (calculette pages)
+  const storage = PlialuStorage.forSubkey('plialu_project_data', 'calcul');
+  storage.load();   // null si rien stocké, l'objet sinon
+  storage.save(d);  // persiste + déclenche le toast
+  storage.clear();  // efface (NE déclenche PAS le toast)
+  ```
+
+  Plus `PlialuStorage.showIndicator(message?)` pour appel manuel.
+  Toast : élément `.plialu-save-indicator` créé à la volée + stylé
+  par `shared/components/save-indicator.css` (token-driven).
+
+- **Constat original** (laissé pour référence) :
+  > Le triplet `const SAVE_KEY = 'plialu_project_data'` +
+  > `function getProjectData()` + `function showSaveIndicator()`
+  > était répété identique dans les 4 fichiers (~25 lignes × 4 = ~100
+  > lignes). Le CSS `#save-indicator { … }` apparaissait aussi en
+  > double (calcul.html + configurateur) avec un troisième duplicata
+  > inline via `el.style.cssText = '…'` dans devis.html et
+  > dessinateur.html.
 
 #### F-2.2 🟡 Hex literals brand non tokenisés (post phase 2 commit 8)
 
@@ -219,19 +237,19 @@ dans la logique « modules d'un même CRM »).
 
 ### 5. Sous-ingénierie
 
-#### F-5.1 🟡 (cf. F-2.1) JS auto-save non factorisé
+#### F-5.1 ✅ RÉSOLU (cf. F-2.1) — JS auto-save factorisé
 
-Voir F-2.1 — le pattern le plus dupliqué du projet, prêt pour une
-factorisation propre.
+Voir F-2.1 — résolu en branche `refactor/shared-js-storage`.
 
-#### F-5.2 🟢 `<script src="…">` partagés inexistants
+#### F-5.2 ✅ RÉSOLU — `shared/js/` créé avec convention documentée
 
-- **Constat** : il n'y a **aucun** fichier JS partagé dans `shared/`
-  (seulement des CSS). Si la factorisation F-2.1 se fait, ce sera
-  l'introduction du concept. À documenter dans `shared/README.md`
-  et créer un sous-dossier `shared/js/`.
-- **Action recommandée** : **prévoir** la convention en même temps
-  que F-2.1 (premier `shared/js/` du projet).
+- **Statut** : résolu le 2026-05-04 par le commit 1 de la branche
+  `refactor/shared-js-storage` (`1fac6d7`). Le dossier `shared/js/`
+  contient maintenant `storage.js` (premier fichier JS partagé) et
+  la convention est documentée dans `shared/README.md` section
+  *JS partagé* (namespacing global `window.PlialuStorage`, pas de
+  modules ES, pas de build, ordre de chargement `<script>` avant
+  l'inline qui le consomme).
 
 ### 6. Documentation
 
