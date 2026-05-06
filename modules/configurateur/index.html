@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="../../shared/components/buttons.css">
 <link rel="stylesheet" href="../../shared/components/card.css">
 <link rel="stylesheet" href="../../shared/components/form.css">
+<link rel="stylesheet" href="../../shared/components/save-indicator.css">
+<script src="../../shared/js/storage.js"></script>
 <style>
 /* ── RESET & BASE ── */
 *{box-sizing:border-box;margin:0;padding:0}
@@ -578,7 +580,12 @@ const EP_REF = {
 // ══════════════════════════════════════════
 let activeGamme   = 'bavette';
 let activeArticle = 'Bv1';
-const SESSION_KEY = 'plialu-configurateur-session';
+
+// Auto-save factorisé via shared/js/storage.js (PlialuStorage).
+// Le configurateur a sa propre clé localStorage (forme « clé propre »
+// vs sous-clé), distincte de l'objet racine 'plialu_project_data' partagé
+// par les pages calculette.
+const storage = PlialuStorage.forKey('plialu-configurateur-session');
 
 // ══════════════════════════════════════════
 // INIT SELECTS depuis les données
@@ -677,35 +684,31 @@ document.querySelectorAll('.gamme-btn').forEach(btn =>
 // SAVE / LOAD LOCALSTORAGE
 // ══════════════════════════════════════════
 function saveSession() {
-  try {
-    localStorage.setItem(SESSION_KEY, JSON.stringify({
-      gamme: activeGamme, article: activeArticle,
-      matiere:    document.getElementById('paramMatiere').value,
-      epaisseur:  document.getElementById('paramEpaisseur').value,
-      ral:        document.getElementById('paramRal').value,
-      finition:   document.getElementById('paramFinition').value,
-      qte:        document.getElementById('paramQte').value,
-      tauxMo:     document.getElementById('paramTauxMo').value,
-      coefMarge:  document.getElementById('paramCoefMarge').value,
-      repere:     document.getElementById('saisieRepere').value,
-      lg:         document.getElementById('saisieLg').value,
-      A:  document.getElementById('saisieA').value,
-      B:  document.getElementById('saisieB').value,
-      C:  document.getElementById('saisieC').value,
-      D:  document.getElementById('saisieD').value,
-      E:  document.getElementById('saisieE').value,
-      pliA: document.getElementById('saisiePliA').value,
-      pliB: document.getElementById('saisiePliB').value,
-      pliC: document.getElementById('saisiePliC').value,
-      pliD: document.getElementById('saisiePliD').value
-    }));
-    showSaveIndicator();
-  } catch(e) {}
+  storage.save({
+    gamme: activeGamme, article: activeArticle,
+    matiere:    document.getElementById('paramMatiere').value,
+    epaisseur:  document.getElementById('paramEpaisseur').value,
+    ral:        document.getElementById('paramRal').value,
+    finition:   document.getElementById('paramFinition').value,
+    qte:        document.getElementById('paramQte').value,
+    tauxMo:     document.getElementById('paramTauxMo').value,
+    coefMarge:  document.getElementById('paramCoefMarge').value,
+    repere:     document.getElementById('saisieRepere').value,
+    lg:         document.getElementById('saisieLg').value,
+    A:  document.getElementById('saisieA').value,
+    B:  document.getElementById('saisieB').value,
+    C:  document.getElementById('saisieC').value,
+    D:  document.getElementById('saisieD').value,
+    E:  document.getElementById('saisieE').value,
+    pliA: document.getElementById('saisiePliA').value,
+    pliB: document.getElementById('saisiePliB').value,
+    pliC: document.getElementById('saisiePliC').value,
+    pliD: document.getElementById('saisiePliD').value
+  });
 }
 
 function loadSession() {
-  let s;
-  try { s = JSON.parse(localStorage.getItem(SESSION_KEY)); } catch(e) {}
+  const s = storage.load();
   if (!s) return;
   if (s.gamme   && GAMMES[s.gamme])                       activeGamme   = s.gamme;
   if (s.article && GAMMES[activeGamme].articles[s.article]) activeArticle = s.article;
@@ -740,22 +743,13 @@ window.addEventListener('resize', drawIso);
 // ══════════════════════════════════════════
 document.getElementById('btnResetMemoire').addEventListener('click', () => {
   if (!confirm('Effacer toute la mémoire du projet ?')) return;
-  [SESSION_KEY,'plialu_project_data','plialu-devis','plialu-devis-dessins']
+  // Session du configurateur (clé propre exposée par le binding shared)
+  storage.clear();
+  // Clés des autres modules (calculette + transferts inter-modules)
+  ['plialu_project_data','plialu-devis','plialu-devis-dessins']
     .forEach(k => localStorage.removeItem(k));
   location.reload();
 });
-
-// ══════════════════════════════════════════
-// INDICATEUR DE SAUVEGARDE
-// ══════════════════════════════════════════
-function showSaveIndicator() {
-  const el = document.getElementById('save-indicator');
-  if (!el) return;
-  el.textContent = '💾 Sauvegardé';
-  el.style.opacity = '1';
-  clearTimeout(el._t);
-  el._t = setTimeout(() => { el.style.opacity = '0'; }, 1800);
-}
 
 // ══════════════════════════════════════════
 // CALCULS DVP + PRIX
