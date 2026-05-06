@@ -15,13 +15,17 @@ shared/
 ├── theme-dark.css              # Surcharges du thème sombre
 ├── preview.html                # Aperçu visuel des composants
 ├── README.md                   # Ce fichier
-└── components/
-    ├── navbar.css              # Navbar horizontale + logo (modules)
-    ├── sidebar.css              # Sidebar verticale + logo (hub uniquement)
-    ├── buttons.css              # .btn + variantes
-    ├── card.css                 # .card / .card-title / .card-active /
-    │                            #   .card--rich + .card-icon / -arrow / -tags
-    └── form.css                 # input/select/textarea + label
+├── components/
+│   ├── navbar.css              # Navbar horizontale + logo (modules)
+│   ├── sidebar.css             # Sidebar verticale + logo (hub uniquement)
+│   ├── buttons.css             # .btn + variantes
+│   ├── card.css                # .card / .card-title / .card-active /
+│   │                           #   .card--rich + .card-icon / -arrow / -tags
+│   ├── form.css                # input/select/textarea + label
+│   └── save-indicator.css      # Toast "💾 Projet sauvegardé" (cf. js/storage.js)
+└── js/
+    └── storage.js              # Helpers auto-save : PlialuStorage.forKey /
+                                #   forSubkey / showIndicator
 ```
 
 ---
@@ -215,6 +219,68 @@ Style global appliqué à `<input>`, `<select>`, `<textarea>` et `<label>`. Pas 
 <input id="ex" type="text" placeholder="…">
 ```
 
+### `save-indicator.css` — Toast de sauvegarde
+
+Style du toast bas-droite « 💾 Projet sauvegardé » émis automatiquement
+par `PlialuStorage.save()` (cf. section *JS partagé* ci-dessous). Aucun
+markup statique requis : l'élément `.plialu-save-indicator` est créé à
+la volée par le helper JS s'il n'existe pas dans le DOM.
+
+---
+
+## JS partagé
+
+Convention : tout fichier JS partagé entre plusieurs pages vit sous
+`shared/js/`. Inclus dans la page consommatrice via :
+
+```html
+<script src="…/shared/js/<fichier>.js"></script>
+```
+
+Le fichier doit exposer un objet global namespace-é (ex. `PlialuStorage`)
+sur `window`. Pas de modules ES (le projet est servi en `file://` et sur
+GitHub Pages sans build).
+
+### `js/storage.js` — Helpers auto-save
+
+Factorise la logique de sauvegarde automatique des modules calculette
+(calcul, devis, dessinateur) et configurateur dans `localStorage`. Couvre
+deux shapes :
+
+- **Une clé propre par module** (configurateur) : `PlialuStorage.forKey(key)`
+- **Une sous-clé d'un objet racine partagé** (calculette) :
+  `PlialuStorage.forSubkey(rootKey, subKey)`
+
+```html
+<link rel="stylesheet" href="…/shared/components/save-indicator.css">
+<script src="…/shared/js/storage.js"></script>
+```
+
+```js
+// Pour un module avec sa propre clé localStorage
+const storage = PlialuStorage.forKey('plialu-configurateur-session');
+
+// Pour un module qui partage 'plialu_project_data' avec d'autres
+const storage = PlialuStorage.forSubkey('plialu_project_data', 'calcul');
+
+const data = storage.load();          // null si rien stocké, l'objet sinon
+storage.save({ champ1: 'valeur' });    // persiste + affiche l'indicateur
+storage.clear();                       // efface (NE déclenche PAS l'indicateur)
+console.log(storage.key, storage.subKey, storage.rootKey);
+```
+
+`PlialuStorage.showIndicator(message?)` peut aussi être appelé manuellement.
+
+Contrats :
+
+- `load()` retourne `null` si rien n'est stocké (ou si le JSON est
+  corrompu) ; l'objet décodé sinon.
+- `save(data)` déclenche `showIndicator()` automatiquement.
+- `clear()` ne déclenche **pas** `showIndicator()` (c'est un reset, pas
+  une sauvegarde).
+- Le format des données dans `localStorage` n'est pas dicté par le
+  helper — chaque module choisit sa shape.
+
 ---
 
 ## Conventions
@@ -226,21 +292,28 @@ Style global appliqué à `<input>`, `<select>`, `<textarea>` et `<label>`. Pas 
 | `index.html` (hub, racine) | `shared/…` |
 | `modules/<nom>/<page>.html` (profondeur 2) | `../../shared/…` |
 
-### Ordre de chargement des `<link>`
+### Ordre de chargement des `<link>` et `<script>`
 
 ```html
+<!-- CSS : tokens d'abord, composants ensuite, inline en dernier -->
 <link rel="stylesheet" href="…/shared/tokens.css">          <!-- 1. tokens -->
 <link rel="stylesheet" href="…/shared/theme-dark.css">      <!-- 2. (optionnel) thème -->
 <link rel="stylesheet" href="…/shared/components/navbar.css"> <!-- 3. composants -->
 <link rel="stylesheet" href="…/shared/components/buttons.css">
 <link rel="stylesheet" href="…/shared/components/card.css">
 <link rel="stylesheet" href="…/shared/components/form.css">
+<link rel="stylesheet" href="…/shared/components/save-indicator.css">
 <style>
   /* règles propres à la page, en dernier */
 </style>
+
+<!-- JS partagés : à charger AVANT le <script> inline qui les consomme -->
+<script src="…/shared/js/storage.js"></script>
 ```
 
 Le `<style>` inline arrive après les `<link>` : ses règles peuvent surcharger les composants partagés pour des cas vraiment spécifiques à la page (ex. styles d'un canvas, d'un tableau métier).
+
+Le `<script>` partagé doit précéder l'inline `<script>` qui l'utilise (ou être en `<head>` sans `defer`). Les helpers exposent des objets globaux (`window.PlialuStorage`) — pas de modules ES, pas de build.
 
 ### Règle absolue dans `shared/components/`
 
