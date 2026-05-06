@@ -208,6 +208,29 @@ toutes MAXCUT et sont **par design** dues à son thème sombre divergent.
 
 ---
 
+## JS partagé
+
+Le présent audit couvre les `<link rel="stylesheet">`. Pour la trace
+des `<script src="">` partagés, le seul fichier en place à ce jour est
+`shared/js/storage.js` (auto-save factorisé), introduit le 2026-05-04
+en branche `refactor/shared-js-storage`. Consommateurs en production :
+
+| Page | charge `storage.js` ? | Usage |
+|---|---|---|
+| `index.html` (hub) | — | aucun formulaire / pas d'auto-save |
+| `modules/calculette/index.html` | — | dashboard sans champ persistant |
+| `modules/calculette/calcul.html` | ✓ | `PlialuStorage.forSubkey('plialu_project_data', 'calcul')` |
+| `modules/calculette/devis.html` | ✓ | `…forSubkey(…, 'devis')` |
+| `modules/calculette/dessinateur.html` | ✓ | `…forSubkey(…, 'dessinateur')` |
+| `modules/configurateur/index.html` | ✓ | `…forKey('plialu-configurateur-session')` |
+| `modules/maxcut/index.html` | — | pas d'auto-save (CSV import/export à la place) |
+
+Voir `shared/README.md` section *JS partagé* pour la convention et
+l'API complète. Si d'autres helpers JS partagés sont ajoutés
+ultérieurement, ce tableau s'étendra (ou un audit dédié sera créé).
+
+---
+
 ## Méthode
 
 ```bash
