@@ -12,6 +12,8 @@
 <link rel="stylesheet" href="../../shared/components/buttons.css">
 <link rel="stylesheet" href="../../shared/components/card.css">
 <link rel="stylesheet" href="../../shared/components/form.css">
+<link rel="stylesheet" href="../../shared/components/save-indicator.css">
+<script src="../../shared/js/storage.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font-sans);background:var(--bg-app);color:var(--text-primary);min-height:100vh}
@@ -283,23 +285,13 @@ let dessinsImportes = [];   // tableau de {id, nom, notes, date, imageBase64}
 // INIT
 // ============================================================
 // ═══════ SAUVEGARDE AUTOMATIQUE ═══════
-const SAVE_KEY = 'plialu_project_data';
-
-function getProjectData(){
-  try { return JSON.parse(localStorage.getItem(SAVE_KEY)) || {}; } catch(e){ return {}; }
-}
-function showSaveIndicator(){
-  let el = document.getElementById('save-indicator');
-  if(!el){ el = document.createElement('div'); el.id='save-indicator'; el.style.cssText='position:fixed;bottom:20px;right:20px;background:rgba(13,41,51,0.88);color:#e8fc69;padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;z-index:200;opacity:0;transition:opacity .35s;pointer-events:none;letter-spacing:.3px'; document.body.appendChild(el); }
-  el.textContent = '\uD83D\uDCBE Projet sauvegard\u00e9';
-  el.style.opacity = '1';
-  clearTimeout(el._t);
-  el._t = setTimeout(() => { el.style.opacity = '0'; }, 1800);
-}
+// Auto-save factoris\u00e9 via shared/js/storage.js (PlialuStorage).
+// Sous-cl\u00e9 "devis" de l'objet racine "plialu_project_data" partag\u00e9
+// avec calcul et dessinateur.
+const storage = PlialuStorage.forSubkey('plialu_project_data', 'devis');
 
 function saveDevisData(){
-  const data = getProjectData();
-  data.devis = {
+  storage.save({
     numero: document.getElementById('d-numero').value,
     date: document.getElementById('d-date').value,
     validite: document.getElementById('d-validite').value,
@@ -314,13 +306,11 @@ function saveDevisData(){
     selectedComm: selectedComm,
     lignesDevis: lignesDevis,
     idCounter: idCounter
-  };
-  localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-  showSaveIndicator();
+  });
 }
 
 function loadDevisData(){
-  const d = getProjectData().devis;
+  const d = storage.load();
   if(!d){
     document.getElementById('d-date').value = new Date().toISOString().split('T')[0];
     document.getElementById('d-numero').value = 'DEV-' + new Date().getFullYear() + '-' + String(Math.floor(Math.random()*900)+100);
