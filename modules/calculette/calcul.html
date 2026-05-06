@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="../../shared/components/buttons.css">
 <link rel="stylesheet" href="../../shared/components/card.css">
 <link rel="stylesheet" href="../../shared/components/form.css">
+<link rel="stylesheet" href="../../shared/components/save-indicator.css">
+<script src="../../shared/js/storage.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font-sans);background:var(--bg-app);color:var(--text-primary);min-height:100vh}
@@ -322,14 +324,13 @@ let epaisseurActive = '15/10';
 let dernierResultat = null;
 
 // ═══════ SAUVEGARDE AUTOMATIQUE ═══════
-const SAVE_KEY = 'plialu_project_data';
+// Auto-save factorisé via shared/js/storage.js (PlialuStorage).
+// Sous-clé "calcul" de l'objet racine "plialu_project_data" partagé
+// avec devis et dessinateur.
+const storage = PlialuStorage.forSubkey('plialu_project_data', 'calcul');
 
-function getProjectData(){
-  try { return JSON.parse(localStorage.getItem(SAVE_KEY)) || {}; } catch(e){ return {}; }
-}
 function saveCalcData(){
-  const data = getProjectData();
-  data.calcul = {
+  storage.save({
     categorie: categorieActive,
     matiere: matiereActive,
     epaisseur: epaisseurActive,
@@ -353,12 +354,10 @@ function saveCalcData(){
     addRal: document.getElementById('add-ral').value,
     addQte: document.getElementById('add-qte').value,
     dernierResultat: dernierResultat
-  };
-  localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-  showSaveIndicator();
+  });
 }
 function loadCalcData(){
-  const d = getProjectData().calcul;
+  const d = storage.load();
   // buildEpBtns doit TOUJOURS être appelé (boutons épaisseur)
   if(d && d.categorie){
     categorieActive = d.categorie;
@@ -422,14 +421,6 @@ function loadCalcData(){
     else                    badge.style.cssText = baseStyle + 'background:#fee2e2;color:#991b1b';
     badge.textContent = 'Marge brute : ' + (r.mgb*100).toFixed(1) + '% \u2014 Delta mat : ' + delta.toFixed(2) + ' \u20ac';
   }
-}
-function showSaveIndicator(){
-  const el = document.getElementById('save-indicator');
-  if(!el) return;
-  el.textContent = '\uD83D\uDCBE Projet sauvegard\u00e9';
-  el.style.opacity = '1';
-  clearTimeout(el._t);
-  el._t = setTimeout(() => { el.style.opacity = '0'; }, 1800);
 }
 
 // Auto-save sur changement de tout input
